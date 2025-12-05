@@ -21,16 +21,16 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Define authorization gates for user roles
-        Gate::define('team_member', function ($user) {
-            return $user->user_type === 'team_member';
+        Gate::define('admin', function ($user) {
+            return $user->user_type === 'admin';
         });
 
         Gate::define('team_lead', function ($user) {
             return $user->user_type === 'team_lead';
         });
 
-        Gate::define('siswa', function ($user) {
-            return $user->user_type === 'siswa';
+        Gate::define('team_member', function ($user) {
+            return $user->user_type === 'team_member';
         });
     }
 }

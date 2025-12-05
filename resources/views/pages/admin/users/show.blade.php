@@ -181,27 +181,27 @@
             <div class="p-6 space-y-4">
                 @if(in_array($user->user_type, ['admin', 'team_lead']))
                     <div class="flex items-start">
-                        <div class="w-32 text-sm text-gray-500 font-medium">NIP</div>
-                        <div class="flex-1 text-gray-900 font-bold">{{ $user->nip ?: '-' }}</div>
+                        <div class="w-32 text-sm text-gray-500 font-medium">Employee ID</div>
+                        <div class="flex-1 text-gray-900 font-bold">{{ $user->employee_id ?: '-' }}</div>
                     </div>
                 @endif
 
                 @if($user->user_type === 'team_member')
                     <div class="flex items-start">
-                        <div class="w-32 text-sm text-gray-500 font-medium">NISN</div>
-                        <div class="flex-1 text-gray-900 font-bold">{{ $user->nisn ?: '-' }}</div>
+                        <div class="w-32 text-sm text-gray-500 font-medium">Member ID</div>
+                        <div class="flex-1 text-gray-900 font-bold">{{ $user->member_id ?: '-' }}</div>
                     </div>
                 @endif
 
                 <div class="flex items-start">
-                    <div class="w-32 text-sm text-gray-500 font-medium">Jurusan</div>
-                    <div class="flex-1 text-gray-900 font-bold">{{ $user->jurusan ?: '-' }}</div>
+                    <div class="w-32 text-sm text-gray-500 font-medium">Department</div>
+                    <div class="flex-1 text-gray-900 font-bold">{{ $user->department ?: '-' }}</div>
                 </div>
 
                 @if($user->user_type === 'team_member')
                     <div class="flex items-start">
-                        <div class="w-32 text-sm text-gray-500 font-medium">Kelas</div>
-                        <div class="flex-1 text-gray-900 font-bold">{{ $user->kelas ?: '-' }}</div>
+                        <div class="w-32 text-sm text-gray-500 font-medium">Team</div>
+                        <div class="flex-1 text-gray-900 font-bold">{{ $user->team ?: '-' }}</div>
                     </div>
                 @endif
 
