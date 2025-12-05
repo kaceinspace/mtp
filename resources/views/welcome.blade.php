@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SMK Assalaam Bandung - Sistem Manajemen Project</title>
+    <title>SIMPRO ASSALAAM - Sistem Informasi Manajemen Project</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -25,8 +25,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-lg font-bold text-gray-900">SMK Assalaam</h1>
-                        <p class="text-xs text-gray-500">Bandung</p>
+                        <h1 class="text-lg font-bold text-gray-900">SIMPRO ASSALAAM</h1>
+                        <p class="text-xs text-gray-500">SMK Assalaam Bandung</p>
                     </div>
                 </div>
 
@@ -73,15 +73,15 @@
                 <div class="text-white">
                     <div class="inline-flex items-center space-x-2 bg-yellow-400 bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
                         <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-                        <span class="text-yellow-100 text-sm font-medium">Sistem Manajemen Project Terpadu</span>
+                        <span class="text-yellow-100 text-sm font-medium">Sistem Informasi Manajemen Project</span>
                     </div>
 
                     <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                        Kelola Project <span class="text-yellow-400">Lebih Mudah</span> & Terorganisir
+                        Kelola Semua Project Dalam Satu <span class="text-yellow-400">SIMPRO</span>
                     </h1>
 
                     <p class="text-xl text-blue-100 mb-8 leading-relaxed">
-                        Platform manajemen project khusus untuk siswa dan guru SMK Assalaam Bandung. Pantau progress, kelola tugas, dan kolaborasi dengan tim secara efektif.
+                        SIMPRO ASSALAAM adalah platform manajemen project khusus untuk siswa dan guru SMK Assalaam Bandung. Pantau progress, kelola tugas, dan kolaborasi dengan tim secara efektif dalam satu sistem terpadu.
                     </p>
 
                     <div class="flex flex-wrap gap-4">
@@ -251,7 +251,7 @@
                     <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Tentang Sistem Kami</h2>
                     <div class="space-y-4 text-gray-600">
                         <p class="text-lg leading-relaxed">
-                            <strong class="text-blue-600">Tracking Project Management System</strong> adalah platform digital yang dikembangkan khusus untuk <strong>SMK Assalaam Bandung</strong> dalam mengelola project akhir siswa secara terstruktur dan efisien.
+                            <strong class="text-blue-600">SIMPRO ASSALAAM (Sistem Informasi Manajemen Project)</strong> adalah platform digital yang dikembangkan khusus untuk <strong>SMK Assalaam Bandung</strong> dalam mengelola project akhir siswa secara terstruktur dan efisien.
                         </p>
                         <p class="text-lg leading-relaxed">
                             Sistem ini memfasilitasi kolaborasi antara <span class="text-blue-600 font-semibold">Admin</span>, <span class="text-green-600 font-semibold">Guru Pembimbing</span>, <span class="text-indigo-600 font-semibold">Guru Penguji</span>, dan <span class="text-yellow-600 font-semibold">Siswa</span> dalam satu platform terpadu.
@@ -477,8 +477,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-white">SMK Assalaam Bandung</h3>
-                            <p class="text-sm text-gray-400">Sistem Manajemen Project</p>
+                            <h3 class="text-lg font-bold text-white">SIMPRO ASSALAAM</h3>
+                            <p class="text-sm text-gray-400">Sistem Informasi Manajemen Project</p>
                         </div>
                     </div>
                     <p class="text-gray-400 mb-4">Platform manajemen project terpadu untuk mendukung pembelajaran berbasis project di SMK Assalaam Bandung.</p>

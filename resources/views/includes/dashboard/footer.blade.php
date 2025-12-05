@@ -1,7 +1,7 @@
 <footer class="bg-white border-t border-gray-200 px-6 py-4">
     <div class="flex flex-col md:flex-row items-center justify-between">
         <div class="text-sm text-gray-600">
-            <p>&copy; {{ date('Y') }} <span class="font-semibold">SMK Assalaam Bandung</span>. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} <span class="font-semibold">SIMPRO ASSALAAM</span> - SMK Assalaam Bandung. All rights reserved.</p>
         </div>
         <div class="flex items-center space-x-4 mt-2 md:mt-0">
             <a href="#" class="text-sm text-gray-600 hover:text-indigo-600 transition">Privacy Policy</a>

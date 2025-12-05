@@ -7,7 +7,10 @@
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
             </svg>
-            <span class="text-xl font-bold">Project Tracker</span>
+            <div>
+                <div class="text-lg font-bold">SIMPRO</div>
+                <div class="text-xs text-indigo-200">ASSALAAM</div>
+            </div>
         </div>
         <button @click="sidebarOpen = false" class="lg:hidden text-white hover:bg-indigo-700 p-1 rounded">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
