@@ -70,37 +70,26 @@
                         <span class="text-xs text-gray-500 mt-1">Akses penuh sistem</span>
                     </label>
 
-                    <label class="group relative flex flex-col items-center justify-center p-6 border-3 border-gray-300 rounded-2xl cursor-pointer hover:border-green-500 hover:shadow-xl hover:shadow-green-500/30 hover:-translate-y-1 transition-all duration-300 {{ old('user_type') == 'guru' ? 'border-green-500 bg-gradient-to-br from-green-50 to-emerald-100 shadow-xl shadow-green-500/30' : '' }}">
-                        <input type="radio" name="user_type" value="guru" class="sr-only" {{ old('user_type') == 'guru' ? 'checked' : '' }} onchange="updateFormFields()">
+                    <label class="group relative flex flex-col items-center justify-center p-6 border-3 border-gray-300 rounded-2xl cursor-pointer hover:border-green-500 hover:shadow-xl hover:shadow-green-500/30 hover:-translate-y-1 transition-all duration-300 {{ old('user_type') == 'team_lead' ? 'border-green-500 bg-gradient-to-br from-green-50 to-emerald-100 shadow-xl shadow-green-500/30' : '' }}">
+                        <input type="radio" name="user_type" value="team_lead" class="sr-only" {{ old('user_type') == 'team_lead' ? 'checked' : '' }} onchange="updateFormFields()">
                         <div class="p-4 bg-gradient-to-br from-green-500 to-emerald-700 rounded-2xl mb-3 group-hover:scale-110 transition-transform">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                             </svg>
                         </div>
-                        <span class="text-sm font-bold text-gray-900">📚 Guru</span>
-                        <span class="text-xs text-gray-500 mt-1">Pembimbing siswa</span>
+                        <span class="text-sm font-bold text-gray-900">👑 Team Lead</span>
+                        <span class="text-xs text-gray-500 mt-1">Project Manager</span>
                     </label>
 
-                    <label class="group relative flex flex-col items-center justify-center p-6 border-3 border-gray-300 rounded-2xl cursor-pointer hover:border-indigo-500 hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-1 transition-all duration-300 {{ old('user_type') == 'guru_penguji' ? 'border-indigo-500 bg-gradient-to-br from-indigo-50 to-purple-100 shadow-xl shadow-indigo-500/30' : '' }}">
-                        <input type="radio" name="user_type" value="guru_penguji" class="sr-only" {{ old('user_type') == 'guru_penguji' ? 'checked' : '' }} onchange="updateFormFields()">
-                        <div class="p-4 bg-gradient-to-br from-indigo-500 to-purple-700 rounded-2xl mb-3 group-hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <span class="text-sm font-bold text-gray-900">✅ Penguji</span>
-                        <span class="text-xs text-gray-500 mt-1">Evaluasi project</span>
-                    </label>
-
-                    <label class="group relative flex flex-col items-center justify-center p-6 border-3 border-gray-300 rounded-2xl cursor-pointer hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-1 transition-all duration-300 {{ old('user_type') == 'siswa' ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-cyan-100 shadow-xl shadow-blue-500/30' : '' }}">
-                        <input type="radio" name="user_type" value="siswa" class="sr-only" {{ old('user_type') == 'siswa' ? 'checked' : '' }} onchange="updateFormFields()">
+                    <label class="group relative flex flex-col items-center justify-center p-6 border-3 border-gray-300 rounded-2xl cursor-pointer hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-1 transition-all duration-300 {{ old('user_type') == 'team_member' ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-cyan-100 shadow-xl shadow-blue-500/30' : '' }}">
+                        <input type="radio" name="user_type" value="team_member" class="sr-only" {{ old('user_type') == 'team_member' ? 'checked' : '' }} onchange="updateFormFields()">
                         <div class="p-4 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl mb-3 group-hover:scale-110 transition-transform">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
                         </div>
-                        <span class="text-sm font-bold text-gray-900">🎓 Siswa</span>
-                        <span class="text-xs text-gray-500 mt-1">Peserta didik</span>
+                        <span class="text-sm font-bold text-gray-900">👥 Team Member</span>
+                        <span class="text-xs text-gray-500 mt-1">Project Contributor</span>
                     </label>
                 </div>
                 @error('user_type')
@@ -176,48 +165,48 @@
             </div>
 
             <!-- Conditional Fields -->
-            <div id="nip-field" class="hidden">
+            <div id="employee-id-field" class="hidden">
                 <div class="p-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl border-2 border-yellow-200">
                     <div class="group">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">🆔 NIP <span class="text-red-500">*</span></label>
-                        <input type="text" name="nip" value="{{ old('nip') }}" placeholder="Nomor Induk Pegawai"
-                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all @error('nip') border-red-500 @enderror">
-                        @error('nip')
+                        <label class="block text-sm font-bold text-gray-700 mb-2">🆔 Employee ID <span class="text-red-500">*</span></label>
+                        <input type="text" name="employee_id" value="{{ old('employee_id') }}" placeholder="Staff/Manager ID Number"
+                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all @error('employee_id') border-red-500 @enderror">
+                        @error('employee_id')
                             <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
             </div>
 
-            <div id="nisn-field" class="hidden">
+            <div id="member-id-field" class="hidden">
                 <div class="p-6 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl border-2 border-blue-200">
                     <div class="group">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">🆔 NISN <span class="text-red-500">*</span></label>
-                        <input type="text" name="nisn" value="{{ old('nisn') }}" placeholder="Nomor Induk Siswa Nasional"
-                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all @error('nisn') border-red-500 @enderror">
-                        @error('nisn')
+                        <label class="block text-sm font-bold text-gray-700 mb-2">🆔 Member ID <span class="text-red-500">*</span></label>
+                        <input type="text" name="member_id" value="{{ old('member_id') }}" placeholder="Member ID Number"
+                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all @error('member_id') border-red-500 @enderror">
+                        @error('member_id')
                             <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
             </div>
 
-            <div id="jurusan-kelas-fields" class="hidden">
+            <div id="department-team-fields" class="hidden">
                 <div class="p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="group">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">🎯 Jurusan</label>
-                            <select name="jurusan" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all">
-                                <option value="">Pilih Jurusan</option>
-                                <option value="RPL" {{ old('jurusan') == 'RPL' ? 'selected' : '' }}>💻 RPL (Rekayasa Perangkat Lunak)</option>
-                                <option value="TKJ" {{ old('jurusan') == 'TKJ' ? 'selected' : '' }}>🌐 TKJ (Teknik Komputer & Jaringan)</option>
-                                <option value="MM" {{ old('jurusan') == 'MM' ? 'selected' : '' }}>🎨 MM (Multimedia)</option>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">🏯 Department</label>
+                            <select name="department" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all">
+                                <option value="">Select Department</option>
+                                <option value="IT Department" {{ old('department') == 'IT Department' ? 'selected' : '' }}>💻 IT Department</option>
+                                <option value="Development" {{ old('department') == 'Development' ? 'selected' : '' }}>⚙️ Development</option>
+                                <option value="Design" {{ old('department') == 'Design' ? 'selected' : '' }}>🎨 Design</option>
                             </select>
                         </div>
 
-                        <div id="kelas-field" class="group">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">🏫 Kelas</label>
-                            <input type="text" name="kelas" value="{{ old('kelas') }}" placeholder="XII RPL 1"
+                        <div id="team-field" class="group">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">👥 Team</label>
+                            <input type="text" name="team" value="{{ old('team') }}" placeholder="Team Alpha, Squad 1, etc"
                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all">
                         </div>
                     </div>
@@ -260,28 +249,28 @@
 <script>
 function updateFormFields() {
     const userType = document.querySelector('input[name="user_type"]:checked')?.value;
-    const nipField = document.getElementById('nip-field');
-    const nisnField = document.getElementById('nisn-field');
-    const jurusanKelasFields = document.getElementById('jurusan-kelas-fields');
-    const kelasField = document.getElementById('kelas-field');
+    const employeeIdField = document.getElementById('employee-id-field');
+    const memberIdField = document.getElementById('member-id-field');
+    const departmentTeamFields = document.getElementById('department-team-fields');
+    const teamField = document.getElementById('team-field');
 
     // Hide all conditional fields first
-    nipField.classList.add('hidden');
-    nisnField.classList.add('hidden');
-    jurusanKelasFields.classList.add('hidden');
+    employeeIdField.classList.add('hidden');
+    memberIdField.classList.add('hidden');
+    departmentTeamFields.classList.add('hidden');
 
     // Show relevant fields based on user type with animation
-    if (userType === 'admin' || userType === 'guru' || userType === 'guru_penguji') {
+    if (userType === 'admin' || userType === 'team_lead') {
         setTimeout(() => {
-            nipField.classList.remove('hidden');
-            jurusanKelasFields.classList.remove('hidden');
-            kelasField.classList.add('hidden');
+            employeeIdField.classList.remove('hidden');
+            departmentTeamFields.classList.remove('hidden');
+            teamField.classList.add('hidden');
         }, 100);
-    } else if (userType === 'siswa') {
+    } else if (userType === 'team_member') {
         setTimeout(() => {
-            nisnField.classList.remove('hidden');
-            jurusanKelasFields.classList.remove('hidden');
-            kelasField.classList.remove('hidden');
+            memberIdField.classList.remove('hidden');
+            departmentTeamFields.classList.remove('hidden');
+            teamField.classList.remove('hidden');
         }, 100);
     }
 }

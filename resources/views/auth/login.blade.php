@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">Selamat Datang Kembali! 👋</h2>
-        <p class="text-gray-600">Login untuk melanjutkan ke dashboard</p>
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Selamat Datang di SIMPRO! 👋</h2>
+        <p class="text-gray-600">Login untuk mengakses Sistem Informasi Manajemen Project</p>
     </div>
 
     <!-- Session Status -->

@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }} - Authentication</title>
+        <title>SIMPRO ASSALAAM - Authentication</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -31,8 +31,8 @@
                             </svg>
                         </div>
                         <div class="text-white">
-                            <h1 class="text-2xl font-bold">SMK Assalaam</h1>
-                            <p class="text-sm text-blue-100">Bandung</p>
+                            <h1 class="text-2xl font-bold">SIMPRO ASSALAAM</h1>
+                            <p class="text-sm text-blue-100">Sistem Informasi Manajemen Project</p>
                         </div>
                     </div>
                 </a>

@@ -21,14 +21,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'nisn',
-        'nip',
+        'member_id',
+        'employee_id',
         'phone',
         'avatar',
         'bio',
         'user_type',
-        'jurusan',
-        'kelas',
+        'department',
+        'team',
         'tahun_ajaran',
         'dark_mode',
         'email_notifications',
@@ -177,14 +177,14 @@ class User extends Authenticatable
         return $this->user_type === 'admin';
     }
 
-    public function isGuru()
+    public function isTeamLead()
     {
-        return in_array($this->user_type, ['guru', 'guru_penguji']);
+        return $this->user_type === 'team_lead';
     }
 
-    public function isSiswa()
+    public function isTeamMember()
     {
-        return $this->user_type === 'siswa';
+        return $this->user_type === 'team_member';
     }
 
     public function getAvatarUrlAttribute()

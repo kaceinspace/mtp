@@ -20,17 +20,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('dashboard.admin')
         ->middleware('can:admin');
 
-    Route::get('/guru/dashboard', [DashboardController::class, 'guru'])
-        ->name('dashboard.guru')
-        ->middleware('can:guru');
+    Route::get('/team-lead/dashboard', [DashboardController::class, 'teamLead'])
+        ->name('dashboard.team_lead')
+        ->middleware('can:team_lead');
 
-    Route::get('/penguji/dashboard', [DashboardController::class, 'penguji'])
-        ->name('dashboard.penguji')
-        ->middleware('can:penguji');
-
-    Route::get('/siswa/dashboard', [DashboardController::class, 'siswa'])
-        ->name('dashboard.siswa')
-        ->middleware('can:siswa');
+    Route::get('/team-member/dashboard', [DashboardController::class, 'teamMember'])
+        ->name('dashboard.team_member')
+        ->middleware('can:team_member');
 
     // Admin Routes
     Route::middleware('can:admin')->prefix('admin')->name('admin.')->group(function () {

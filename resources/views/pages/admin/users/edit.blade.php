@@ -33,12 +33,10 @@
                 <div class="flex items-center space-x-2 mt-2">
                     @if($user->user_type === 'admin')
                         <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold">🛡️ Admin</span>
-                    @elseif($user->user_type === 'guru')
-                        <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold">📚 Guru</span>
-                    @elseif($user->user_type === 'guru_penguji')
-                        <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold">✅ Penguji</span>
+                    @elseif($user->user_type === 'team_lead')
+                        <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold">👑 Team Lead</span>
                     @else
-                        <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold">🎓 Siswa</span>
+                        <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold">👥 Team Member</span>
                     @endif
                     @if($user->is_active)
                         <span class="px-3 py-1 bg-green-500/50 backdrop-blur-sm rounded-full text-xs font-bold">✅ Aktif</span>
@@ -91,16 +89,6 @@
                             </svg>
                         </div>
                         <span class="text-sm font-bold text-gray-900">📚 Guru</span>
-                    </label>
-
-                    <label class="group relative flex flex-col items-center justify-center p-6 border-3 border-gray-300 rounded-2xl cursor-pointer hover:border-indigo-500 hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-1 transition-all duration-300 {{ old('user_type', $user->user_type) == 'guru_penguji' ? 'border-indigo-500 bg-gradient-to-br from-indigo-50 to-purple-100 shadow-xl shadow-indigo-500/30' : '' }}">
-                        <input type="radio" name="user_type" value="guru_penguji" class="sr-only" {{ old('user_type', $user->user_type) == 'guru_penguji' ? 'checked' : '' }} onchange="updateFormFields()">
-                        <div class="p-4 bg-gradient-to-br from-indigo-500 to-purple-700 rounded-2xl mb-3 group-hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <span class="text-sm font-bold text-gray-900">✅ Penguji</span>
                     </label>
 
                     <label class="group relative flex flex-col items-center justify-center p-6 border-3 border-gray-300 rounded-2xl cursor-pointer hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-1 transition-all duration-300 {{ old('user_type', $user->user_type) == 'siswa' ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-cyan-100 shadow-xl shadow-blue-500/30' : '' }}">
@@ -186,48 +174,48 @@
             </div>
 
             <!-- Conditional Fields -->
-            <div id="nip-field" class="hidden">
+            <div id="employee-id-field" class="hidden">
                 <div class="p-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl border-2 border-yellow-200">
                     <div class="group">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">🆔 NIP</label>
-                        <input type="text" name="nip" value="{{ old('nip', $user->nip) }}"
-                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all @error('nip') border-red-500 @enderror">
-                        @error('nip')
+                        <label class="block text-sm font-bold text-gray-700 mb-2">🆔 Employee ID</label>
+                        <input type="text" name="employee_id" value="{{ old('employee_id', $user->employee_id) }}"
+                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all @error('employee_id') border-red-500 @enderror">
+                        @error('employee_id')
                             <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
             </div>
 
-            <div id="nisn-field" class="hidden">
+            <div id="member-id-field" class="hidden">
                 <div class="p-6 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl border-2 border-blue-200">
                     <div class="group">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">🆔 NISN</label>
-                        <input type="text" name="nisn" value="{{ old('nisn', $user->nisn) }}"
-                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all @error('nisn') border-red-500 @enderror">
-                        @error('nisn')
+                        <label class="block text-sm font-bold text-gray-700 mb-2">🆔 Member ID</label>
+                        <input type="text" name="member_id" value="{{ old('member_id', $user->member_id) }}"
+                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all @error('member_id') border-red-500 @enderror">
+                        @error('member_id')
                             <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
             </div>
 
-            <div id="jurusan-kelas-fields" class="hidden">
+            <div id="department-team-fields" class="hidden">
                 <div class="p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="group">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">🎯 Jurusan</label>
-                            <select name="jurusan" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all">
-                                <option value="">Pilih Jurusan</option>
-                                <option value="RPL" {{ old('jurusan', $user->jurusan) == 'RPL' ? 'selected' : '' }}>💻 RPL</option>
-                                <option value="TKJ" {{ old('jurusan', $user->jurusan) == 'TKJ' ? 'selected' : '' }}>🌐 TKJ</option>
-                                <option value="MM" {{ old('jurusan', $user->jurusan) == 'MM' ? 'selected' : '' }}>🎨 MM</option>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">🏯 Department</label>
+                            <select name="department" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all">
+                                <option value="">Select Department</option>
+                                <option value="IT Department" {{ old('department', $user->department) == 'IT Department' ? 'selected' : '' }}>💻 IT Department</option>
+                                <option value="Development" {{ old('department', $user->department) == 'Development' ? 'selected' : '' }}>⚙️ Development</option>
+                                <option value="Design" {{ old('department', $user->department) == 'Design' ? 'selected' : '' }}>🎨 Design</option>
                             </select>
                         </div>
 
-                        <div id="kelas-field" class="group">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">🏫 Kelas</label>
-                            <input type="text" name="kelas" value="{{ old('kelas', $user->kelas) }}" placeholder="XII RPL 1"
+                        <div id="team-field" class="group">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">👥 Team</label>
+                            <input type="text" name="team" value="{{ old('team', $user->team) }}" placeholder="Team Alpha, Squad 1, etc"
                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 group-hover:border-blue-300 transition-all">
                         </div>
                     </div>
@@ -270,28 +258,28 @@
 <script>
 function updateFormFields() {
     const userType = document.querySelector('input[name="user_type"]:checked')?.value;
-    const nipField = document.getElementById('nip-field');
-    const nisnField = document.getElementById('nisn-field');
-    const jurusanKelasFields = document.getElementById('jurusan-kelas-fields');
-    const kelasField = document.getElementById('kelas-field');
+    const employeeIdField = document.getElementById('employee-id-field');
+    const memberIdField = document.getElementById('member-id-field');
+    const departmentTeamFields = document.getElementById('department-team-fields');
+    const teamField = document.getElementById('team-field');
 
     // Hide all conditional fields first
-    nipField.classList.add('hidden');
-    nisnField.classList.add('hidden');
-    jurusanKelasFields.classList.add('hidden');
+    employeeIdField.classList.add('hidden');
+    memberIdField.classList.add('hidden');
+    departmentTeamFields.classList.add('hidden');
 
     // Show relevant fields based on user type
-    if (userType === 'admin' || userType === 'guru' || userType === 'guru_penguji') {
+    if (userType === 'admin' || userType === 'team_lead') {
         setTimeout(() => {
-            nipField.classList.remove('hidden');
-            jurusanKelasFields.classList.remove('hidden');
-            kelasField.classList.add('hidden');
+            employeeIdField.classList.remove('hidden');
+            departmentTeamFields.classList.remove('hidden');
+            teamField.classList.add('hidden');
         }, 100);
-    } else if (userType === 'siswa') {
+    } else if (userType === 'team_member') {
         setTimeout(() => {
-            nisnField.classList.remove('hidden');
-            jurusanKelasFields.classList.remove('hidden');
-            kelasField.classList.remove('hidden');
+            memberIdField.classList.remove('hidden');
+            departmentTeamFields.classList.remove('hidden');
+            teamField.classList.remove('hidden');
         }, 100);
     }
 }

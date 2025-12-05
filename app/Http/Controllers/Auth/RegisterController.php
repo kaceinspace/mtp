@@ -28,11 +28,11 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Password::min(8)],
-            'user_type' => 'required|in:siswa,guru,guru_penguji',
-            'nisn' => 'required_if:user_type,siswa|nullable|string|unique:users',
-            'nip' => 'required_if:user_type,guru,guru_penguji|nullable|string|unique:users',
-            'jurusan' => 'required_if:user_type,siswa|nullable|string',
-            'kelas' => 'nullable|string',
+            'user_type' => 'required|in:team_member,team_lead',
+            'member_id' => 'required_if:user_type,team_member|nullable|string|unique:users',
+            'employee_id' => 'required_if:user_type,team_lead|nullable|string|unique:users',
+            'department' => 'nullable|string',
+            'team' => 'nullable|string',
         ]);
 
         $user = User::create([
@@ -40,10 +40,10 @@ class RegisterController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'user_type' => $request->user_type,
-            'nisn' => $request->nisn,
-            'nip' => $request->nip,
-            'jurusan' => $request->jurusan,
-            'kelas' => $request->kelas,
+            'member_id' => $request->member_id,
+            'employee_id' => $request->employee_id,
+            'department' => $request->department,
+            'team' => $request->team,
             'tahun_ajaran' => date('Y'),
         ]);
 

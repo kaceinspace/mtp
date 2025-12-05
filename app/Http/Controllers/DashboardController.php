@@ -31,20 +31,19 @@ class DashboardController extends Controller
 
         // Get user distribution
         $stats['user_distribution'] = [
-            'siswa' => User::where('user_type', 'siswa')->count(),
-            'guru' => User::where('user_type', 'guru')->count(),
-            'guru_penguji' => User::where('user_type', 'guru_penguji')->count(),
+            'team_member' => User::where('user_type', 'team_member')->count(),
+            'team_lead' => User::where('user_type', 'team_lead')->count(),
             'admin' => User::where('user_type', 'admin')->count(),
         ];
 
         return view('pages.admin.dashboard', compact('stats', 'recent_projects'));
     }
 
-    public function siswa()
+    public function teamMember()
     {
         $user = auth()->user();
 
-        // Get statistics for siswa dashboard
+        // Get statistics for team member dashboard
         $stats = [
             'my_projects' => 0, // Will be implemented when Project model exists
             'active_projects' => 0,
@@ -99,16 +98,16 @@ class DashboardController extends Controller
             // ],
         ]);
 
-        return view('pages.siswa.dashboard', compact('stats', 'projects', 'activities', 'deadlines', 'team_members'));
+        return view('pages.team_member.dashboard', compact('stats', 'projects', 'activities', 'deadlines', 'team_members'));
     }
 
-    public function guru()
+    public function teamLead()
     {
         $user = auth()->user();
 
-        // Get statistics for guru dashboard
+        // Get statistics for team lead dashboard
         $stats = [
-            'my_students' => 0, // Will be implemented
+            'my_team_members' => 0, // Will be implemented
             'supervised_projects' => 0,
             'pending_reviews' => 0,
             'completed_projects' => 0,
@@ -116,30 +115,10 @@ class DashboardController extends Controller
 
         // Placeholder data
         $supervised_projects = collect([]);
-        $students = collect([]);
+        $team_members = collect([]);
         $pending_reviews = collect([]);
 
-        return view('pages.guru.dashboard', compact('stats', 'supervised_projects', 'students', 'pending_reviews'));
-    }
-
-    public function penguji()
-    {
-        $user = auth()->user();
-
-        // Get statistics for guru penguji dashboard
-        $stats = [
-            'projects_to_review' => 0,
-            'completed_reviews' => 0,
-            'scheduled_presentations' => 0,
-            'average_score' => 0,
-        ];
-
-        // Placeholder data
-        $projects_to_review = collect([]);
-        $completed_reviews = collect([]);
-        $scheduled_presentations = collect([]);
-
-        return view('pages.penguji.dashboard', compact('stats', 'projects_to_review', 'completed_reviews', 'scheduled_presentations'));
+        return view('pages.team_lead.dashboard', compact('stats', 'supervised_projects', 'team_members', 'pending_reviews'));
     }
 
     public function index()
@@ -149,10 +128,9 @@ class DashboardController extends Controller
 
         return match($user->user_type) {
             'admin' => redirect()->route('dashboard.admin'),
-            'guru' => redirect()->route('dashboard.guru'),
-            'guru_penguji' => redirect()->route('dashboard.penguji'),
-            'siswa' => redirect()->route('dashboard.siswa'),
-            default => redirect()->route('dashboard.siswa'),
+            'team_lead' => redirect()->route('dashboard.team_lead'),
+            'team_member' => redirect()->route('dashboard.team_member'),
+            default => redirect()->route('dashboard.team_member'),
         };
     }
 }

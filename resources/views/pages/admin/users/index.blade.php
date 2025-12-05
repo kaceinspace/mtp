@@ -42,21 +42,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                 </svg>
             </div>
-            <span class="text-3xl font-bold">{{ $users->where('user_type', 'guru')->count() }}</span>
+            <span class="text-3xl font-bold">{{ $users->where('user_type', 'team_lead')->count() }}</span>
         </div>
-        <p class="text-green-100 font-medium">Guru Pembimbing</p>
-    </div>
-
-    <div class="group bg-gradient-to-br from-indigo-500 to-purple-700 rounded-2xl p-6 text-white hover:shadow-2xl hover:shadow-indigo-500/50 hover:-translate-y-1 transition-all duration-300">
-        <div class="flex items-center justify-between mb-2">
-            <div class="p-3 bg-white/20 backdrop-blur-sm rounded-xl group-hover:rotate-12 transition-transform duration-300">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-            </div>
-            <span class="text-3xl font-bold">{{ $users->where('user_type', 'guru_penguji')->count() }}</span>
-        </div>
-        <p class="text-indigo-100 font-medium">Guru Penguji</p>
+        <p class="text-green-100 font-medium">Team Lead</p>
     </div>
 
     <div class="group bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl p-6 text-white hover:shadow-2xl hover:shadow-blue-500/50 hover:-translate-y-1 transition-all duration-300">
@@ -66,9 +54,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                 </svg>
             </div>
-            <span class="text-3xl font-bold">{{ $users->where('user_type', 'siswa')->count() }}</span>
+            <span class="text-3xl font-bold">{{ $users->where('user_type', 'team_member')->count() }}</span>
         </div>
-        <p class="text-blue-100 font-medium">Siswa</p>
+        <p class="text-blue-100 font-medium">Team Member</p>
     </div>
 </div>
 
@@ -92,7 +80,7 @@
         <div class="group">
             <label class="block text-sm font-semibold text-gray-700 mb-2">🔍 Cari User</label>
             <input type="text" name="search" value="{{ request('search') }}"
-                   placeholder="Nama, email, NISN, NIP..."
+                   placeholder="Nama, email, Member ID, Employee ID..."
                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all group-hover:border-blue-300">
         </div>
 
@@ -100,22 +88,21 @@
         <div class="group">
             <label class="block text-sm font-semibold text-gray-700 mb-2">👤 Tipe User</label>
             <select name="user_type" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all group-hover:border-blue-300">
-                <option value="">Semua Tipe</option>
+                <option value="">All User Types</option>
                 <option value="admin" {{ request('user_type') == 'admin' ? 'selected' : '' }}>🛡️ Admin</option>
-                <option value="guru" {{ request('user_type') == 'guru' ? 'selected' : '' }}>📚 Guru Pembimbing</option>
-                <option value="guru_penguji" {{ request('user_type') == 'guru_penguji' ? 'selected' : '' }}>✅ Guru Penguji</option>
-                <option value="siswa" {{ request('user_type') == 'siswa' ? 'selected' : '' }}>🎓 Siswa</option>
+                <option value="team_lead" {{ request('user_type') == 'team_lead' ? 'selected' : '' }}>👑 Team Lead</option>
+                <option value="team_member" {{ request('user_type') == 'team_member' ? 'selected' : '' }}>👥 Team Member</option>
             </select>
         </div>
 
-        <!-- Jurusan Filter -->
+        <!-- Department Filter -->
         <div class="group">
-            <label class="block text-sm font-semibold text-gray-700 mb-2">🎯 Jurusan</label>
-            <select name="jurusan" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all group-hover:border-blue-300">
-                <option value="">Semua Jurusan</option>
-                <option value="RPL" {{ request('jurusan') == 'RPL' ? 'selected' : '' }}>💻 RPL</option>
-                <option value="TKJ" {{ request('jurusan') == 'TKJ' ? 'selected' : '' }}>🌐 TKJ</option>
-                <option value="MM" {{ request('jurusan') == 'MM' ? 'selected' : '' }}>🎨 MM</option>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">🏯 Department</label>
+            <select name="department" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all group-hover:border-blue-300">
+                <option value="">All Departments</option>
+                <option value="IT Department" {{ request('department') == 'IT Department' ? 'selected' : '' }}>💻 IT Department</option>
+                <option value="Development" {{ request('department') == 'Development' ? 'selected' : '' }}>⚙️ Development</option>
+                <option value="Design" {{ request('department') == 'Design' ? 'selected' : '' }}>🎨 Design</option>
             </select>
         </div>
 
@@ -202,7 +189,7 @@
                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">User</th>
                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Tipe</th>
                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Kontak</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Jurusan/Kelas</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Department/Team</th>
                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
                     <th class="px-6 py-4 text-right text-xs font-bold text-gray-600 uppercase tracking-wider">Aksi</th>
                 </tr>
@@ -225,19 +212,19 @@
                                         </svg>
                                         {{ $user->email }}
                                     </div>
-                                    @if($user->nisn)
+                                    @if($user->member_id)
                                         <div class="text-xs text-gray-400 flex items-center mt-1">
                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                             </svg>
-                                            NISN: {{ $user->nisn }}
+                                            Member ID: {{ $user->member_id }}
                                         </div>
-                                    @elseif($user->nip)
+                                    @elseif($user->employee_id)
                                         <div class="text-xs text-gray-400 flex items-center mt-1">
                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                             </svg>
-                                            NIP: {{ $user->nip }}
+                                            Employee ID: {{ $user->employee_id }}
                                         </div>
                                     @endif
                                 </div>
@@ -248,17 +235,13 @@
                                 <span class="px-3 py-1.5 inline-flex text-xs leading-5 font-bold rounded-xl bg-gradient-to-r from-purple-500 to-purple-700 text-white shadow-lg shadow-purple-500/50">
                                     🛡️ Admin
                                 </span>
-                            @elseif($user->user_type === 'guru')
+                            @elseif($user->user_type === 'team_lead')
                                 <span class="px-3 py-1.5 inline-flex text-xs leading-5 font-bold rounded-xl bg-gradient-to-r from-green-500 to-emerald-700 text-white shadow-lg shadow-green-500/50">
-                                    📚 Guru
-                                </span>
-                            @elseif($user->user_type === 'guru_penguji')
-                                <span class="px-3 py-1.5 inline-flex text-xs leading-5 font-bold rounded-xl bg-gradient-to-r from-indigo-500 to-purple-700 text-white shadow-lg shadow-indigo-500/50">
-                                    ✅ Penguji
+                                    👑 Team Lead
                                 </span>
                             @else
                                 <span class="px-3 py-1.5 inline-flex text-xs leading-5 font-bold rounded-xl bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-lg shadow-blue-500/50">
-                                    🎓 Siswa
+                                    👥 Team Member
                                 </span>
                             @endif
                         </td>
@@ -275,10 +258,10 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            @if($user->jurusan)
-                                <div class="text-sm font-bold text-gray-900">{{ $user->jurusan }}</div>
-                                @if($user->kelas)
-                                    <div class="text-xs text-gray-500 font-medium">{{ $user->kelas }}</div>
+                            @if($user->department)
+                                <div class="text-sm font-bold text-gray-900">{{ $user->department }}</div>
+                                @if($user->team)
+                                    <div class="text-xs text-gray-500 font-medium">{{ $user->team }}</div>
                                 @endif
                             @else
                                 <span class="text-gray-400">-</span>

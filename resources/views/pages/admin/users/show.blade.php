@@ -63,23 +63,19 @@
                             <span class="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-700 text-white rounded-xl font-bold shadow-lg shadow-purple-500/50">
                                 🛡️ Admin
                             </span>
-                        @elseif($user->user_type === 'guru')
+                        @elseif($user->user_type === 'team_lead')
                             <span class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-700 text-white rounded-xl font-bold shadow-lg shadow-green-500/50">
-                                📚 Guru Pembimbing
-                            </span>
-                        @elseif($user->user_type === 'guru_penguji')
-                            <span class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/50">
-                                ✅ Guru Penguji
+                                👑 Team Lead
                             </span>
                         @else
                             <span class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/50">
-                                🎓 Siswa
+                                👥 Team Member
                             </span>
                         @endif
 
-                        @if($user->jurusan)
+                        @if($user->department)
                             <span class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white rounded-xl font-bold shadow-lg shadow-yellow-500/50">
-                                🎯 {{ $user->jurusan }}
+                                🏢 {{ $user->department }}
                             </span>
                         @endif
                     </div>
@@ -162,12 +158,10 @@
                     <div class="flex-1 text-gray-900 font-bold">
                         @if($user->user_type === 'admin')
                             🛡️ Admin
-                        @elseif($user->user_type === 'guru')
-                            📚 Guru Pembimbing
-                        @elseif($user->user_type === 'guru_penguji')
-                            ✅ Guru Penguji
+                        @elseif($user->user_type === 'team_lead')
+                            👑 Team Lead
                         @else
-                            🎓 Siswa
+                            👥 Team Member
                         @endif
                     </div>
                 </div>
@@ -185,14 +179,14 @@
                 </h3>
             </div>
             <div class="p-6 space-y-4">
-                @if(in_array($user->user_type, ['admin', 'guru', 'guru_penguji']))
+                @if(in_array($user->user_type, ['admin', 'team_lead']))
                     <div class="flex items-start">
                         <div class="w-32 text-sm text-gray-500 font-medium">NIP</div>
                         <div class="flex-1 text-gray-900 font-bold">{{ $user->nip ?: '-' }}</div>
                     </div>
                 @endif
 
-                @if($user->user_type === 'siswa')
+                @if($user->user_type === 'team_member')
                     <div class="flex items-start">
                         <div class="w-32 text-sm text-gray-500 font-medium">NISN</div>
                         <div class="flex-1 text-gray-900 font-bold">{{ $user->nisn ?: '-' }}</div>
@@ -204,7 +198,7 @@
                     <div class="flex-1 text-gray-900 font-bold">{{ $user->jurusan ?: '-' }}</div>
                 </div>
 
-                @if($user->user_type === 'siswa')
+                @if($user->user_type === 'team_member')
                     <div class="flex items-start">
                         <div class="w-32 text-sm text-gray-500 font-medium">Kelas</div>
                         <div class="flex-1 text-gray-900 font-bold">{{ $user->kelas ?: '-' }}</div>

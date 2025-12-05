@@ -34,14 +34,14 @@ class UserController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('nisn', 'like', "%{$search}%")
-                    ->orWhere('nip', 'like', "%{$search}%");
+                    ->orWhere('member_id', 'like', "%{$search}%")
+                    ->orWhere('employee_id', 'like', "%{$search}%");
             });
         }
 
-        // Filter by jurusan
-        if ($request->filled('jurusan')) {
-            $query->where('jurusan', $request->jurusan);
+        // Filter by department
+        if ($request->filled('department')) {
+            $query->where('department', $request->department);
         }
 
         $users = $query->latest()->paginate(20);
@@ -66,12 +66,12 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'user_type' => 'required|in:admin,guru,guru_penguji,siswa',
+            'user_type' => 'required|in:admin,team_lead,team_member',
             'phone' => 'nullable|string|max:20',
-            'jurusan' => 'nullable|string|max:100',
-            'kelas' => 'nullable|string|max:50',
-            'nisn' => 'nullable|string|unique:users,nisn',
-            'nip' => 'nullable|string|unique:users,nip',
+            'department' => 'nullable|string|max:100',
+            'team' => 'nullable|string|max:50',
+            'member_id' => 'nullable|string|unique:users,member_id',
+            'employee_id' => 'nullable|string|unique:users,employee_id',
             'is_active' => 'boolean',
         ]);
 
@@ -114,12 +114,12 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:8|confirmed',
-            'user_type' => 'required|in:admin,guru,guru_penguji,siswa',
+            'user_type' => 'required|in:admin,team_lead,team_member',
             'phone' => 'nullable|string|max:20',
-            'jurusan' => 'nullable|string|max:100',
-            'kelas' => 'nullable|string|max:50',
-            'nisn' => ['nullable', 'string', Rule::unique('users')->ignore($user->id)],
-            'nip' => ['nullable', 'string', Rule::unique('users')->ignore($user->id)],
+            'department' => 'nullable|string|max:100',
+            'team' => 'nullable|string|max:50',
+            'member_id' => ['nullable', 'string', Rule::unique('users')->ignore($user->id)],
+            'employee_id' => ['nullable', 'string', Rule::unique('users')->ignore($user->id)],
             'is_active' => 'boolean',
         ]);
 

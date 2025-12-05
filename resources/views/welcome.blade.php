@@ -254,7 +254,7 @@
                             <strong class="text-blue-600">SIMPRO ASSALAAM (Sistem Informasi Manajemen Project)</strong> adalah platform digital yang dikembangkan khusus untuk <strong>SMK Assalaam Bandung</strong> dalam mengelola project akhir siswa secara terstruktur dan efisien.
                         </p>
                         <p class="text-lg leading-relaxed">
-                            Sistem ini memfasilitasi kolaborasi antara <span class="text-blue-600 font-semibold">Admin</span>, <span class="text-green-600 font-semibold">Guru Pembimbing</span>, <span class="text-indigo-600 font-semibold">Guru Penguji</span>, dan <span class="text-yellow-600 font-semibold">Siswa</span> dalam satu platform terpadu.
+                            Sistem ini memfasilitasi kolaborasi antara <span class="text-blue-600 font-semibold">Admin</span>, <span class="text-green-600 font-semibold">Guru</span>, dan <span class="text-yellow-600 font-semibold">Siswa</span> dalam satu platform terpadu.
                         </p>
                         <div class="bg-blue-50 border-l-4 border-blue-600 p-6 rounded-lg mt-6">
                             <h3 class="font-bold text-blue-900 mb-3">🎯 Visi Kami</h3>

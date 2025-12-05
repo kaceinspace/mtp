@@ -14,27 +14,27 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             // Add role-specific fields if not exists
             if (!Schema::hasColumn('users', 'user_type')) {
-                $table->enum('user_type', ['admin', 'guru', 'guru_penguji', 'siswa'])->default('siswa')->after('password');
+                $table->enum('user_type', ['admin', 'team_lead', 'team_member'])->default('team_member')->after('password');
             }
 
-            if (!Schema::hasColumn('users', 'nisn')) {
-                $table->string('nisn')->unique()->nullable()->after('user_type');
+            if (!Schema::hasColumn('users', 'member_id')) {
+                $table->string('member_id')->unique()->nullable()->after('user_type');
             }
 
-            if (!Schema::hasColumn('users', 'nip')) {
-                $table->string('nip')->unique()->nullable()->after('nisn');
+            if (!Schema::hasColumn('users', 'employee_id')) {
+                $table->string('employee_id')->unique()->nullable()->after('member_id');
             }
 
             if (!Schema::hasColumn('users', 'phone')) {
-                $table->string('phone')->nullable()->after('nip');
+                $table->string('phone')->nullable()->after('employee_id');
             }
 
-            if (!Schema::hasColumn('users', 'jurusan')) {
-                $table->string('jurusan')->nullable()->after('phone');
+            if (!Schema::hasColumn('users', 'department')) {
+                $table->string('department')->nullable()->after('phone');
             }
 
-            if (!Schema::hasColumn('users', 'kelas')) {
-                $table->string('kelas')->nullable()->after('jurusan');
+            if (!Schema::hasColumn('users', 'team')) {
+                $table->string('team')->nullable()->after('department');
             }
 
             if (!Schema::hasColumn('users', 'is_active')) {
@@ -51,11 +51,11 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn([
                 'user_type',
-                'nisn',
-                'nip',
+                'member_id',
+                'employee_id',
                 'phone',
-                'jurusan',
-                'kelas',
+                'department',
+                'team',
                 'is_active'
             ]);
         });
