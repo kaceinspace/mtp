@@ -15,7 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Order matters: Users -> Teams -> Projects
         $this->call(UserSeeder::class);
+        $this->call(TeamSeeder::class);
+        $this->call(ProjectSeeder::class);
     }
 }
 

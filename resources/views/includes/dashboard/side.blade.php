@@ -1,18 +1,18 @@
-<aside class="fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-indigo-600 to-indigo-800 text-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 lg:translate-x-0"
+<aside class="fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-primary-600 to-primary-800 dark:from-gray-900 dark:to-gray-800 text-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 lg:translate-x-0"
        :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }">
 
     <!-- Sidebar Header -->
-    <div class="flex items-center justify-between h-16 px-6 border-b border-indigo-500/30">
+    <div class="flex items-center justify-between h-16 px-6 border-b border-primary-500/30 dark:border-gray-700">
         <div class="flex items-center space-x-3">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
             </svg>
             <div>
                 <div class="text-lg font-bold">SIMPRO</div>
-                <div class="text-xs text-indigo-200">ASSALAAM</div>
+                <div class="text-xs text-primary-200 dark:text-gray-400">ASSALAAM</div>
             </div>
         </div>
-        <button @click="sidebarOpen = false" class="lg:hidden text-white hover:bg-indigo-700 p-1 rounded">
+        <button @click="sidebarOpen = false" class="lg:hidden text-white hover:bg-primary-700 dark:hover:bg-gray-700 p-1 rounded">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
@@ -37,18 +37,25 @@
                 <span>Users Management</span>
             </a>
 
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition">
+            <a href="{{ route('projects.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('projects.*') ? 'bg-white/10 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white' }} transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                 </svg>
                 <span>All Projects</span>
             </a>
 
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition">
+            <a href="{{ route('tasks.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('tasks.*') ? 'bg-white/10 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white' }} transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                 </svg>
                 <span>All Tasks</span>
+            </a>
+
+            <a href="{{ route('teams.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('teams.*') ? 'bg-white/10 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white' }} transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                <span>All Teams</span>
             </a>
 
             <div class="pt-4 pb-2">
@@ -70,8 +77,49 @@
                 <span>Settings</span>
             </a>
 
-        @elseif(auth()->check() && auth()->user()->user_type === 'siswa')
-            <!-- Siswa Menu -->
+        @elseif(auth()->check() && auth()->user()->user_type === 'team_lead')
+            <!-- Team Lead Menu -->
+            <a href="{{ route('dashboard.team_lead') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('dashboard.team_lead') ? 'bg-white/10 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white' }} transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span class="font-medium">Dashboard</span>
+            </a>
+
+            <a href="{{ route('projects.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('projects.*') ? 'bg-white/10 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white' }} transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                </svg>
+                <span>My Projects</span>
+            </a>
+
+            <a href="{{ route('tasks.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('tasks.*') ? 'bg-white/10 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white' }} transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                </svg>
+                <span>My Tasks</span>
+            </a>
+
+            <a href="{{ route('teams.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('teams.*') ? 'bg-white/10 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white' }} transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                <span>My Teams</span>
+            </a>
+
+            <div class="pt-4 pb-2">
+                <p class="px-4 text-xs font-semibold text-white/50 uppercase tracking-wider">Management</p>
+            </div>
+
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                <span>Reports</span>
+            </a>
+
+        @elseif(auth()->check() && auth()->user()->user_type === 'team_member')
+            <!-- Team Member Menu -->
             <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-white/10 text-white">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -79,25 +127,25 @@
                 <span class="font-medium">Dashboard</span>
             </a>
 
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition">
+            <a href="{{ route('projects.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('projects.*') ? 'bg-white/10 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white' }} transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                 </svg>
                 <span>My Projects</span>
             </a>
 
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition">
+            <a href="{{ route('tasks.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('tasks.*') ? 'bg-white/10 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white' }} transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                 </svg>
                 <span>My Tasks</span>
             </a>
 
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition">
+            <a href="{{ route('teams.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg {{ request()->routeIs('teams.*') ? 'bg-white/10 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white' }} transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                 </svg>
-                <span>My Team</span>
+                <span>My Teams</span>
             </a>
 
             <div class="pt-4 pb-2">
@@ -136,12 +184,12 @@
     </nav>
 
     <!-- Sidebar Footer - User Profile -->
-    <div class="p-4 border-t border-indigo-500/30">
-        <div class="flex items-center space-x-3 p-3 bg-white/10 rounded-lg">
-            <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=fff&color=6366f1" alt="User" class="w-10 h-10 rounded-full">
+    <div class="p-4 border-t border-primary-500/30 dark:border-gray-700">
+        <div class="flex items-center space-x-3 p-3 bg-white/10 dark:bg-white/5 rounded-lg">
+            <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=3b82f6&color=fff" alt="User" class="w-10 h-10 rounded-full">
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-white truncate">{{ auth()->user()->name ?? 'User Name' }}</p>
-                <p class="text-xs text-indigo-200 truncate">{{ ucfirst(auth()->user()->user_type ?? 'User') }}</p>
+                <p class="text-xs text-primary-200 dark:text-gray-400 truncate">{{ ucfirst(auth()->user()->user_type ?? 'User') }}</p>
             </div>
         </div>
     </div>

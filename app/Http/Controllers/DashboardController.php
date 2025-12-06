@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
+use App\Models\Project;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -9,116 +12,185 @@ class DashboardController extends Controller
 {
     public function admin()
     {
+        $totalUsers = User::count();
+        $totalProjects = Project::count();
+        $totalTasks = Task::count();
+        $completedProjects = Project::where('status', 'completed')->count();
+
         // Get statistics for admin dashboard
         $stats = [
-            'total_users' => User::count(),
+            'total_users' => $totalUsers,
             'active_users' => User::where('is_active', true)->count(),
-            'total_projects' => 0, // Will be implemented when Project model exists
-            'total_tasks' => 0, // Will be implemented when Task model exists
-            'completion_rate' => 0, // Will be calculated when data exists
+            'total_projects' => $totalProjects,
+            'ongoing_projects' => Project::where('status', 'ongoing')->count(),
+            'completed_projects' => $completedProjects,
+            'total_tasks' => $totalTasks,
+            'pending_tasks' => Task::where('status', 'todo')->count(),
+            'completion_rate' => $totalProjects > 0 ? round(($completedProjects / $totalProjects) * 100) : 0,
         ];
 
-        // Get recent projects (placeholder for now)
-        $recent_projects = collect([
-            // Example data structure:
-            // (object)[
-            //     'title' => 'Website Redesign',
-            //     'creator' => 'John Doe',
-            //     'status' => 'in_progress',
-            //     'created_at' => now()->subDays(2),
-            // ],
-        ]);
+        // Get recent projects
+        $recent_projects = Project::with('creator')
+            ->latest()
+            ->take(5)
+            ->get();
 
-        // Get user distribution
-        $stats['user_distribution'] = [
-            'team_member' => User::where('user_type', 'team_member')->count(),
-            'team_lead' => User::where('user_type', 'team_lead')->count(),
-            'admin' => User::where('user_type', 'admin')->count(),
-        ];
+        // Get user distribution with counts and percentages
+        $teamMemberCount = User::where('user_type', 'team_member')->count();
+        $teamLeadCount = User::where('user_type', 'team_lead')->count();
+        $adminCount = User::where('user_type', 'admin')->count();
 
-        return view('pages.admin.dashboard', compact('stats', 'recent_projects'));
+        $stats['team_member_count'] = $teamMemberCount;
+        $stats['team_lead_count'] = $teamLeadCount;
+        $stats['admin_count'] = $adminCount;
+
+        $stats['team_member_percentage'] = $totalUsers > 0 ? round(($teamMemberCount / $totalUsers) * 100) : 0;
+        $stats['team_lead_percentage'] = $totalUsers > 0 ? round(($teamLeadCount / $totalUsers) * 100) : 0;
+        $stats['admin_percentage'] = $totalUsers > 0 ? round(($adminCount / $totalUsers) * 100) : 0;
+
+        // Get recent activities (all activities for admin)
+        $recent_activities = Activity::with(['user', 'project'])
+            ->latest()
+            ->take(15)
+            ->get();
+
+        return view('pages.admin.dashboard', compact('stats', 'recent_projects', 'recent_activities'));
     }
 
     public function teamMember()
     {
         $user = auth()->user();
 
-        // Get statistics for team member dashboard
+        // Get projects where user is a member
+        $myProjectIds = $user->projects()->pluck('projects.id');
+
+        // Get assigned tasks
+        $myTasks = Task::where('assigned_to', $user->id);
+        $activeTasks = (clone $myTasks)->whereIn('status', ['todo', 'in-progress'])->get();
+        $completedTasks = (clone $myTasks)->where('status', 'completed')->count();
+        $overdueTasks = (clone $myTasks)
+            ->whereIn('status', ['todo', 'in-progress'])
+            ->where('due_date', '<', now())
+            ->count();
+
+        // Get statistics
         $stats = [
-            'my_projects' => 0, // Will be implemented when Project model exists
-            'active_projects' => 0,
-            'active_tasks' => 0, // Will be implemented when Task model exists
-            'overdue_tasks' => 0,
-            'completed_tasks' => 0,
-            'total_tasks' => 0,
-            'achievement_points' => 0, // Will be implemented when Achievement system exists
+            'my_projects' => $myProjectIds->count(),
+            'active_projects' => $user->projects()->whereIn('status', ['planning', 'ongoing'])->count(),
+            'active_tasks' => $activeTasks->count(),
+            'overdue_tasks' => $overdueTasks,
+            'completed_tasks' => $completedTasks,
+            'total_tasks' => Task::where('assigned_to', $user->id)->count(),
         ];
 
-        // Get my projects (placeholder for now)
-        $projects = collect([
-            // Example data structure:
-            // (object)[
-            //     'title' => 'Mobile App Development',
-            //     'description' => 'Building a mobile app for school management',
-            //     'status' => 'in_progress',
-            //     'progress' => 65,
-            //     'members_count' => 4,
-            //     'created_at' => now()->subDays(5),
-            // ],
-        ]);
+        // Get my projects with details
+        $projects = Project::whereIn('id', $myProjectIds)
+            ->with(['creator', 'members'])
+            ->latest()
+            ->take(5)
+            ->get();
 
-        // Get recent activities (placeholder for now)
-        $activities = collect([
-            // Example data structure:
-            // (object)[
-            //     'type' => 'task_completed',
-            //     'description' => 'Menyelesaikan task "Design Homepage"',
-            //     'created_at' => now()->subHours(2),
-            // ],
-        ]);
+        // Get upcoming deadlines
+        $deadlines = Task::where('assigned_to', $user->id)
+            ->whereIn('status', ['todo', 'in-progress'])
+            ->whereNotNull('due_date')
+            ->where('due_date', '>=', now())
+            ->orderBy('due_date', 'asc')
+            ->take(5)
+            ->get();
 
-        // Get upcoming deadlines (placeholder for now)
-        $deadlines = collect([
-            // Example data structure:
-            // (object)[
-            //     'title' => 'Submit Design Mockup',
-            //     'project' => 'Website Redesign',
-            //     'due_date' => now()->addDays(2),
-            // ],
-        ]);
+        // Get recent activities from my tasks
+        $activities = Task::where('assigned_to', $user->id)
+            ->latest('updated_at')
+            ->take(10)
+            ->get();
 
-        // Get team members (placeholder for now)
-        $team_members = collect([
-            // Example data structure:
-            // (object)[
-            //     'name' => 'Budi Santoso',
-            //     'role' => 'Frontend Developer',
-            //     'avatar' => 'https://ui-avatars.com/api/?name=Budi+Santoso',
-            //     'is_online' => true,
-            // ],
-        ]);
+        // Get recent activities from my projects
+        $recent_activities = Activity::with(['user', 'project'])
+            ->whereIn('project_id', $myProjectIds)
+            ->latest()
+            ->take(15)
+            ->get();
 
-        return view('pages.team_member.dashboard', compact('stats', 'projects', 'activities', 'deadlines', 'team_members'));
+        // Get team members from my projects
+        $team_members = User::whereHas('projects', function($query) use ($myProjectIds) {
+            $query->whereIn('projects.id', $myProjectIds);
+        })
+        ->where('id', '!=', $user->id)
+        ->with('profile')
+        ->take(10)
+        ->get();
+
+        return view('pages.team_member.dashboard', compact('stats', 'projects', 'activities', 'deadlines', 'team_members', 'recent_activities'));
     }
 
     public function teamLead()
     {
         $user = auth()->user();
 
-        // Get statistics for team lead dashboard
+        // Get teams where user is a team lead
+        $myTeamIds = $user->leadingTeams->pluck('id');
+
+        // Get projects for my teams
+        $myProjects = Project::whereIn('team', $myTeamIds)->with(['members', 'tasks']);
+
+        // Get statistics
         $stats = [
-            'my_team_members' => 0, // Will be implemented
-            'supervised_projects' => 0,
-            'pending_reviews' => 0,
-            'completed_projects' => 0,
+            'my_teams' => $myTeamIds->count(),
+            'total_projects' => (clone $myProjects)->count(),
+            'ongoing_projects' => (clone $myProjects)->where('status', 'ongoing')->count(),
+            'completed_projects' => (clone $myProjects)->where('status', 'completed')->count(),
+            'total_tasks' => Task::whereHas('project', function($query) use ($myTeamIds) {
+                $query->whereIn('team', $myTeamIds);
+            })->count(),
+            'pending_tasks' => Task::whereHas('project', function($query) use ($myTeamIds) {
+                $query->whereIn('team', $myTeamIds);
+            })->where('status', 'todo')->count(),
         ];
 
-        // Placeholder data
-        $supervised_projects = collect([]);
-        $team_members = collect([]);
-        $pending_reviews = collect([]);
+        // Get projects for display
+        $projects = Project::whereIn('team', $myTeamIds)
+            ->with(['creator', 'members', 'teamInfo'])
+            ->latest()
+            ->take(6)
+            ->get();
 
-        return view('pages.team_lead.dashboard', compact('stats', 'supervised_projects', 'team_members', 'pending_reviews'));
+        // Get team members
+        $team_members = User::whereHas('teams', function($query) use ($myTeamIds) {
+            $query->whereIn('teams.id', $myTeamIds);
+        })
+        ->where('id', '!=', $user->id)
+        ->with('profile')
+        ->get();
+
+        // Get pending/high priority tasks
+        $pending_tasks = Task::whereHas('project', function($query) use ($myTeamIds) {
+            $query->whereIn('team', $myTeamIds);
+        })
+        ->whereIn('status', ['todo', 'in-progress'])
+        ->where('priority', 'critical')
+        ->orWhere(function($query) use ($myTeamIds) {
+            $query->whereHas('project', function($q) use ($myTeamIds) {
+                $q->whereIn('team', $myTeamIds);
+            })
+            ->where('due_date', '<', now()->addDays(3));
+        })
+        ->with(['project', 'assignedTo'])
+        ->orderBy('priority', 'desc')
+        ->orderBy('due_date', 'asc')
+        ->take(10)
+        ->get();
+
+        // Get recent activities from my teams' projects
+        $recent_activities = Activity::with(['user', 'project'])
+            ->whereHas('project', function($query) use ($myTeamIds) {
+                $query->whereIn('team', $myTeamIds);
+            })
+            ->latest()
+            ->take(15)
+            ->get();
+
+        return view('pages.team_lead.dashboard', compact('stats', 'projects', 'team_members', 'pending_tasks', 'recent_activities'));
     }
 
     public function index()

@@ -280,6 +280,20 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex items-center justify-end space-x-2">
+                                <!-- Impersonate Button -->
+                                @if($user->id !== auth()->id() && $user->user_type !== 'admin')
+                                    <form action="{{ route('admin.users.impersonate', $user) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit"
+                                                class="p-2 text-indigo-600 hover:text-white hover:bg-indigo-600 rounded-xl hover:shadow-lg hover:shadow-indigo-500/50 transition-all duration-300"
+                                                title="Login sebagai {{ $user->name }}">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                @endif
+
                                 <a href="{{ route('admin.users.show', $user) }}"
                                    class="p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-xl hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
                                    title="Lihat Detail">

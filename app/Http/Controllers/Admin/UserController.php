@@ -166,4 +166,39 @@ class UserController extends Controller
         return redirect()->back()
             ->with('success', "User berhasil {$status}!");
     }
+
+    /**
+     * Impersonate a user
+     */
+    public function impersonate(User $user)
+    {
+        if (!auth()->user()->canImpersonate()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if (!$user->canBeImpersonated()) {
+            return redirect()->back()
+                ->with('error', 'User ini tidak bisa di-impersonate!');
+        }
+
+        auth()->user()->impersonate($user);
+
+        return redirect()->route('dashboard')
+            ->with('success', "Sekarang Anda login sebagai {$user->name}");
+    }
+
+    /**
+     * Leave impersonation
+     */
+    public function leaveImpersonate()
+    {
+        if (!auth()->user()->isImpersonated()) {
+            return redirect()->route('dashboard');
+        }
+
+        auth()->user()->leaveImpersonation();
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Kembali ke akun admin');
+    }
 }

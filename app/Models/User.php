@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Lab404\Impersonate\Models\Impersonate;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes, Impersonate;
 
     /**
      * The attributes that are mass assignable.
@@ -90,6 +91,26 @@ class User extends Authenticatable
         return $this->belongsToMany(Project::class, 'project_members')
             ->withPivot('role', 'responsibilities', 'is_active')
             ->withTimestamps();
+    }
+
+    // Alias for easier access to user's projects
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_members')
+            ->withTimestamps();
+    }
+
+    // Team relationships
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class, 'team_user')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    public function leadingTeams()
+    {
+        return $this->hasMany(Team::class, 'team_lead_id');
     }
 
     public function assignedTasks()
@@ -202,6 +223,22 @@ class User extends Authenticatable
         ];
 
         return asset('images/avatars/' . ($avatarMap[$this->user_type] ?? 'default.png'));
+    }
+
+    /**
+     * Impersonate: Only admin can impersonate others
+     */
+    public function canImpersonate()
+    {
+        return $this->user_type === 'admin';
+    }
+
+    /**
+     * Impersonate: Admin cannot be impersonated
+     */
+    public function canBeImpersonated()
+    {
+        return $this->user_type !== 'admin';
     }
 }
 
