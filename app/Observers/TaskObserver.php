@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Activity;
 use App\Models\Task;
+use App\Services\NotificationService;
 
 class TaskObserver
 {
@@ -20,6 +21,11 @@ class TaskObserver
             'subject_id' => $task->id,
             'description' => "Created task: {$task->title}",
         ]);
+
+        // Notify assigned user
+        if ($task->assigned_to) {
+            NotificationService::taskAssigned($task, $task->assignedTo);
+        }
     }
 
     /**
@@ -37,7 +43,17 @@ class TaskObserver
                 'subject_id' => $task->id,
                 'description' => "Completed task: {$task->title}",
             ]);
-        } elseif ($task->isDirty(['status', 'priority', 'assigned_to'])) {
+
+            // Notify project creator and team lead
+            $notifyUsers = [$task->project->created_by];
+            if ($task->project->teamInfo && $task->project->teamInfo->team_lead_id) {
+                $notifyUsers[] = $task->project->teamInfo->team_lead_id;
+            }
+            NotificationService::taskCompleted($task, array_unique($notifyUsers));
+        } elseif ($task->isDirty('assigned_to') && $task->assigned_to) {
+            // Notify newly assigned user
+            NotificationService::taskAssigned($task, $task->assignedTo);
+        } elseif ($task->isDirty(['status', 'priority'])) {
             Activity::log([
                 'user_id' => auth()->id() ?? $task->created_by,
                 'project_id' => $task->project_id,
@@ -46,6 +62,11 @@ class TaskObserver
                 'subject_id' => $task->id,
                 'description' => "Updated task: {$task->title}",
             ]);
+
+            // Notify assigned user about updates
+            if ($task->assigned_to) {
+                NotificationService::taskUpdated($task);
+            }
         }
     }
 

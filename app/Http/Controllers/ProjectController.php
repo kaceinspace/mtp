@@ -18,7 +18,7 @@ class ProjectController extends Controller
 
         // Admin can see all projects
         if (Gate::allows('admin')) {
-            $projects = Project::with(['creator', 'members'])
+            $projects = Project::with(['creator', 'members', 'teamInfo'])
                 ->latest()
                 ->paginate(10);
         }
@@ -26,15 +26,20 @@ class ProjectController extends Controller
         elseif (Gate::allows('team_lead')) {
             $teamLeadTeams = $user->leadingTeams->pluck('id');
 
-            $projects = Project::with(['creator', 'members'])
-                ->whereIn('team', $teamLeadTeams)
+            $projects = Project::with(['creator', 'members', 'teamInfo'])
+                ->where(function($query) use ($teamLeadTeams, $user) {
+                    // Projects in team lead's teams
+                    $query->whereIn('team', $teamLeadTeams)
+                          // OR projects created by team lead (even if team is NULL)
+                          ->orWhere('created_by', $user->id);
+                })
                 ->latest()
                 ->paginate(10);
         }
         // Team members see only their assigned projects
         else {
             $projects = $user->projects()
-                ->with(['creator', 'members'])
+                ->with(['creator', 'members', 'teamInfo'])
                 ->latest()
                 ->paginate(10);
         }
@@ -54,7 +59,15 @@ class ProjectController extends Controller
 
         $users = User::where('user_type', '!=', 'admin')->get();
 
-        return view('pages.projects.create', compact('users'));
+        // Get teams based on user role
+        if (Gate::allows('admin')) {
+            $teams = \App\Models\Team::all();
+        } else {
+            // Team lead only sees their teams
+            $teams = auth()->user()->leadingTeams;
+        }
+
+        return view('pages.projects.create', compact('users', 'teams'));
     }
 
     /**
@@ -70,7 +83,7 @@ class ProjectController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'department' => 'nullable|string|max:255',
-            'team' => 'nullable|string|max:255',
+            'team' => 'nullable|exists:teams,id',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'status' => 'required|in:planning,ongoing,completed,on-hold',
@@ -78,6 +91,14 @@ class ProjectController extends Controller
             'members' => 'nullable|array',
             'members.*' => 'exists:users,id',
         ]);
+
+        // If team lead and no team selected, use their team
+        if (Gate::allows('team_lead') && empty($validated['team'])) {
+            $userTeam = auth()->user()->leadingTeams->first();
+            if ($userTeam) {
+                $validated['team'] = $userTeam->id;
+            }
+        }
 
         $project = Project::create([
             'title' => $validated['title'],
@@ -105,7 +126,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $project->load(['creator', 'members', 'tasks.assignee']);
+        $project->load(['creator', 'members', 'tasks.assignee', 'teamInfo']);
 
         return view('pages.projects.show', compact('project'));
     }
@@ -123,7 +144,15 @@ class ProjectController extends Controller
         $users = User::where('user_type', '!=', 'admin')->get();
         $project->load('members');
 
-        return view('pages.projects.edit', compact('project', 'users'));
+        // Get teams based on user role
+        if (Gate::allows('admin')) {
+            $teams = \App\Models\Team::all();
+        } else {
+            // Team lead only sees their teams
+            $teams = auth()->user()->leadingTeams;
+        }
+
+        return view('pages.projects.edit', compact('project', 'users', 'teams'));
     }
 
     /**
@@ -139,7 +168,7 @@ class ProjectController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'department' => 'nullable|string|max:255',
-            'team' => 'nullable|string|max:255',
+            'team' => 'nullable|exists:teams,id',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'status' => 'required|in:planning,ongoing,completed,on-hold',

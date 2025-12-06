@@ -67,17 +67,25 @@
 
                 <div>
                     <label for="team" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Team
+                        Team @if(Gate::allows('admin'))<span class="text-red-500">*</span>@endif
                     </label>
-                    <input type="text"
-                           name="team"
-                           id="team"
-                           value="{{ old('team') }}"
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white @error('team') border-red-500 @enderror"
-                           placeholder="e.g., Alpha, Beta">
+                    <select name="team"
+                            id="team"
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white @error('team') border-red-500 @enderror"
+                            {{ Gate::allows('admin') ? 'required' : '' }}>
+                        <option value="">-- Select Team --</option>
+                        @foreach($teams as $team)
+                            <option value="{{ $team->id }}" {{ old('team') == $team->id ? 'selected' : '' }}>
+                                {{ $team->name }}
+                            </option>
+                        @endforeach
+                    </select>
                     @error('team')
                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
+                    @if(Gate::allows('team_lead'))
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">If not selected, your team will be used automatically</p>
+                    @endif
                 </div>
             </div>
 

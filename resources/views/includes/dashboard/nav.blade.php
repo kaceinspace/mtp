@@ -37,12 +37,12 @@
             </button>
 
             <!-- Notifications -->
-            <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open" class="relative p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+            <div x-data="notificationDropdown()" x-init="init()" class="relative">
+                <button @click="open = !open; if(open) loadNotifications()" class="relative p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                     </svg>
-                    <span class="absolute top-1 right-1 w-2 h-2 bg-accent-500 rounded-full"></span>
+                    <span x-show="unreadCount > 0" x-text="unreadCount" class="absolute -top-1 -right-1 min-w-[20px] h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1.5"></span>
                 </button>
 
                 <!-- Notification Dropdown -->
@@ -55,41 +55,54 @@
                      x-transition:leave-end="opacity-0 scale-95"
                      class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
                      style="display: none;">
-                    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
                         <h3 class="font-semibold text-gray-800 dark:text-gray-100">Notifications</h3>
+                        <button @click="markAllAsRead()" x-show="unreadCount > 0" class="text-xs text-primary-600 dark:text-primary-400 hover:underline">
+                            Mark all read
+                        </button>
                     </div>
                     <div class="max-h-96 overflow-y-auto">
-                        <a href="#" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 transition">
-                            <div class="flex items-start space-x-3">
-                                <div class="flex-shrink-0 w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100">Task completed</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Your task "Design Homepage" has been completed</p>
-                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">5 minutes ago</p>
-                                </div>
+                        <template x-if="loading">
+                            <div class="p-8 text-center">
+                                <svg class="animate-spin h-8 w-8 text-primary-600 mx-auto" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
                             </div>
-                        </a>
-                        <a href="#" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                            <div class="flex items-start space-x-3">
-                                <div class="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                                    </svg>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100">New team member</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Ahmad joined your project team</p>
-                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">2 hours ago</p>
-                                </div>
+                        </template>
+
+                        <template x-if="!loading && notifications.length === 0">
+                            <div class="p-8 text-center">
+                                <svg class="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                                </svg>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">No notifications</p>
                             </div>
-                        </a>
+                        </template>
+
+                        <template x-for="notification in notifications" :key="notification.id">
+                            <a :href="notification.action_url || '#'" @click="markAsRead(notification.id)"
+                               class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 transition"
+                               :class="{'bg-blue-50 dark:bg-blue-900/20': !notification.is_read}">
+                                <div class="flex items-start space-x-3">
+                                    <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-lg"
+                                         :class="getColorClass(notification.type)">
+                                        <span x-text="getIcon(notification.type)"></span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 dark:text-gray-100" x-text="notification.title"></p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400" x-text="notification.message"></p>
+                                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1" x-text="formatTime(notification.created_at)"></p>
+                                    </div>
+                                    <template x-if="!notification.is_read">
+                                        <div class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
+                                    </template>
+                                </div>
+                            </a>
+                        </template>
                     </div>
                     <div class="p-3 border-t border-gray-200 dark:border-gray-700">
-                        <a href="#" class="block text-center text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">View all notifications</a>
+                        <a href="{{ route('notifications.index') }}" class="block text-center text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">View all notifications</a>
                     </div>
                 </div>
             </div>
@@ -145,3 +158,129 @@
         </div>
     </div>
 </header>
+
+<script>
+function notificationDropdown() {
+    return {
+        open: false,
+        loading: false,
+        notifications: [],
+        unreadCount: 0,
+
+        init() {
+            this.loadUnreadCount();
+            // Poll for new notifications every 30 seconds
+            setInterval(() => {
+                this.loadUnreadCount();
+            }, 30000);
+        },
+
+        async loadNotifications() {
+            this.loading = true;
+            try {
+                const response = await fetch('{{ route("notifications.recent") }}');
+                const data = await response.json();
+                this.notifications = data.notifications;
+                this.unreadCount = data.unread_count;
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async loadUnreadCount() {
+            try {
+                const response = await fetch('{{ route("notifications.unreadCount") }}');
+                const data = await response.json();
+                this.unreadCount = data.count;
+            } catch (error) {
+                console.error('Error loading unread count:', error);
+            }
+        },
+
+        async markAsRead(notificationId) {
+            try {
+                await fetch(`/notifications/${notificationId}/mark-read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    }
+                });
+                this.loadNotifications();
+            } catch (error) {
+                console.error('Error marking notification as read:', error);
+            }
+        },
+
+        async markAllAsRead() {
+            try {
+                await fetch('{{ route("notifications.markAllAsRead") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    }
+                });
+                this.loadNotifications();
+            } catch (error) {
+                console.error('Error marking all as read:', error);
+            }
+        },
+
+        getIcon(type) {
+            const icons = {
+                'task_assigned': '📋',
+                'task_updated': '🔄',
+                'task_completed': '✅',
+                'task_due_soon': '⏰',
+                'project_created': '📁',
+                'project_updated': '✏️',
+                'project_member_added': '👤',
+                'file_uploaded': '📤',
+                'discussion_created': '💬',
+                'discussion_replied': '💭',
+                'discussion_mentioned': '@️⃣',
+                'deadline_approaching': '⚠️',
+                'status_changed': '🔔',
+            };
+            return icons[type] || '🔔';
+        },
+
+        getColorClass(type) {
+            const colors = {
+                'task_assigned': 'bg-green-100 text-green-600',
+                'task_updated': 'bg-blue-100 text-blue-600',
+                'task_completed': 'bg-purple-100 text-purple-600',
+                'task_due_soon': 'bg-orange-100 text-orange-600',
+                'project_created': 'bg-green-100 text-green-600',
+                'project_updated': 'bg-blue-100 text-blue-600',
+                'project_member_added': 'bg-green-100 text-green-600',
+                'file_uploaded': 'bg-green-100 text-green-600',
+                'discussion_created': 'bg-blue-100 text-blue-600',
+                'discussion_replied': 'bg-yellow-100 text-yellow-600',
+                'discussion_mentioned': 'bg-yellow-100 text-yellow-600',
+                'deadline_approaching': 'bg-orange-100 text-orange-600',
+                'status_changed': 'bg-indigo-100 text-indigo-600',
+            };
+            return colors[type] || 'bg-gray-100 text-gray-600';
+        },
+
+        formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+            if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            return date.toLocaleDateString();
+        }
+    }
+}
+</script>

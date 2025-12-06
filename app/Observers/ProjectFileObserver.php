@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Activity;
 use App\Models\ProjectFile;
+use App\Services\NotificationService;
 
 class ProjectFileObserver
 {
@@ -24,6 +25,13 @@ class ProjectFileObserver
                 'file_size' => $projectFile->file_size,
             ],
         ]);
+
+        // Notify project members about new file
+        $project = $projectFile->project;
+        $memberIds = $project->members->pluck('id')->toArray();
+        if (!empty($memberIds)) {
+            NotificationService::fileUploaded($project, $projectFile->file_name, $memberIds);
+        }
     }
 
     /**
