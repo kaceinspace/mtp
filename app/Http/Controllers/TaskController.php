@@ -48,7 +48,7 @@ class TaskController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         // Only admin and team_lead can create tasks
         if (!Gate::allows('admin') && !Gate::allows('team_lead')) {
@@ -69,7 +69,10 @@ class TaskController extends Controller
 
         $users = User::where('user_type', '!=', 'admin')->get();
 
-        return view('pages.tasks.create', compact('projects', 'users'));
+        // Get selected project if provided
+        $selectedProjectId = $request->query('project_id');
+
+        return view('pages.tasks.create', compact('projects', 'users', 'selectedProjectId'));
     }
 
     /**

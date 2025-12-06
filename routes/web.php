@@ -54,6 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Task Management (accessible by admin, team_lead, and assigned team_member)
     Route::resource('tasks', TaskController::class);
     Route::get('/tasks-kanban', [TaskController::class, 'kanban'])->name('tasks.kanban');
+    Route::get('/tasks-wbs', [App\Http\Controllers\TaskWbsController::class, 'index'])->name('tasks.wbs');
     Route::patch('/tasks/{task}/update-status', [TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
 
     // Team Management (accessible by admin, team_lead, and team_member)
@@ -72,6 +73,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/projects/{project}/files', [App\Http\Controllers\ProjectFileController::class, 'store'])->name('projects.files.store');
     Route::get('/files/{file}/download', [App\Http\Controllers\ProjectFileController::class, 'download'])->name('files.download');
     Route::delete('/files/{file}', [App\Http\Controllers\ProjectFileController::class, 'destroy'])->name('files.destroy');
+
+    // Work Breakdown Structure (WBS)
+    Route::get('/projects/{project}/wbs', [App\Http\Controllers\WbsController::class, 'index'])->name('projects.wbs');
+    Route::get('/projects/{project}/wbs/tree', [App\Http\Controllers\WbsController::class, 'tree'])->name('projects.wbs.tree');
+    Route::post('/projects/{project}/wbs', [App\Http\Controllers\WbsController::class, 'store'])->name('projects.wbs.store');
+    Route::post('/projects/{project}/wbs/reorder', [App\Http\Controllers\WbsController::class, 'reorder'])->name('projects.wbs.reorder');
+    Route::patch('/projects/{project}/wbs/{task}', [App\Http\Controllers\WbsController::class, 'update'])->name('projects.wbs.update');
+    Route::delete('/projects/{project}/wbs/{task}', [App\Http\Controllers\WbsController::class, 'destroy'])->name('projects.wbs.destroy');
+    
+    // Task Dependencies
+    Route::post('/projects/{project}/wbs/dependencies', [App\Http\Controllers\WbsController::class, 'addDependency'])->name('projects.wbs.dependencies.add');
+    Route::delete('/projects/{project}/wbs/dependencies/{dependency}', [App\Http\Controllers\WbsController::class, 'removeDependency'])->name('projects.wbs.dependencies.remove');
+    Route::get('/projects/{project}/wbs/{task}/dependencies', [App\Http\Controllers\WbsController::class, 'getDependencies'])->name('projects.wbs.dependencies.get');
+    
+    // Critical Path
+    Route::post('/projects/{project}/wbs/critical-path/calculate', [App\Http\Controllers\WbsController::class, 'calculateCriticalPath'])->name('projects.wbs.critical-path.calculate');
+    Route::get('/projects/{project}/wbs/critical-path', [App\Http\Controllers\WbsController::class, 'showCriticalPath'])->name('projects.wbs.critical-path');
+    Route::post('/projects/{project}/wbs/reorder', [App\Http\Controllers\WbsController::class, 'reorder'])->name('projects.wbs.reorder');
+    Route::patch('/projects/{project}/wbs/{task}', [App\Http\Controllers\WbsController::class, 'update'])->name('projects.wbs.update');
+    Route::delete('/projects/{project}/wbs/{task}', [App\Http\Controllers\WbsController::class, 'destroy'])->name('projects.wbs.destroy');
+
+    // Task Dependencies
+    Route::post('/projects/{project}/wbs/dependencies', [App\Http\Controllers\WbsController::class, 'addDependency'])->name('projects.wbs.dependencies.add');
+    Route::delete('/projects/{project}/wbs/dependencies/{dependency}', [App\Http\Controllers\WbsController::class, 'removeDependency'])->name('projects.wbs.dependencies.remove');
+    Route::get('/projects/{project}/wbs/{task}/dependencies', [App\Http\Controllers\WbsController::class, 'getDependencies'])->name('projects.wbs.dependencies.get');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
