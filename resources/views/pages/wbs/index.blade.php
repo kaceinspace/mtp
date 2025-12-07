@@ -33,6 +33,11 @@
                     class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition z-10 relative cursor-pointer">
                 <i class="fas fa-weight-hanging mr-2"></i>Weight Manager
             </button>
+            <button type="button"
+                    onclick="openCalendarSettingsModal()"
+                    class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition z-10 relative cursor-pointer">
+                <i class="fas fa-calendar-alt mr-2"></i>Calendar Settings
+            </button>
             <a href="{{ route('projects.wbs.critical-path', $project) }}"
                class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition z-10 relative">
                 <i class="fas fa-route mr-2"></i>Critical Path
@@ -382,6 +387,162 @@
                     <button type="submit" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg">Save Weight</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Calendar Settings Modal -->
+    <div id="calendarSettingsModal" style="display: none;"
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+         onclick="if(event.target === this) closeCalendarSettingsModal()">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden"
+             onclick="event.stopPropagation()">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+                    <i class="fas fa-calendar-alt mr-2"></i>Calendar & Working Days Settings
+                </h3>
+                <button onclick="closeCalendarSettingsModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="border-b border-gray-200 dark:border-gray-700">
+                <nav class="flex gap-4 px-6" aria-label="Tabs">
+                    <button onclick="switchCalendarTab('working-days')" id="tab-working-days"
+                            class="calendar-tab py-3 px-4 text-sm font-medium border-b-2 border-teal-600 text-teal-600">
+                        <i class="fas fa-business-time mr-2"></i>Working Days
+                    </button>
+                    <button onclick="switchCalendarTab('holidays')" id="tab-holidays"
+                            class="calendar-tab py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                        <i class="fas fa-umbrella-beach mr-2"></i>Holidays
+                    </button>
+                    <button onclick="switchCalendarTab('planning')" id="tab-planning"
+                            class="calendar-tab py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                        <i class="fas fa-chart-line mr-2"></i>Weekly Planning
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+                <!-- Working Days Tab -->
+                <div id="workingDaysContent" class="calendar-tab-content">
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-4">Select Working Days</h4>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <input type="checkbox" id="monday" class="working-day-checkbox form-checkbox h-5 w-5 text-teal-600">
+                                    <span class="ml-2 text-gray-700 dark:text-gray-300">Monday</span>
+                                </label>
+                                <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <input type="checkbox" id="tuesday" class="working-day-checkbox form-checkbox h-5 w-5 text-teal-600">
+                                    <span class="ml-2 text-gray-700 dark:text-gray-300">Tuesday</span>
+                                </label>
+                                <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <input type="checkbox" id="wednesday" class="working-day-checkbox form-checkbox h-5 w-5 text-teal-600">
+                                    <span class="ml-2 text-gray-700 dark:text-gray-300">Wednesday</span>
+                                </label>
+                                <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <input type="checkbox" id="thursday" class="working-day-checkbox form-checkbox h-5 w-5 text-teal-600">
+                                    <span class="ml-2 text-gray-700 dark:text-gray-300">Thursday</span>
+                                </label>
+                                <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <input type="checkbox" id="friday" class="working-day-checkbox form-checkbox h-5 w-5 text-teal-600">
+                                    <span class="ml-2 text-gray-700 dark:text-gray-300">Friday</span>
+                                </label>
+                                <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <input type="checkbox" id="saturday" class="working-day-checkbox form-checkbox h-5 w-5 text-teal-600">
+                                    <span class="ml-2 text-gray-700 dark:text-gray-300">Saturday</span>
+                                </label>
+                                <label class="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <input type="checkbox" id="sunday" class="working-day-checkbox form-checkbox h-5 w-5 text-teal-600">
+                                    <span class="ml-2 text-gray-700 dark:text-gray-300">Sunday</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-gray-700 dark:text-gray-300 mb-2">Work Start Time</label>
+                                <input type="time" id="work_start_time" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 dark:text-gray-300 mb-2">Work End Time</label>
+                                <input type="time" id="work_end_time" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 dark:text-gray-300 mb-2">Hours Per Day</label>
+                                <input type="number" id="hours_per_day" step="0.5" min="1" max="24" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button onclick="saveWorkingDays()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg">
+                                <i class="fas fa-save mr-2"></i>Save Working Days
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Holidays Tab -->
+                <div id="holidaysContent" class="calendar-tab-content hidden">
+                    <div class="space-y-4">
+                        <!-- Add Holiday Form -->
+                        <div class="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Add New Holiday</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Date</label>
+                                    <input type="date" id="holiday_date" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Holiday Name</label>
+                                    <input type="text" id="holiday_name" placeholder="e.g., New Year's Day" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Type</label>
+                                    <select id="holiday_type" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="holiday">Public Holiday</option>
+                                        <option value="non-working-day">Non-Working Day</option>
+                                        <option value="custom">Custom</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="flex items-center mt-8">
+                                        <input type="checkbox" id="is_recurring" class="form-checkbox h-5 w-5 text-teal-600">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Recurring Annually</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <label class="block text-gray-700 dark:text-gray-300 mb-2">Description (Optional)</label>
+                                <textarea id="holiday_description" rows="2" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                            </div>
+                            <div class="mt-4 flex justify-end">
+                                <button onclick="addHoliday()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg">
+                                    <i class="fas fa-plus mr-2"></i>Add Holiday
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Holidays List -->
+                        <div id="holidaysList" class="space-y-2">
+                            <div class="text-center py-8 text-gray-500">Loading holidays...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weekly Planning Tab -->
+                <div id="planningContent" class="calendar-tab-content hidden">
+                    <div class="text-center py-8 text-gray-500">Loading planning view...</div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 p-6 border-t border-gray-200 dark:border-gray-700">
+                <button onclick="closeCalendarSettingsModal()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">Close</button>
+            </div>
         </div>
     </div>
 
@@ -1934,6 +2095,300 @@
             } catch (error) {
                 console.error('Error:', error);
                 alert('Failed to distribute weight');
+            }
+        }
+
+        // Calendar Settings Functions
+        function openCalendarSettingsModal() {
+            document.getElementById('calendarSettingsModal').style.display = 'flex';
+            switchCalendarTab('working-days');
+            loadCalendarSettings();
+        }
+
+        function closeCalendarSettingsModal() {
+            document.getElementById('calendarSettingsModal').style.display = 'none';
+        }
+
+        function switchCalendarTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.calendar-tab').forEach(btn => {
+                btn.classList.remove('border-teal-600', 'text-teal-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+            document.getElementById(`tab-${tab}`).classList.remove('border-transparent', 'text-gray-500');
+            document.getElementById(`tab-${tab}`).classList.add('border-teal-600', 'text-teal-600');
+
+            // Hide all content
+            document.querySelectorAll('.calendar-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Show selected content and load data
+            const contentMap = {
+                'working-days': 'workingDaysContent',
+                'holidays': 'holidaysContent',
+                'planning': 'planningContent'
+            };
+
+            const contentId = contentMap[tab];
+            if (contentId) {
+                document.getElementById(contentId).classList.remove('hidden');
+                
+                if (tab === 'holidays') {
+                    loadHolidays();
+                } else if (tab === 'planning') {
+                    loadWeeklyPlanning();
+                }
+            }
+        }
+
+        async function loadCalendarSettings() {
+            try {
+                const response = await fetch('{{ route("projects.wbs.calendar.settings", $project) }}');
+                const data = await response.json();
+
+                if (data.success) {
+                    // Populate working days
+                    const workingDays = data.working_days;
+                    ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
+                        const checkbox = document.getElementById(day);
+                        if (checkbox) {
+                            checkbox.checked = workingDays[day] ?? false;
+                        }
+                    });
+
+                    document.getElementById('work_start_time').value = workingDays.work_start_time || '09:00';
+                    document.getElementById('work_end_time').value = workingDays.work_end_time || '17:00';
+                    document.getElementById('hours_per_day').value = workingDays.hours_per_day || 8;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function saveWorkingDays() {
+            const data = {
+                monday: document.getElementById('monday').checked,
+                tuesday: document.getElementById('tuesday').checked,
+                wednesday: document.getElementById('wednesday').checked,
+                thursday: document.getElementById('thursday').checked,
+                friday: document.getElementById('friday').checked,
+                saturday: document.getElementById('saturday').checked,
+                sunday: document.getElementById('sunday').checked,
+                work_start_time: document.getElementById('work_start_time').value,
+                work_end_time: document.getElementById('work_end_time').value,
+                hours_per_day: parseFloat(document.getElementById('hours_per_day').value)
+            };
+
+            try {
+                const response = await fetch('{{ route("projects.wbs.calendar.working-days", $project) }}', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('✓ Working days saved successfully!');
+                } else {
+                    alert('Failed to save: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to save working days');
+            }
+        }
+
+        async function loadHolidays() {
+            const container = document.getElementById('holidaysList');
+            container.innerHTML = '<div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Loading holidays...</div>';
+
+            try {
+                const response = await fetch('{{ route("projects.wbs.calendar.settings", $project) }}');
+                const data = await response.json();
+
+                if (!data.success || data.holidays.length === 0) {
+                    container.innerHTML = '<div class="text-center py-8 text-gray-500">No holidays added yet</div>';
+                    return;
+                }
+
+                let html = '';
+                data.holidays.forEach(holiday => {
+                    const date = new Date(holiday.date);
+                    const typeColors = {
+                        'holiday': 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+                        'non-working-day': 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+                        'custom': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                    };
+                    const typeClass = typeColors[holiday.type] || typeColors.custom;
+
+                    html += `
+                        <div class="flex items-center justify-between p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-semibold text-gray-900 dark:text-white">${holiday.name}</span>
+                                    <span class="px-2 py-0.5 ${typeClass} rounded text-xs">${holiday.type}</span>
+                                    ${holiday.is_recurring ? '<i class="fas fa-sync-alt text-teal-600 text-xs" title="Recurring annually"></i>' : ''}
+                                </div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                    <i class="fas fa-calendar mr-1"></i>${date.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
+                                </div>
+                                ${holiday.description ? `<div class="text-sm text-gray-500 dark:text-gray-400 mt-1">${holiday.description}</div>` : ''}
+                            </div>
+                            <button onclick="deleteHoliday(${holiday.id})" class="ml-3 px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = '<div class="text-center py-8 text-red-500">Failed to load holidays</div>';
+            }
+        }
+
+        async function addHoliday() {
+            const data = {
+                date: document.getElementById('holiday_date').value,
+                name: document.getElementById('holiday_name').value,
+                type: document.getElementById('holiday_type').value,
+                description: document.getElementById('holiday_description').value,
+                is_recurring: document.getElementById('is_recurring').checked
+            };
+
+            if (!data.date || !data.name) {
+                alert('Please fill in date and name');
+                return;
+            }
+
+            try {
+                const response = await fetch('{{ route("projects.wbs.calendar.holidays.add", $project) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    // Clear form
+                    document.getElementById('holiday_date').value = '';
+                    document.getElementById('holiday_name').value = '';
+                    document.getElementById('holiday_description').value = '';
+                    document.getElementById('is_recurring').checked = false;
+                    
+                    // Reload holidays list
+                    loadHolidays();
+                    alert('✓ Holiday added successfully!');
+                } else {
+                    alert('Failed to add holiday: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to add holiday');
+            }
+        }
+
+        async function deleteHoliday(holidayId) {
+            if (!confirm('Delete this holiday?')) return;
+
+            try {
+                const response = await fetch(`/projects/{{ $project->id }}/wbs/calendar/holidays/${holidayId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    loadHolidays();
+                } else {
+                    alert('Failed to delete: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to delete holiday');
+            }
+        }
+
+        async function loadWeeklyPlanning() {
+            const container = document.getElementById('planningContent');
+            container.innerHTML = '<div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Loading planning...</div>';
+
+            try {
+                const response = await fetch('{{ route("projects.wbs.calendar.planning", $project) }}?view=week');
+                const data = await response.json();
+
+                if (!data.success) {
+                    container.innerHTML = '<div class="text-center py-8 text-gray-500">No planning data available</div>';
+                    return;
+                }
+
+                let html = `
+                    <div class="space-y-6">
+                        <div class="bg-gradient-to-r from-teal-50 to-blue-50 dark:from-teal-900/20 dark:to-blue-900/20 rounded-lg p-6">
+                            <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                                Week Overview: ${data.start_date} to ${data.end_date}
+                            </h4>
+                            <div class="grid grid-cols-3 gap-4 mt-4">
+                `;
+
+                data.breakdown.forEach(period => {
+                    html += `
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                            <div class="text-sm text-gray-600 dark:text-gray-400">${period.period}</div>
+                            <div class="text-2xl font-bold text-teal-600 mt-2">${period.working_days}</div>
+                            <div class="text-xs text-gray-500">working days</div>
+                            ${period.holidays > 0 ? `<div class="text-xs text-red-600 mt-1">${period.holidays} holiday(s)</div>` : ''}
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+
+                // Tasks breakdown by date
+                if (Object.keys(data.tasks).length > 0) {
+                    html += '<div class="space-y-3"><h4 class="font-semibold text-gray-900 dark:text-white mb-3">Tasks This Week</h4>';
+                    
+                    Object.entries(data.tasks).forEach(([date, tasks]) => {
+                        const dateObj = new Date(date);
+                        html += `
+                            <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                                <div class="font-semibold text-gray-900 dark:text-white mb-2">
+                                    ${dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                                </div>
+                                <div class="space-y-2">
+                                    ${tasks.map(task => `
+                                        <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900/50 rounded">
+                                            <div>
+                                                <span class="text-xs font-mono text-gray-600 dark:text-gray-400 mr-2">${task.wbs_code}</span>
+                                                <span class="text-sm text-gray-900 dark:text-white">${task.title}</span>
+                                            </div>
+                                            <span class="text-xs text-gray-500">${task.assignee}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                } else {
+                    html += '<div class="text-center py-8 text-gray-500">No tasks scheduled this week</div>';
+                }
+
+                html += '</div>';
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = '<div class="text-center py-8 text-red-500">Failed to load planning data</div>';
             }
         }
 

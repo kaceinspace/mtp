@@ -1436,5 +1436,208 @@ class WbsController extends Controller
             'projectDuration' => $projectDuration,
         ]);
     }
+
+    /**
+     * Get project calendar settings.
+     */
+    public function getCalendarSettings(Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $workingDays = $project->workingDays()->first();
+        $holidays = $project->holidays()->orderBy('date')->get();
+
+        return response()->json([
+            'success' => true,
+            'working_days' => $workingDays ?? [
+                'monday' => true,
+                'tuesday' => true,
+                'wednesday' => true,
+                'thursday' => true,
+                'friday' => true,
+                'saturday' => false,
+                'sunday' => false,
+                'work_start_time' => '09:00',
+                'work_end_time' => '17:00',
+                'hours_per_day' => 8.00,
+            ],
+            'holidays' => $holidays,
+        ]);
+    }
+
+    /**
+     * Update working days configuration.
+     */
+    public function updateWorkingDays(Request $request, Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $validated = $request->validate([
+            'monday' => 'boolean',
+            'tuesday' => 'boolean',
+            'wednesday' => 'boolean',
+            'thursday' => 'boolean',
+            'friday' => 'boolean',
+            'saturday' => 'boolean',
+            'sunday' => 'boolean',
+            'work_start_time' => 'nullable|date_format:H:i',
+            'work_end_time' => 'nullable|date_format:H:i',
+            'hours_per_day' => 'nullable|numeric|min:1|max:24',
+        ]);
+
+        $workingDays = $project->workingDays()->first();
+
+        if ($workingDays) {
+            $workingDays->update($validated);
+        } else {
+            $project->workingDays()->create($validated);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Working days updated successfully',
+        ]);
+    }
+
+    /**
+     * Add holiday.
+     */
+    public function addHoliday(Request $request, Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $validated = $request->validate([
+            'date' => 'required|date',
+            'name' => 'required|string|max:255',
+            'type' => 'nullable|string|in:holiday,non-working-day,custom',
+            'description' => 'nullable|string',
+            'is_recurring' => 'boolean',
+        ]);
+
+        try {
+            $holiday = $project->holidays()->create($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Holiday added successfully',
+                'holiday' => $holiday,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to add holiday: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete holiday.
+     */
+    public function deleteHoliday(Project $project, $holidayId)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $holiday = $project->holidays()->findOrFail($holidayId);
+        $holiday->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Holiday deleted successfully',
+        ]);
+    }
+
+    /**
+     * Calculate working days between dates.
+     */
+    public function calculateWorkingDays(Request $request, Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $validated = $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $calculator = new \App\Services\WorkingDayCalculator();
+        $startDate = \Carbon\Carbon::parse($validated['start_date']);
+        $endDate = \Carbon\Carbon::parse($validated['end_date']);
+
+        $workingDays = $calculator->calculateWorkingDays($project, $startDate, $endDate);
+        $workingHours = $calculator->calculateWorkingHours($project, $startDate, $endDate);
+        $breakdown = $calculator->getWorkingDaysBreakdown($project, $startDate, $endDate, 'week');
+
+        return response()->json([
+            'success' => true,
+            'working_days' => $workingDays,
+            'working_hours' => $workingHours,
+            'breakdown' => $breakdown,
+        ]);
+    }
+
+    /**
+     * Get weekly/monthly planning view.
+     */
+    public function getPlanningView(Request $request, Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $view = $request->get('view', 'week'); // week or month
+        $startDate = $request->get('start_date') 
+            ? \Carbon\Carbon::parse($request->get('start_date'))
+            : \Carbon\Carbon::now()->startOfWeek();
+
+        if ($view === 'week') {
+            $endDate = $startDate->copy()->endOfWeek();
+        } else {
+            $endDate = $startDate->copy()->endOfMonth();
+        }
+
+        $calculator = new \App\Services\WorkingDayCalculator();
+        $breakdown = $calculator->getWorkingDaysBreakdown($project, $startDate, $endDate, $view);
+
+        // Get tasks in this period
+        $tasks = Task::where('project_id', $project->id)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('due_date', [$startDate, $endDate])
+                    ->orWhereBetween('calculated_start_date', [$startDate, $endDate]);
+            })
+            ->with(['assignee'])
+            ->get();
+
+        // Group tasks by date
+        $tasksByDate = [];
+        foreach ($tasks as $task) {
+            $date = $task->due_date ? $task->due_date->format('Y-m-d') : null;
+            if ($date) {
+                if (!isset($tasksByDate[$date])) {
+                    $tasksByDate[$date] = [];
+                }
+                $tasksByDate[$date][] = [
+                    'id' => $task->id,
+                    'wbs_code' => $task->wbs_code,
+                    'title' => $task->title,
+                    'status' => $task->status,
+                    'weight' => $task->weight,
+                    'assignee' => $task->assignee ? $task->assignee->name : 'Unassigned',
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'view' => $view,
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'),
+            'breakdown' => $breakdown,
+            'tasks' => $tasksByDate,
+        ]);
+    }
 }
+
 

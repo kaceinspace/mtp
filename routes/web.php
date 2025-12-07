@@ -110,6 +110,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/projects/{project}/wbs/weight/timeline', [App\Http\Controllers\WbsController::class, 'getWeightTimeline'])->name('projects.wbs.weight.timeline');
     Route::get('/projects/{project}/wbs/weight/by-status', [App\Http\Controllers\WbsController::class, 'getWeightByStatus'])->name('projects.wbs.weight.by-status');
 
+    // Calendar & Scheduling
+    Route::get('/projects/{project}/wbs/calendar/settings', [App\Http\Controllers\WbsController::class, 'getCalendarSettings'])->name('projects.wbs.calendar.settings');
+    Route::put('/projects/{project}/wbs/calendar/working-days', [App\Http\Controllers\WbsController::class, 'updateWorkingDays'])->name('projects.wbs.calendar.working-days');
+    Route::post('/projects/{project}/wbs/calendar/holidays', [App\Http\Controllers\WbsController::class, 'addHoliday'])->name('projects.wbs.calendar.holidays.add');
+    Route::delete('/projects/{project}/wbs/calendar/holidays/{holidayId}', [App\Http\Controllers\WbsController::class, 'deleteHoliday'])->name('projects.wbs.calendar.holidays.delete');
+    Route::post('/projects/{project}/wbs/calendar/calculate-working-days', [App\Http\Controllers\WbsController::class, 'calculateWorkingDays'])->name('projects.wbs.calendar.calculate');
+    Route::get('/projects/{project}/wbs/calendar/planning', [App\Http\Controllers\WbsController::class, 'getPlanningView'])->name('projects.wbs.calendar.planning');
+
     Route::post('/projects/{project}/wbs/reorder', [App\Http\Controllers\WbsController::class, 'reorder'])->name('projects.wbs.reorder');
     Route::patch('/projects/{project}/wbs/{task}', [App\Http\Controllers\WbsController::class, 'update'])->name('projects.wbs.update');
     Route::delete('/projects/{project}/wbs/{task}', [App\Http\Controllers\WbsController::class, 'destroy'])->name('projects.wbs.destroy');

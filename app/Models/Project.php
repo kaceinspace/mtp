@@ -62,4 +62,16 @@ class Project extends Model
     {
         return $this->hasMany(ProjectFile::class);
     }
+
+    // Project holidays
+    public function holidays(): HasMany
+    {
+        return $this->hasMany(ProjectHoliday::class);
+    }
+
+    // Project working days configuration
+    public function workingDays(): HasMany
+    {
+        return $this->hasMany(ProjectWorkingDay::class);
+    }
 }
