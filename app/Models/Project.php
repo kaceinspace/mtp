@@ -74,4 +74,10 @@ class Project extends Model
     {
         return $this->hasMany(ProjectWorkingDay::class);
     }
+
+    // Project weekly plans
+    public function weeklyPlans(): HasMany
+    {
+        return $this->hasMany(WeeklyPlan::class);
+    }
 }

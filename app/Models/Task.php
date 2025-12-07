@@ -173,6 +173,26 @@ class Task extends Model
             ->withTimestamps();
     }
 
+    // Progress tracking entries
+    public function progressEntries(): HasMany
+    {
+        return $this->hasMany(TaskProgress::class)->orderBy('week_start_date', 'desc');
+    }
+
+    // Get latest progress
+    public function latestProgress()
+    {
+        return $this->hasOne(TaskProgress::class)->latestOfMany('week_start_date');
+    }
+
+    // Get progress for specific week
+    public function getProgressForWeek($weekStartDate)
+    {
+        return $this->progressEntries()
+                    ->where('week_start_date', $weekStartDate)
+                    ->first();
+    }
+
     // Check if task has any dependencies
     public function hasDependencies(): bool
     {
@@ -205,11 +225,25 @@ class Task extends Model
     // Calculate dates based on dependencies
     public function calculateDates(): void
     {
+        // Use WorkingDayCalculator if available for the project
+        $useWorkingDays = $this->project->workingDays()->exists();
+        $calculator = $useWorkingDays ? new \App\Services\WorkingDayCalculator() : null;
+
         if (!$this->hasDependencies()) {
             // No dependencies, use project start date or today
             $startDate = $this->project->start_date ?? now();
             $this->calculated_start_date = $startDate;
-            $this->calculated_end_date = $startDate->copy()->addDays($this->estimated_duration - 1);
+
+            // Calculate end date using working days if configured
+            if ($calculator && $this->estimated_duration > 0) {
+                $this->calculated_end_date = $calculator->addWorkingDays(
+                    $this->project,
+                    $startDate->copy(),
+                    $this->estimated_duration - 1
+                );
+            } else {
+                $this->calculated_end_date = $startDate->copy()->addDays($this->estimated_duration - 1);
+            }
         } else {
             // Calculate based on dependencies
             $latestEndDate = null;
@@ -231,8 +265,12 @@ class Task extends Model
                     default => $dependsOnTask->calculated_end_date->copy()->addDays(1),
                 };
 
-                // Apply lag/lead time
-                $calculatedDate = $baseDate->addDays($dep->lag_days);
+                // Apply lag/lead time (use working days if configured)
+                if ($calculator && $dep->lag_days != 0) {
+                    $calculatedDate = $calculator->addWorkingDays($this->project, $baseDate, $dep->lag_days);
+                } else {
+                    $calculatedDate = $baseDate->addDays($dep->lag_days);
+                }
 
                 if (!$latestEndDate || $calculatedDate > $latestEndDate) {
                     $latestEndDate = $calculatedDate;
@@ -240,7 +278,17 @@ class Task extends Model
             }
 
             $this->calculated_start_date = $latestEndDate;
-            $this->calculated_end_date = $latestEndDate->copy()->addDays($this->estimated_duration - 1);
+
+            // Calculate end date using working days if configured
+            if ($calculator && $this->estimated_duration > 0) {
+                $this->calculated_end_date = $calculator->addWorkingDays(
+                    $this->project,
+                    $latestEndDate->copy(),
+                    $this->estimated_duration - 1
+                );
+            } else {
+                $this->calculated_end_date = $latestEndDate->copy()->addDays($this->estimated_duration - 1);
+            }
         }
 
         $this->saveQuietly();

@@ -118,14 +118,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/projects/{project}/wbs/calendar/calculate-working-days', [App\Http\Controllers\WbsController::class, 'calculateWorkingDays'])->name('projects.wbs.calendar.calculate');
     Route::get('/projects/{project}/wbs/calendar/planning', [App\Http\Controllers\WbsController::class, 'getPlanningView'])->name('projects.wbs.calendar.planning');
 
-    Route::post('/projects/{project}/wbs/reorder', [App\Http\Controllers\WbsController::class, 'reorder'])->name('projects.wbs.reorder');
-    Route::patch('/projects/{project}/wbs/{task}', [App\Http\Controllers\WbsController::class, 'update'])->name('projects.wbs.update');
-    Route::delete('/projects/{project}/wbs/{task}', [App\Http\Controllers\WbsController::class, 'destroy'])->name('projects.wbs.destroy');
+    // Progress Tracking (Phase 4.1)
+    Route::get('/projects/{project}/progress', [App\Http\Controllers\ProgressController::class, 'index'])->name('projects.progress.index');
+    Route::get('/projects/{project}/progress/weekly-plan', [App\Http\Controllers\ProgressController::class, 'getWeeklyPlan'])->name('projects.progress.weekly-plan');
+    Route::put('/projects/{project}/progress/weekly-plan/{plan}', [App\Http\Controllers\ProgressController::class, 'updateWeeklyPlan'])->name('projects.progress.weekly-plan.update');
+    Route::patch('/projects/{project}/progress/task/{task}', [App\Http\Controllers\ProgressController::class, 'updateProgress'])->name('projects.progress.update');
+    Route::get('/projects/{project}/progress/task/{task}', [App\Http\Controllers\ProgressController::class, 'getTaskProgress'])->name('projects.progress.task');
+    Route::get('/projects/{project}/progress/summary', [App\Http\Controllers\ProgressController::class, 'getWeeklySummary'])->name('projects.progress.summary');
+    Route::get('/projects/{project}/progress/deviation-alerts', [App\Http\Controllers\ProgressController::class, 'getDeviationAlerts'])->name('projects.progress.deviation-alerts');
 
-    // Task Dependencies
-    Route::post('/projects/{project}/wbs/dependencies', [App\Http\Controllers\WbsController::class, 'addDependency'])->name('projects.wbs.dependencies.add');
-    Route::delete('/projects/{project}/wbs/dependencies/{dependency}', [App\Http\Controllers\WbsController::class, 'removeDependency'])->name('projects.wbs.dependencies.remove');
-    Route::get('/projects/{project}/wbs/{task}/dependencies', [App\Http\Controllers\WbsController::class, 'getDependencies'])->name('projects.wbs.dependencies.get');
+    // Progress Reports (Phase 4.2)
+    Route::get('/projects/{project}/progress/report', [App\Http\Controllers\ProgressController::class, 'showReport'])->name('projects.progress.report');
+    Route::get('/projects/{project}/progress/export/excel', [App\Http\Controllers\ProgressController::class, 'exportExcel'])->name('projects.progress.export.excel');
+    Route::get('/projects/{project}/progress/export/pdf', [App\Http\Controllers\ProgressController::class, 'exportPdf'])->name('projects.progress.export.pdf');
+
+    // Analytics & S-Curve (Phase 4.3)
+    Route::get('/projects/{project}/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('projects.analytics.index');
+    Route::get('/projects/{project}/analytics/scurve-data', [App\Http\Controllers\AnalyticsController::class, 'getSCurveData'])->name('projects.analytics.scurve');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

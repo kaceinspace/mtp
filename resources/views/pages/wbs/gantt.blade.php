@@ -15,6 +15,29 @@
                class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
                 <i class="fas fa-arrow-left mr-2"></i>Back to WBS
             </a>
+            <a href="{{ route('projects.wbs', $project) }}"
+               class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition">
+                <i class="fas fa-calendar-alt mr-2"></i>Calendar Settings
+            </a>
+        </div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="mb-4 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-lg p-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">Project Duration:</span>
+                    <span class="ml-2 font-semibold text-gray-900 dark:text-white" id="projectDuration">Calculating...</span>
+                </div>
+                <div>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">Working Days:</span>
+                    <span class="ml-2 font-semibold text-teal-600" id="workingDaysInfo">Calculating...</span>
+                </div>
+            </div>
+            <a href="{{ route('projects.wbs', $project) }}#calendar" class="text-sm text-teal-600 hover:text-teal-700">
+                <i class="fas fa-cog mr-1"></i>Configure Calendar
+            </a>
         </div>
     </div>
 
@@ -120,12 +143,6 @@
         } catch (error) {
             console.error('Error initializing Gantt chart:', error);
             document.getElementById('gantt').innerHTML = '<p class="text-red-500 text-center py-8">Error: ' + error.message + '</p>';
-        }
-    }
-
-    function changeViewMode(mode) {
-        if (ganttChart) {
-            ganttChart.change_view_mode(mode);
         }
     }
 

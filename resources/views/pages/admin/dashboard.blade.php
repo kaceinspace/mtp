@@ -95,6 +95,258 @@
         </div>
     </div>
 
+    <!-- Phase 4.4: Dashboard Analytics -->
+
+    <!-- Project Health Indicators -->
+    @if(isset($projectHealthData))
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                    <i class="fas fa-heartbeat text-red-500 mr-2"></i>
+                    Project Health Indicators
+                </h3>
+                <div class="flex gap-4 text-sm">
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                        <span class="text-gray-600 dark:text-gray-400">{{ $projectHealthData['healthy'] }} Healthy</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
+                        <span class="text-gray-600 dark:text-gray-400">{{ $projectHealthData['at_risk'] }} At Risk</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+                        <span class="text-gray-600 dark:text-gray-400">{{ $projectHealthData['critical'] }} Critical</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border-2 border-green-500">
+                    <div class="text-3xl font-bold text-green-600 dark:text-green-400">{{ $projectHealthData['healthy'] }}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Healthy Projects</div>
+                </div>
+                <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border-2 border-yellow-500">
+                    <div class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{{ $projectHealthData['at_risk'] }}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">At Risk Projects</div>
+                </div>
+                <div class="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border-2 border-red-500">
+                    <div class="text-3xl font-bold text-red-600 dark:text-red-400">{{ $projectHealthData['critical'] }}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Critical Projects</div>
+                </div>
+            </div>
+
+            @if(count($projectHealthData['projects']) > 0)
+            <div class="space-y-3">
+                <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Projects Needing Attention</h4>
+                @foreach($projectHealthData['projects'] as $item)
+                <div class="flex items-center justify-between p-3 rounded-lg border
+                    @if($item['health']['status'] === 'critical') border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/10
+                    @elseif($item['health']['status'] === 'at-risk') border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/10
+                    @else border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/10
+                    @endif">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full
+                                @if($item['health']['status'] === 'critical') bg-red-500
+                                @elseif($item['health']['status'] === 'at-risk') bg-yellow-500
+                                @else bg-green-500
+                                @endif"></span>
+                            <span class="font-medium text-gray-900 dark:text-white">{{ $item['project']->title }}</span>
+                        </div>
+                        @if(count($item['health']['issues']) > 0)
+                        <div class="mt-1 flex flex-wrap gap-1">
+                            @foreach($item['health']['issues'] as $issue)
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                                <i class="fas fa-exclamation-triangle text-orange-500 mr-1 text-xs"></i>
+                                {{ $issue }}
+                            </span>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
+                    <div class="ml-4 text-right">
+                        <div class="text-2xl font-bold
+                            @if($item['health']['status'] === 'critical') text-red-600 dark:text-red-400
+                            @elseif($item['health']['status'] === 'at-risk') text-yellow-600 dark:text-yellow-400
+                            @else text-green-600 dark:text-green-400
+                            @endif">
+                            {{ $item['health']['score'] }}
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Health Score</div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @endif
+        </div>
+    </div>
+    @endif
+
+    <!-- Progress Trends & Predictions -->
+    @if(isset($progressTrends))
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                    <i class="fas fa-chart-line text-blue-500 mr-2"></i>
+                    Progress Trends
+                    @if($progressTrends['trend'] === 'improving')
+                        <span class="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                            <i class="fas fa-arrow-up mr-1"></i> Improving
+                        </span>
+                    @elseif($progressTrends['trend'] === 'declining')
+                        <span class="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
+                            <i class="fas fa-arrow-down mr-1"></i> Declining
+                        </span>
+                    @else
+                        <span class="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
+                            <i class="fas fa-minus mr-1"></i> Stable
+                        </span>
+                    @endif
+                </h3>
+            </div>
+            <div class="p-6">
+                <canvas id="progressTrendChart" class="w-full" style="height: 250px;"></canvas>
+                @if($progressTrends['prediction'])
+                <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-700 dark:text-gray-300">
+                            <i class="fas fa-crystal-ball text-blue-500 mr-2"></i>
+                            Predicted next week completion:
+                        </span>
+                        <span class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ $progressTrends['prediction'] }}%</span>
+                    </div>
+                </div>
+                @endif
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                    <i class="fas fa-tasks text-purple-500 mr-2"></i>
+                    Task Completion Trends
+                </h3>
+            </div>
+            <div class="p-6">
+                <canvas id="taskCompletionChart" class="w-full" style="height: 250px;"></canvas>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Team Performance & Risk Indicators -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Team Performance -->
+        @if(isset($teamPerformance))
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                    <i class="fas fa-users text-indigo-500 mr-2"></i>
+                    Team Performance Metrics
+                </h3>
+            </div>
+            <div class="p-6">
+                @if(count($teamPerformance) > 0)
+                <div class="space-y-4">
+                    @foreach($teamPerformance as $team)
+                    <div class="p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-semibold text-gray-900 dark:text-white">{{ $team['name'] }}</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium
+                                @if($team['performance'] === 'excellent') bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300
+                                @elseif($team['performance'] === 'good') bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300
+                                @else bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300
+                                @endif">
+                                {{ ucfirst(str_replace('-', ' ', $team['performance'])) }}
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mt-3">
+                            <div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">SPI</div>
+                                <div class="text-lg font-bold text-gray-900 dark:text-white">{{ $team['spi'] }}</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">Completion</div>
+                                <div class="text-lg font-bold text-gray-900 dark:text-white">{{ $team['completion_rate'] }}%</div>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                            <span>{{ $team['projects'] }} Projects</span>
+                            <span>{{ $team['tasks'] }} Tasks</span>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <p class="text-center text-gray-500 dark:text-gray-400 py-8">No team data available</p>
+                @endif
+            </div>
+        </div>
+        @endif
+
+        <!-- Risk Indicators -->
+        @if(isset($riskIndicators))
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                    <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
+                    Risk Indicators
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="text-center p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                        <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ $riskIndicators['high_count'] }}</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">High Risk</div>
+                    </div>
+                    <div class="text-center p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                        <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $riskIndicators['medium_count'] }}</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">Medium Risk</div>
+                    </div>
+                    <div class="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $riskIndicators['low_count'] }}</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">Low Risk</div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">High Risk Projects</h4>
+                    @forelse($riskIndicators['high_risks'] as $item)
+                    <div class="p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
+                        <div class="font-medium text-gray-900 dark:text-white">{{ $item['project']->title }}</div>
+                        <div class="mt-1 flex flex-wrap gap-1">
+                            @foreach($item['risk']['factors'] as $factor)
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                                {{ $factor }}
+                            </span>
+                            @endforeach
+                        </div>
+                    </div>
+                    @empty
+                    <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No high risk projects</p>
+                    @endforelse
+
+                    @if(count($riskIndicators['medium_risks']) > 0)
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 mt-4">Medium Risk Projects</h4>
+                    @foreach($riskIndicators['medium_risks'] as $item)
+                    <div class="p-3 rounded-lg border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/10">
+                        <div class="font-medium text-gray-900 dark:text-white">{{ $item['project']->title }}</div>
+                        <div class="mt-1 text-xs text-gray-600 dark:text-gray-400">
+                            {{ implode(', ', $item['risk']['factors']) }}
+                        </div>
+                    </div>
+                    @endforeach
+                    @endif
+                </div>
+            </div>
+        </div>
+        @endif
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Recent Projects -->
         <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
@@ -223,3 +475,143 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if dark mode is enabled
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    const gridColor = isDarkMode ? '#374151' : '#e5e7eb';
+    const textColor = isDarkMode ? '#9ca3af' : '#6b7280';
+
+    // Chart.js default colors
+    Chart.defaults.color = textColor;
+    Chart.defaults.borderColor = gridColor;
+
+    @if(isset($progressTrends) && isset($progressTrends['weeks']) && count($progressTrends['weeks']) > 0)
+    // Progress Trends Chart
+    const progressCtx = document.getElementById('progressTrendChart');
+    if (progressCtx) {
+        new Chart(progressCtx, {
+            type: 'line',
+            data: {
+                labels: {!! json_encode($progressTrends['weeks']) !!},
+                datasets: [{
+                    label: 'Completion Rate',
+                    data: {!! json_encode($progressTrends['completion_rates']) !!},
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                        titleColor: isDarkMode ? '#f3f4f6' : '#111827',
+                        bodyColor: isDarkMode ? '#d1d5db' : '#374151',
+                        borderColor: gridColor,
+                        borderWidth: 1,
+                        callbacks: {
+                            label: function(context) {
+                                return 'Completion: ' + context.parsed.y.toFixed(1) + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        },
+                        grid: {
+                            color: gridColor
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Task Completion Trends Chart
+    const taskCtx = document.getElementById('taskCompletionChart');
+    if (taskCtx) {
+        new Chart(taskCtx, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($progressTrends['weeks']) !!},
+                datasets: [{
+                    label: 'Completed Tasks',
+                    data: {!! json_encode(array_map(function($tasks) {
+                        return $tasks['completed'] ?? 0;
+                    }, $progressTrends['tasks'])) !!},
+                    backgroundColor: '#10b981',
+                    borderRadius: 6
+                }, {
+                    label: 'Pending Tasks',
+                    data: {!! json_encode(array_map(function($tasks) {
+                        return ($tasks['total'] ?? 0) - ($tasks['completed'] ?? 0);
+                    }, $progressTrends['tasks'])) !!},
+                    backgroundColor: '#f59e0b',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                        titleColor: isDarkMode ? '#f3f4f6' : '#111827',
+                        bodyColor: isDarkMode ? '#d1d5db' : '#374151',
+                        borderColor: gridColor,
+                        borderWidth: 1
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        grid: {
+                            color: gridColor
+                        }
+                    }
+                }
+            }
+        });
+    }
+    @endif
+});
+</script>
+@endpush

@@ -42,6 +42,10 @@
                class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition z-10 relative">
                 <i class="fas fa-route mr-2"></i>Critical Path
             </a>
+            <a href="{{ route('projects.progress.index', $project) }}"
+               class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition z-10 relative">
+                <i class="fas fa-chart-bar mr-2"></i>Progress Tracking
+            </a>
             <a href="{{ route('projects.show', $project) }}"
                class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition z-10 relative">
                 <i class="fas fa-arrow-left mr-2"></i>Back to Project
@@ -2133,7 +2137,7 @@
             const contentId = contentMap[tab];
             if (contentId) {
                 document.getElementById(contentId).classList.remove('hidden');
-                
+
                 if (tab === 'holidays') {
                     loadHolidays();
                 } else if (tab === 'planning') {
@@ -2179,6 +2183,30 @@
                 work_end_time: document.getElementById('work_end_time').value,
                 hours_per_day: parseFloat(document.getElementById('hours_per_day').value)
             };
+
+            // Validate at least one working day is selected
+            const hasWorkingDay = Object.keys(data).some(key =>
+                ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].includes(key) && data[key]
+            );
+
+            if (!hasWorkingDay) {
+                alert('⚠ Please select at least one working day');
+                return;
+            }
+
+            // Validate work times
+            if (data.work_start_time && data.work_end_time) {
+                if (data.work_start_time >= data.work_end_time) {
+                    alert('⚠ Work end time must be after start time');
+                    return;
+                }
+            }
+
+            // Validate hours per day
+            if (isNaN(data.hours_per_day) || data.hours_per_day < 1 || data.hours_per_day > 24) {
+                alert('⚠ Hours per day must be between 1 and 24');
+                return;
+            }
 
             try {
                 const response = await fetch('{{ route("projects.wbs.calendar.working-days", $project) }}', {
@@ -2283,7 +2311,7 @@
                     document.getElementById('holiday_name').value = '';
                     document.getElementById('holiday_description').value = '';
                     document.getElementById('is_recurring').checked = false;
-                    
+
                     // Reload holidays list
                     loadHolidays();
                     alert('✓ Holiday added successfully!');
@@ -2357,7 +2385,7 @@
                 // Tasks breakdown by date
                 if (Object.keys(data.tasks).length > 0) {
                     html += '<div class="space-y-3"><h4 class="font-semibold text-gray-900 dark:text-white mb-3">Tasks This Week</h4>';
-                    
+
                     Object.entries(data.tasks).forEach(([date, tasks]) => {
                         const dateObj = new Date(date);
                         html += `

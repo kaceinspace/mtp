@@ -85,8 +85,8 @@ class WbsController extends Controller
                 'id' => $task->id,
                 'wbs_code' => $task->wbs_code,
                 'title' => $task->wbs_code . ' ' . $task->title,
-                'start_date' => $task->start_date ?? now()->format('Y-m-d'),
-                'end_date' => $task->end_date ?? now()->addDays(7)->format('Y-m-d'),
+                'start_date' => $task->calculated_start_date?->format('Y-m-d') ?? $task->due_date?->format('Y-m-d') ?? now()->format('Y-m-d'),
+                'end_date' => $task->calculated_end_date?->format('Y-m-d') ?? $task->due_date?->format('Y-m-d') ?? now()->addDays(7)->format('Y-m-d'),
                 'status' => $task->status,
                 'dependencies' => $dependencies,
             ];
@@ -1448,9 +1448,9 @@ class WbsController extends Controller
         $workingDays = $project->workingDays()->first();
         $holidays = $project->holidays()->orderBy('date')->get();
 
-        return response()->json([
-            'success' => true,
-            'working_days' => $workingDays ?? [
+        // If no config exists, return default as object structure
+        if (!$workingDays) {
+            $workingDays = (object) [
                 'monday' => true,
                 'tuesday' => true,
                 'wednesday' => true,
@@ -1461,7 +1461,12 @@ class WbsController extends Controller
                 'work_start_time' => '09:00',
                 'work_end_time' => '17:00',
                 'hours_per_day' => 8.00,
-            ],
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'working_days' => $workingDays,
             'holidays' => $holidays,
         ]);
     }
@@ -1486,6 +1491,32 @@ class WbsController extends Controller
             'work_end_time' => 'nullable|date_format:H:i',
             'hours_per_day' => 'nullable|numeric|min:1|max:24',
         ]);
+
+        // Validate at least one working day is selected
+        $hasWorkingDay = false;
+        foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day) {
+            if (isset($validated[$day]) && $validated[$day]) {
+                $hasWorkingDay = true;
+                break;
+            }
+        }
+
+        if (!$hasWorkingDay) {
+            return response()->json([
+                'success' => false,
+                'message' => 'At least one working day must be selected',
+            ], 422);
+        }
+
+        // Validate work times if provided
+        if (isset($validated['work_start_time']) && isset($validated['work_end_time'])) {
+            if ($validated['work_start_time'] >= $validated['work_end_time']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Work end time must be after start time',
+                ], 422);
+            }
+        }
 
         $workingDays = $project->workingDays()->first();
 
@@ -1588,7 +1619,7 @@ class WbsController extends Controller
         $this->authorizeProjectAccess($user, $project);
 
         $view = $request->get('view', 'week'); // week or month
-        $startDate = $request->get('start_date') 
+        $startDate = $request->get('start_date')
             ? \Carbon\Carbon::parse($request->get('start_date'))
             : \Carbon\Carbon::now()->startOfWeek();
 

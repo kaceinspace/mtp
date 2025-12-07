@@ -35,17 +35,36 @@ class WorkingDayCalculator
      */
     public function addWorkingDays(Project $project, Carbon $startDate, int $daysToAdd): Carbon
     {
+        if ($daysToAdd <= 0) {
+            return $startDate->copy();
+        }
+
         $workingDaysConfig = $this->getWorkingDaysConfig($project);
         $currentDate = $startDate->copy();
         $daysAdded = 0;
 
-        while ($daysAdded < $daysToAdd) {
+        // Estimate end date for holiday query (assume ~1.4x actual days for buffer)
+        $estimatedEndDate = $startDate->copy()->addDays((int)($daysToAdd * 1.4) + 30);
+        $holidays = $this->getHolidays($project, $startDate, $estimatedEndDate);
+
+        // Create holiday lookup map
+        $holidayDates = [];
+        foreach ($holidays as $holiday) {
+            $holidayDates[$holiday->date->format('Y-m-d')] = true;
+        }
+
+        $maxIterations = $daysToAdd * 3; // Safety limit
+        $iterations = 0;
+
+        while ($daysAdded < $daysToAdd && $iterations < $maxIterations) {
             $currentDate->addDay();
+            $iterations++;
 
-            // Get holidays for this specific date (efficient query)
-            $holidays = $this->getHolidays($project, $currentDate, $currentDate);
+            $dateString = $currentDate->format('Y-m-d');
+            $isHoliday = isset($holidayDates[$dateString]);
+            $isConfiguredWorkingDay = $workingDaysConfig->isWorkingDay($currentDate);
 
-            if ($this->isWorkingDay($currentDate, $workingDaysConfig, $holidays)) {
+            if ($isConfiguredWorkingDay && !$isHoliday) {
                 $daysAdded++;
             }
         }
@@ -141,8 +160,10 @@ class WorkingDayCalculator
     {
         $workingDaysConfig = $this->getWorkingDaysConfig($project);
         $nextDay = $date->copy()->addDay();
+        $maxIterations = 365; // Prevent infinite loop
+        $iterations = 0;
 
-        while (true) {
+        while ($iterations < $maxIterations) {
             $holidays = $this->getHolidays($project, $nextDay, $nextDay);
 
             if ($this->isWorkingDay($nextDay, $workingDaysConfig, $holidays)) {
@@ -150,7 +171,11 @@ class WorkingDayCalculator
             }
 
             $nextDay->addDay();
+            $iterations++;
         }
+
+        // If no working day found in 365 days, return original date + 1
+        return $date->copy()->addDay();
     }
 
     /**
@@ -160,8 +185,10 @@ class WorkingDayCalculator
     {
         $workingDaysConfig = $this->getWorkingDaysConfig($project);
         $prevDay = $date->copy()->subDay();
+        $maxIterations = 365; // Prevent infinite loop
+        $iterations = 0;
 
-        while (true) {
+        while ($iterations < $maxIterations) {
             $holidays = $this->getHolidays($project, $prevDay, $prevDay);
 
             if ($this->isWorkingDay($prevDay, $workingDaysConfig, $holidays)) {
@@ -169,7 +196,11 @@ class WorkingDayCalculator
             }
 
             $prevDay->subDay();
+            $iterations++;
         }
+
+        // If no working day found in 365 days, return original date - 1
+        return $date->copy()->subDay();
     }
 
     /**
@@ -179,6 +210,16 @@ class WorkingDayCalculator
     {
         $breakdown = [];
         $currentDate = $startDate->copy();
+
+        // Fetch config and holidays once for the entire range
+        $workingDaysConfig = $this->getWorkingDaysConfig($project);
+        $allHolidays = $this->getHolidays($project, $startDate, $endDate);
+
+        // Create a map of holiday dates for O(1) lookup
+        $holidayDates = [];
+        foreach ($allHolidays as $holiday) {
+            $holidayDates[$holiday->date->format('Y-m-d')] = true;
+        }
 
         while ($currentDate->lte($endDate)) {
             $periodKey = $period === 'week'
@@ -197,13 +238,14 @@ class WorkingDayCalculator
                 ];
             }
 
-            $workingDaysConfig = $this->getWorkingDaysConfig($project);
-            $holidays = $this->getHolidays($project, $currentDate, $currentDate);
+            $dateString = $currentDate->format('Y-m-d');
+            $isHoliday = isset($holidayDates[$dateString]);
+            $isConfiguredWorkingDay = $workingDaysConfig->isWorkingDay($currentDate);
 
-            if ($this->isWorkingDay($currentDate, $workingDaysConfig, $holidays)) {
+            if ($isConfiguredWorkingDay && !$isHoliday) {
                 $breakdown[$periodKey]['working_days']++;
             } else {
-                if (count($holidays) > 0) {
+                if ($isHoliday) {
                     $breakdown[$periodKey]['holidays']++;
                 } else {
                     $breakdown[$periodKey]['non_working_days']++;
