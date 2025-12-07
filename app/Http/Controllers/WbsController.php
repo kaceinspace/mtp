@@ -20,14 +20,425 @@ class WbsController extends Controller
         $user = auth()->user();
         $this->authorizeProjectAccess($user, $project);
 
-        // Get root level tasks with all children
+        // Get root level tasks only (lazy loading implementation)
         $tasks = Task::rootTasks($project->id);
-        $tasks->load(['children.children.children', 'assignee']); // Load 3 levels deep
+        $tasks->load(['assignee']); // Don't eager load children, use lazy loading instead
 
         // Get all project members for assignment dropdown
         $members = $project->members;
 
         return view('pages.wbs.index', compact('project', 'tasks', 'members'));
+    }
+
+    /**
+     * Get children tasks for lazy loading (AJAX).
+     */
+    public function getChildren(Project $project, Task $task)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        if ($task->project_id !== $project->id) {
+            abort(403, 'Task does not belong to this project');
+        }
+
+        $children = $task->children()->with(['assignee'])->orderBy('order')->get();
+
+        $html = view('pages.wbs.children-list', [
+            'tasks' => $children,
+            'level' => $task->level + 1
+        ])->render();
+
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+            'count' => $children->count()
+        ]);
+    }
+
+    /**
+     * Show Gantt chart view for the project.
+     */
+    public function showGantt(Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        // Get all tasks with start and end dates
+        $tasks = Task::where('project_id', $project->id)
+            ->orderBy('order')
+            ->get();
+
+        // Format tasks for Gantt chart
+        $ganttTasks = $tasks->map(function ($task) {
+            // Build dependencies string (comma-separated WBS codes)
+            $dependencies = $task->dependencies()
+                ->with('dependsOnTask')
+                ->get()
+                ->filter(function($dep) {
+                    return $dep->dependency_type === 'finish-to-start';
+                })
+                ->pluck('dependsOnTask.wbs_code')
+                ->join(',');
+
+            return [
+                'id' => $task->id,
+                'wbs_code' => $task->wbs_code,
+                'title' => $task->wbs_code . ' ' . $task->title,
+                'start_date' => $task->start_date ?? now()->format('Y-m-d'),
+                'end_date' => $task->end_date ?? now()->addDays(7)->format('Y-m-d'),
+                'status' => $task->status,
+                'dependencies' => $dependencies,
+            ];
+        });
+
+        // Get critical path task IDs if available
+        $criticalPathIds = [];
+        $criticalPathData = $project->tasks()
+            ->whereNotNull('early_start')
+            ->get();
+
+        foreach ($criticalPathData as $task) {
+            if ($task->early_start == $task->late_start &&
+                $task->early_finish == $task->late_finish) {
+                $criticalPathIds[] = $task->id;
+            }
+        }
+
+        return view('pages.wbs.gantt', compact('project', 'ganttTasks', 'criticalPathIds'));
+    }
+
+    /**
+     * Get weight distribution across timeline.
+     */
+    public function getWeightTimeline(Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $tasks = Task::where('project_id', $project->id)
+            ->whereNotNull('due_date')
+            ->where('weight', '>', 0)
+            ->orderBy('due_date')
+            ->get();
+
+        // Group by month
+        $timeline = [];
+        $cumulativeWeight = 0;
+
+        foreach ($tasks as $task) {
+            $month = $task->due_date->format('Y-m');
+
+            if (!isset($timeline[$month])) {
+                $timeline[$month] = [
+                    'month' => $task->due_date->format('M Y'),
+                    'total_weight' => 0,
+                    'cumulative_weight' => 0,
+                    'tasks' => [],
+                ];
+            }
+
+            $timeline[$month]['total_weight'] += $task->weight;
+            $timeline[$month]['tasks'][] = [
+                'id' => $task->id,
+                'wbs_code' => $task->wbs_code,
+                'title' => $task->title,
+                'weight' => $task->weight,
+                'status' => $task->status,
+            ];
+        }
+
+        // Calculate cumulative
+        foreach ($timeline as $month => &$data) {
+            $cumulativeWeight += $data['total_weight'];
+            $data['cumulative_weight'] = round($cumulativeWeight, 2);
+        }
+
+        return response()->json([
+            'success' => true,
+            'timeline' => array_values($timeline),
+        ]);
+    }
+
+    /**
+     * Get weight distribution by status.
+     */
+    public function getWeightByStatus(Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $distribution = Task::where('project_id', $project->id)
+            ->where('weight', '>', 0)
+            ->selectRaw('status, SUM(weight) as total_weight, COUNT(*) as task_count')
+            ->groupBy('status')
+            ->get();
+
+        $totalWeight = $distribution->sum('total_weight');
+
+        $result = $distribution->map(function ($item) use ($totalWeight) {
+            return [
+                'status' => $item->status,
+                'weight' => round($item->total_weight, 2),
+                'percentage' => $totalWeight > 0 ? round(($item->total_weight / $totalWeight) * 100, 2) : 0,
+                'task_count' => $item->task_count,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'distribution' => $result,
+            'total_weight' => round($totalWeight, 2),
+        ]);
+    }
+
+    /**
+     * Update task weight.
+     */
+    public function updateWeight(Request $request, Project $project, Task $task)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        if ($task->project_id !== $project->id) {
+            abort(403, 'Task does not belong to this project');
+        }
+
+        $validated = $request->validate([
+            'weight' => 'required|numeric|min:0|max:100',
+        ]);
+
+        try {
+            $task->update(['weight' => $validated['weight']]);
+
+            // Recalculate weight percentages for siblings
+            $this->recalculateWeightPercentages($project->id, $task->parent_id);
+
+            // Get validation status
+            $validation = $this->validateWeightGroup($project->id, $task->parent_id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Weight updated successfully',
+                'task' => $task->fresh(),
+                'validation' => $validation,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update weight: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Auto-distribute weight equally among siblings.
+     */
+    public function autoDistributeWeight(Request $request, Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $validated = $request->validate([
+            'parent_id' => 'nullable|exists:tasks,id',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $parentId = $validated['parent_id'] ?? null;
+
+            // Get all siblings
+            $allSiblings = Task::where('project_id', $project->id)
+                ->where('parent_id', $parentId)
+                ->get();
+
+            // Get locked and unlocked tasks
+            $lockedTasks = $allSiblings->where('is_weight_locked', true);
+            $unlockedTasks = $allSiblings->where('is_weight_locked', false);
+
+            if ($unlockedTasks->isEmpty()) {
+                throw new \Exception('No unlocked tasks to distribute weight');
+            }
+
+            // Calculate remaining weight after locked tasks
+            $lockedWeight = $lockedTasks->sum('weight');
+            $remainingWeight = 100 - $lockedWeight;
+
+            if ($remainingWeight < 0) {
+                throw new \Exception('Locked tasks already exceed 100%. Please adjust locked weights first.');
+            }
+
+            if ($remainingWeight == 0) {
+                throw new \Exception('No remaining weight to distribute. Locked tasks total 100%.');
+            }
+
+            // Distribute remaining weight among unlocked tasks
+            $taskCount = $unlockedTasks->count();
+            $baseWeight = floor(($remainingWeight / $taskCount) * 100) / 100; // Round down
+            $totalAssigned = $baseWeight * $taskCount;
+            $remainder = round($remainingWeight - $totalAssigned, 2);
+
+            // Distribute base weight to all unlocked tasks
+            $index = 0;
+            foreach ($unlockedTasks as $task) {
+                // Give remainder to last task to ensure exactly 100% total
+                $weight = ($index === $taskCount - 1) ? round($baseWeight + $remainder, 2) : $baseWeight;
+                $task->update(['weight' => $weight]);
+                $index++;
+            }
+
+            $this->recalculateWeightPercentages($project->id, $parentId);
+
+            // Get validation status
+            $validation = $this->validateWeightGroup($project->id, $parentId);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Weight distributed successfully',
+                'validation' => $validation,
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to distribute weight: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Lock/unlock task weight.
+     */
+    public function toggleWeightLock(Request $request, Project $project, Task $task)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        if ($task->project_id !== $project->id) {
+            abort(403, 'Task does not belong to this project');
+        }
+
+        try {
+            $task->update(['is_weight_locked' => !$task->is_weight_locked]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Weight lock toggled successfully',
+                'task' => $task->fresh(),
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to toggle lock: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Get weight distribution summary.
+     */
+    public function getWeightSummary(Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $tasks = Task::where('project_id', $project->id)->with('parent')->get();
+
+        // Group by parent
+        $summary = $tasks->groupBy('parent_id')->map(function ($siblings, $parentId) {
+            $totalWeight = $siblings->sum('weight');
+            $isValid = abs($totalWeight - 100) < 0.01; // Allow 0.01 tolerance
+
+            // Get parent info
+            $parent = $siblings->first()->parent;
+            $parentInfo = $parent ? [
+                'id' => $parent->id,
+                'wbs_code' => $parent->wbs_code,
+                'title' => $parent->title,
+            ] : null;
+
+            return [
+                'parent' => $parentInfo,
+                'total_weight' => round($totalWeight, 2),
+                'is_valid' => $isValid,
+                'task_count' => $siblings->count(),
+                'tasks' => $siblings->map(function ($task) {
+                    return [
+                        'id' => $task->id,
+                        'wbs_code' => $task->wbs_code,
+                        'title' => $task->title,
+                        'weight' => $task->weight,
+                        'weight_percentage' => $task->weight_percentage,
+                        'is_locked' => $task->is_weight_locked,
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'summary' => $summary,
+        ]);
+    }
+
+    /**
+     * Recalculate weight percentages for siblings.
+     */
+    private function recalculateWeightPercentages($projectId, $parentId)
+    {
+        $siblings = Task::where('project_id', $projectId)
+            ->where('parent_id', $parentId)
+            ->get();
+
+        $totalWeight = $siblings->sum('weight');
+
+        foreach ($siblings as $task) {
+            $percentage = $totalWeight > 0 ? round(($task->weight / $totalWeight) * 100, 2) : 0;
+            $task->update(['weight_percentage' => $percentage]);
+        }
+    }
+
+    /**
+     * Validate weight group totals.
+     */
+    private function validateWeightGroup($projectId, $parentId)
+    {
+        $siblings = Task::where('project_id', $projectId)
+            ->where('parent_id', $parentId)
+            ->get();
+
+        $totalWeight = $siblings->sum('weight');
+        $isValid = abs($totalWeight - 100) < 0.01;
+        $difference = round(100 - $totalWeight, 2);
+
+        return [
+            'is_valid' => $isValid,
+            'total_weight' => round($totalWeight, 2),
+            'difference' => $difference,
+            'task_count' => $siblings->count(),
+            'locked_count' => $siblings->where('is_weight_locked', true)->count(),
+            'status' => $this->getValidationStatus($totalWeight),
+        ];
+    }
+
+    /**
+     * Get validation status message.
+     */
+    private function getValidationStatus($totalWeight)
+    {
+        if (abs($totalWeight - 100) < 0.01) {
+            return 'perfect';
+        } elseif ($totalWeight > 100) {
+            return 'over';
+        } elseif ($totalWeight < 100) {
+            return 'under';
+        }
+        return 'unknown';
     }
 
     /**
@@ -241,6 +652,157 @@ class WbsController extends Controller
     }
 
     /**
+     * Bulk update task status.
+     */
+    public function bulkUpdate(Request $request, Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $validated = $request->validate([
+            'task_ids' => 'required|array',
+            'task_ids.*' => 'required|integer|exists:tasks,id',
+            'status' => 'required|in:todo,in-progress,review,completed',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $tasks = Task::whereIn('id', $validated['task_ids'])
+                ->where('project_id', $project->id)
+                ->get();
+
+            if ($tasks->count() !== count($validated['task_ids'])) {
+                throw new \Exception('Some tasks do not belong to this project');
+            }
+
+            foreach ($tasks as $task) {
+                $task->update(['status' => $validated['status']]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tasks updated successfully',
+                'count' => $tasks->count(),
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update tasks: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Bulk assign tasks to user.
+     */
+    public function bulkAssign(Request $request, Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $validated = $request->validate([
+            'task_ids' => 'required|array',
+            'task_ids.*' => 'required|integer|exists:tasks,id',
+            'assigned_to' => 'required|integer|exists:users,id',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $tasks = Task::whereIn('id', $validated['task_ids'])
+                ->where('project_id', $project->id)
+                ->get();
+
+            if ($tasks->count() !== count($validated['task_ids'])) {
+                throw new \Exception('Some tasks do not belong to this project');
+            }
+
+            // Verify assigned user is a project member
+            $assignee = User::findOrFail($validated['assigned_to']);
+            if (!$project->members->contains($assignee)) {
+                throw new \Exception('User is not a project member');
+            }
+
+            foreach ($tasks as $task) {
+                $task->update(['assigned_to' => $validated['assigned_to']]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tasks assigned successfully',
+                'count' => $tasks->count(),
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to assign tasks: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Bulk delete tasks.
+     */
+    public function bulkDelete(Request $request, Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $validated = $request->validate([
+            'task_ids' => 'required|array',
+            'task_ids.*' => 'required|integer|exists:tasks,id',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $tasks = Task::whereIn('id', $validated['task_ids'])
+                ->where('project_id', $project->id)
+                ->get();
+
+            if ($tasks->count() !== count($validated['task_ids'])) {
+                throw new \Exception('Some tasks do not belong to this project');
+            }
+
+            // Group tasks by parent_id for reordering
+            $parentsToReorder = [];
+            foreach ($tasks as $task) {
+                $parentsToReorder[$task->parent_id] = true;
+                $task->delete();
+            }
+
+            // Reorder siblings for each affected parent
+            foreach (array_keys($parentsToReorder) as $parentId) {
+                $this->reorderSiblings($project->id, $parentId);
+            }
+
+            // Regenerate WBS codes
+            $this->regenerateWbsCodes($project);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tasks deleted successfully',
+                'count' => $tasks->count(),
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete tasks: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Helper: Reorder siblings after insert/delete/move.
      */
     private function reorderSiblings($projectId, $parentId)
@@ -263,13 +825,206 @@ class WbsController extends Controller
 
     /**
      * Helper: Regenerate WBS codes for entire project.
+     * Uses queue for large projects (>50 tasks).
      */
     private function regenerateWbsCodes(Project $project)
     {
+        $taskCount = Task::where('project_id', $project->id)->count();
+
+        // For large projects, use queue to avoid timeout
+        if ($taskCount > 50) {
+            \App\Jobs\RegenerateWbsCodesJob::dispatch($project->id);
+            return;
+        }
+
+        // For small projects, regenerate synchronously
         $rootTasks = Task::rootTasks($project->id);
 
         foreach ($rootTasks as $task) {
             $task->updateWbsCode();
+        }
+    }
+
+    /**
+     * Save current WBS structure as a template.
+     */
+    public function saveTemplate(Request $request, Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        try {
+            $tasks = Task::where('project_id', $project->id)
+                ->orderBy('parent_id')
+                ->orderBy('order')
+                ->get();
+
+            $structure = $this->buildTemplateStructure($tasks);
+
+            $template = \App\Models\WbsTemplate::create([
+                'name' => $validated['name'],
+                'description' => $validated['description'] ?? null,
+                'user_id' => $user->id,
+                'project_id' => $project->id,
+                'structure' => $structure,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Template saved successfully',
+                'template' => $template,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save template: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Load a template and apply it to the project.
+     */
+    public function loadTemplate(Request $request, Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $validated = $request->validate([
+            'template_id' => 'required|exists:wbs_templates,id',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $template = \App\Models\WbsTemplate::findOrFail($validated['template_id']);
+
+            if ($template->user_id !== $user->id && $template->project_id !== null) {
+                throw new \Exception('You do not have permission to use this template');
+            }
+
+            Task::where('project_id', $project->id)->delete();
+
+            $this->createTasksFromTemplate($project->id, $template->structure, null);
+
+            $this->regenerateWbsCodes($project);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Template loaded successfully',
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load template: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * List all available templates for the user.
+     */
+    public function listTemplates(Request $request, Project $project)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        $templates = \App\Models\WbsTemplate::where('user_id', $user->id)
+            ->orWhereNull('project_id')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'templates' => $templates,
+        ]);
+    }
+
+    /**
+     * Delete a template.
+     */
+    public function deleteTemplate(Request $request, Project $project, $templateId)
+    {
+        $user = auth()->user();
+        $this->authorizeProjectAccess($user, $project);
+
+        try {
+            $template = \App\Models\WbsTemplate::findOrFail($templateId);
+
+            if ($template->user_id !== $user->id) {
+                throw new \Exception('You do not have permission to delete this template');
+            }
+
+            $template->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Template deleted successfully',
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete template: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Build template structure from tasks.
+     */
+    private function buildTemplateStructure($tasks, $parentId = null)
+    {
+        $result = [];
+
+        foreach ($tasks as $task) {
+            if ($task->parent_id === $parentId) {
+                $taskData = [
+                    'title' => $task->title,
+                    'description' => $task->description,
+                    'status' => $task->status,
+                    'priority' => $task->priority,
+                    'estimated_hours' => $task->estimated_hours,
+                    'children' => $this->buildTemplateStructure($tasks, $task->id),
+                ];
+                $result[] = $taskData;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Create tasks from template structure.
+     */
+    private function createTasksFromTemplate($projectId, $structure, $parentId, $order = 0)
+    {
+        foreach ($structure as $index => $taskData) {
+            $task = Task::create([
+                'project_id' => $projectId,
+                'parent_id' => $parentId,
+                'title' => $taskData['title'],
+                'description' => $taskData['description'] ?? null,
+                'status' => $taskData['status'] ?? 'todo',
+                'priority' => $taskData['priority'] ?? 'medium',
+                'estimated_hours' => $taskData['estimated_hours'] ?? null,
+                'order' => $order + $index,
+                'level' => $parentId ? Task::find($parentId)->level + 1 : 0,
+                'wbs_code' => '',
+            ]);
+
+            if (!empty($taskData['children'])) {
+                $this->createTasksFromTemplate($projectId, $taskData['children'], $task->id);
+            }
         }
     }
 

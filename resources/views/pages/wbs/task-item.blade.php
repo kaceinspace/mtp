@@ -21,14 +21,27 @@
     <!-- Task Row -->
     <div class="flex items-stretch {{ $indentClass }} {{ $bgClass }} rounded-lg hover:shadow-md transition-all duration-200 group border border-gray-200 dark:border-gray-700 overflow-hidden mb-2">
 
-        <!-- Left Section: Expand + WBS Code + Title -->
+        <!-- Left Section: Checkbox + Drag Handle + Expand + WBS Code + Title -->
         <div class="flex items-center flex-grow min-w-0 p-3 gap-3">
+            <!-- Bulk Selection Checkbox -->
+            <div class="flex-shrink-0">
+                <input type="checkbox"
+                       class="task-checkbox w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500"
+                       data-task-id="{{ $task->id }}"
+                       onchange="updateBulkActions()">
+            </div>
+
+            <!-- Drag Handle -->
+            <div class="drag-handle cursor-move flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <i class="fas fa-grip-vertical text-gray-400 dark:text-gray-500 text-sm"></i>
+            </div>
+
             <!-- Expand/Collapse Button -->
             <div class="w-6 flex-shrink-0">
-                @if($hasChildren)
-                    <button onclick="toggleTask({{ $task->id }})"
+                @if($task->isParent())
+                    <button onclick="toggleTaskLazy({{ $task->id }})"
                             class="w-6 h-6 flex items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-400 transition">
-                        <i id="icon-{{ $task->id }}" data-expand-icon class="fas fa-chevron-down text-xs"></i>
+                        <i id="icon-{{ $task->id }}" data-expand-icon class="fas fa-chevron-right text-xs"></i>
                     </button>
                 @else
                     <div class="w-6 h-6 flex items-center justify-center">
@@ -144,6 +157,47 @@
                 </span>
             </div>
 
+            <!-- Weight Badge with Inline Edit -->
+            <div class="flex-shrink-0 group/weight relative">
+                @php
+                    $weightColor = 'gray';
+                    $weightBg = 'bg-gray-100 dark:bg-gray-700';
+                    $weightText = 'text-gray-700 dark:text-gray-300';
+                    $weightBorder = 'border-gray-300 dark:border-gray-600';
+                    $weightHover = 'hover:bg-gray-200 dark:hover:bg-gray-600';
+
+                    if ($task->weight > 0) {
+                        if ($task->weight_percentage >= 30) {
+                            $weightBg = 'bg-purple-100 dark:bg-purple-900/30';
+                            $weightText = 'text-purple-700 dark:text-purple-400';
+                            $weightBorder = 'border-purple-300 dark:border-purple-700';
+                            $weightHover = 'hover:bg-purple-200 dark:hover:bg-purple-900/50';
+                        } elseif ($task->weight_percentage >= 20) {
+                            $weightBg = 'bg-blue-100 dark:bg-blue-900/30';
+                            $weightText = 'text-blue-700 dark:text-blue-400';
+                            $weightBorder = 'border-blue-300 dark:border-blue-700';
+                            $weightHover = 'hover:bg-blue-200 dark:hover:bg-blue-900/50';
+                        } elseif ($task->weight_percentage >= 10) {
+                            $weightBg = 'bg-indigo-100 dark:bg-indigo-900/30';
+                            $weightText = 'text-indigo-700 dark:text-indigo-400';
+                            $weightBorder = 'border-indigo-300 dark:border-indigo-700';
+                            $weightHover = 'hover:bg-indigo-200 dark:hover:bg-indigo-900/50';
+                        }
+                    }
+                @endphp
+                <div class="flex items-center gap-1">
+                    <button onclick="openWeightEditor({{ $task->id }}, {{ $task->weight }}, {{ $task->is_weight_locked ? 'true' : 'false' }})"
+                            class="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded border {{ $weightBg }} {{ $weightText }} {{ $weightBorder }} {{ $weightHover }} transition cursor-pointer"
+                            title="Weight: {{ $task->weight }}% ({{ $task->weight_percentage }}% of siblings)">
+                        <i class="fas fa-weight-hanging mr-1 text-xs"></i>
+                        <span>{{ $task->weight }}%</span>
+                        @if($task->is_weight_locked)
+                            <i class="fas fa-lock ml-1 text-xs"></i>
+                        @endif
+                    </button>
+                </div>
+            </div>
+
             <!-- Due Date -->
             <div class="flex-shrink-0 hidden xl:block">
                 @if($task->due_date)
@@ -179,12 +233,20 @@
         </div>
     </div>
 
-    <!-- Children Tasks (Recursive) -->
-    @if($hasChildren)
-        <div id="children-{{ $task->id }}" data-task-collapse class="mt-2 space-y-2">
-            @foreach($task->children as $child)
-                @include('pages.wbs.task-item', ['task' => $child, 'level' => $level + 1])
-            @endforeach
+    <!-- Children Tasks Container (Lazy Loaded) -->
+    @if($task->isParent())
+        <div id="children-{{ $task->id }}"
+             data-task-collapse
+             data-children-container
+             data-parent-id="{{ $task->id }}"
+             data-loaded="false"
+             style="display: none;"
+             class="mt-2 space-y-2">
+            <!-- Children will be loaded via AJAX -->
+            <div class="flex items-center justify-center py-4">
+                <i class="fas fa-spinner fa-spin text-primary-600 mr-2"></i>
+                <span class="text-sm text-gray-500">Loading subtasks...</span>
+            </div>
         </div>
     @endif
 </div>

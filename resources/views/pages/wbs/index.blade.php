@@ -14,6 +14,25 @@
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Hierarchical task breakdown and planning</p>
         </div>
         <div class="flex gap-2">
+            <button type="button"
+                    onclick="openSaveTemplateModal()"
+                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition z-10 relative cursor-pointer">
+                <i class="fas fa-save mr-2"></i>Save as Template
+            </button>
+            <button type="button"
+                    onclick="openLoadTemplateModal()"
+                    class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition z-10 relative cursor-pointer">
+                <i class="fas fa-download mr-2"></i>Load Template
+            </button>
+            <a href="{{ route('projects.wbs.gantt', $project) }}"
+               class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition z-10 relative">
+                <i class="fas fa-chart-gantt mr-2"></i>Gantt View
+            </a>
+            <button type="button"
+                    onclick="openWeightManagerModal()"
+                    class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition z-10 relative cursor-pointer">
+                <i class="fas fa-weight-hanging mr-2"></i>Weight Manager
+            </button>
             <a href="{{ route('projects.wbs.critical-path', $project) }}"
                class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition z-10 relative">
                 <i class="fas fa-route mr-2"></i>Critical Path
@@ -53,8 +72,37 @@
                 </div>
             </div>
 
+            <!-- Bulk Actions Toolbar (Hidden by default) -->
+            <div id="bulkActionsToolbar" style="display: none;" class="mb-4 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <span id="selectedCount">0</span> task(s) selected
+                        </span>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" class="w-4 h-4 text-primary-600 rounded">
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Select All</span>
+                        </label>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="bulkChangeStatus()" class="text-sm px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded transition">
+                            <i class="fas fa-tasks mr-1"></i>Change Status
+                        </button>
+                        <button onclick="bulkAssign()" class="text-sm px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded transition">
+                            <i class="fas fa-user-plus mr-1"></i>Assign To
+                        </button>
+                        <button onclick="bulkDelete()" class="text-sm px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded transition">
+                            <i class="fas fa-trash mr-1"></i>Delete
+                        </button>
+                        <button onclick="clearSelection()" class="text-sm px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white rounded transition">
+                            <i class="fas fa-times mr-1"></i>Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Task Tree -->
-            <div class="space-y-2">
+            <div id="taskTree" class="space-y-2">
                 @forelse($tasks as $task)
                     @include('pages.wbs.task-item', ['task' => $task, 'level' => 0])
                 @empty
@@ -191,6 +239,147 @@
                             class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg">
                         <span id="submitButtonText">Create Task</span>
                     </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Save Template Modal -->
+    <div id="saveTemplateModal" style="display: none;"
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+         onclick="if(event.target === this) closeSaveTemplateModal()">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Save as Template</h3>
+                <button onclick="closeSaveTemplateModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="saveTemplateForm" onsubmit="saveTemplate(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Template Name</label>
+                    <input type="text" name="name" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Description (Optional)</label>
+                    <textarea name="description" rows="3" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeSaveTemplateModal()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">Save Template</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Load Template Modal -->
+    <div id="loadTemplateModal" style="display: none;"
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+         onclick="if(event.target === this) closeLoadTemplateModal()">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Load Template</h3>
+                <button onclick="closeLoadTemplateModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4 text-sm text-red-600 dark:text-red-400">
+                <i class="fas fa-exclamation-triangle mr-2"></i>Warning: Loading a template will replace all existing tasks in this project.
+            </div>
+            <div id="templatesList" class="space-y-2 mb-4 max-h-96 overflow-y-auto">
+                <!-- Templates will be loaded here -->
+            </div>
+            <div class="flex justify-end">
+                <button onclick="closeLoadTemplateModal()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weight Manager Modal -->
+    <div id="weightManagerModal" style="display: none;"
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+         onclick="if(event.target === this) closeWeightManagerModal()">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+            <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+                    <i class="fas fa-weight-hanging mr-2"></i>Weight Distribution Manager
+                </h3>
+                <button onclick="closeWeightManagerModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="border-b border-gray-200 dark:border-gray-700">
+                <nav class="flex gap-4 px-6" aria-label="Tabs">
+                    <button onclick="switchWeightTab('summary')" id="tab-summary"
+                            class="weight-tab py-3 px-4 text-sm font-medium border-b-2 border-amber-600 text-amber-600">
+                        <i class="fas fa-list mr-2"></i>Summary
+                    </button>
+                    <button onclick="switchWeightTab('timeline')" id="tab-timeline"
+                            class="weight-tab py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                        <i class="fas fa-chart-line mr-2"></i>Timeline
+                    </button>
+                    <button onclick="switchWeightTab('status')" id="tab-status"
+                            class="weight-tab py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                        <i class="fas fa-chart-pie mr-2"></i>By Status
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+                <div id="weightSummaryContent" class="weight-tab-content">
+                    <div class="text-center py-8 text-gray-500">Loading...</div>
+                </div>
+                <div id="weightTimelineContent" class="weight-tab-content hidden">
+                    <div class="text-center py-8 text-gray-500">Loading...</div>
+                </div>
+                <div id="weightStatusContent" class="weight-tab-content hidden">
+                    <div class="text-center py-8 text-gray-500">Loading...</div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 p-6 border-t border-gray-200 dark:border-gray-700">
+                <button onclick="closeWeightManagerModal()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weight Editor Modal (Quick Edit) -->
+    <div id="weightEditorModal" style="display: none;"
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+         onclick="if(event.target === this) closeWeightEditorModal()">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Edit Weight</h3>
+                <button onclick="closeWeightEditorModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="weightEditorForm" onsubmit="saveWeight(event)">
+                <input type="hidden" id="weightTaskId" name="task_id">
+                <div class="mb-4">
+                    <label class="block text-gray-700 dark:text-gray-300 mb-2">
+                        Weight (%)
+                    </label>
+                    <input type="number" id="weightInput" name="weight" min="0" max="100" step="0.01" required
+                           class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                           oninput="previewValidation()">
+                    <!-- Validation Preview -->
+                    <div id="validationPreview" class="mt-2 text-sm hidden"></div>
+                </div>
+                <div class="mb-4">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="weightLockCheckbox" class="form-checkbox h-5 w-5 text-amber-600">
+                        <span class="ml-2 text-gray-700 dark:text-gray-300">
+                            <i class="fas fa-lock mr-1"></i>Lock weight (prevent auto-distribution)
+                        </span>
+                    </label>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeWeightEditorModal()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg">Save Weight</button>
                 </div>
             </form>
         </div>
@@ -866,21 +1055,895 @@
             }
         }
 
-        // Toggle task children visibility
-        function toggleTask(taskId) {
+        // Lazy Loading Toggle for Tasks
+        async function toggleTaskLazy(taskId) {
             const children = document.getElementById(`children-${taskId}`);
             const icon = document.getElementById(`icon-${taskId}`);
+            const isLoaded = children.dataset.loaded === 'true';
 
             if (children.style.display === 'none') {
+                // Expanding - load children if not loaded yet
                 children.style.display = 'block';
                 icon.classList.remove('fa-chevron-right');
                 icon.classList.add('fa-chevron-down');
+
+                if (!isLoaded) {
+                    // Load children via AJAX
+                    try {
+                        const response = await fetch(`/projects/{{ $project->id }}/wbs/${taskId}/children`, {
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            }
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            children.innerHTML = data.html;
+                            children.dataset.loaded = 'true';
+
+                            // Reinitialize drag & drop for newly loaded children
+                            initDragDrop();
+                        } else {
+                            children.innerHTML = '<div class="text-center py-4 text-red-600">Failed to load subtasks</div>';
+                        }
+                    } catch (error) {
+                        console.error('Error loading children:', error);
+                        children.innerHTML = '<div class="text-center py-4 text-red-600">Error loading subtasks</div>';
+                    }
+                }
             } else {
+                // Collapsing
                 children.style.display = 'none';
                 icon.classList.remove('fa-chevron-down');
                 icon.classList.add('fa-chevron-right');
             }
         }
+
+        // Legacy toggleTask for backwards compatibility
+        function toggleTask(taskId) {
+            toggleTaskLazy(taskId);
+        }
+
+        // Drag & Drop Functionality
+        function initDragDrop() {
+            // Initialize sortable for root level tasks
+            const taskTree = document.getElementById('taskTree');
+            if (taskTree) {
+                new Sortable(taskTree, {
+                    animation: 150,
+                    handle: '.drag-handle',
+                    ghostClass: 'bg-primary-100',
+                    dragClass: 'opacity-50',
+                    onEnd: function(evt) {
+                        const taskId = evt.item.dataset.taskId;
+                        const newIndex = evt.newIndex;
+                        const parentId = null; // Root level
+
+                        reorderTask(taskId, parentId, newIndex);
+                    }
+                });
+            }
+
+            // Initialize sortable for each children container
+            document.querySelectorAll('[data-children-container]').forEach(container => {
+                new Sortable(container, {
+                    animation: 150,
+                    handle: '.drag-handle',
+                    ghostClass: 'bg-primary-100',
+                    dragClass: 'opacity-50',
+                    onEnd: function(evt) {
+                        const taskId = evt.item.dataset.taskId;
+                        const newIndex = evt.newIndex;
+                        const parentId = container.dataset.parentId;
+
+                        reorderTask(taskId, parentId, newIndex);
+                    }
+                });
+            });
+        }
+
+        async function reorderTask(taskId, parentId, newOrder) {
+            try {
+                const response = await fetch('{{ route("projects.wbs.reorder", $project) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        task_id: taskId,
+                        new_parent_id: parentId,
+                        new_order: newOrder
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Reload page to show updated WBS codes
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to reorder task');
+                    window.location.reload(); // Revert changes
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to reorder task');
+                window.location.reload(); // Revert changes
+            }
+        }
+
+        // Bulk Operations
+        function updateBulkActions() {
+            const checkboxes = document.querySelectorAll('.task-checkbox:checked');
+            const toolbar = document.getElementById('bulkActionsToolbar');
+            const countSpan = document.getElementById('selectedCount');
+
+            countSpan.textContent = checkboxes.length;
+            toolbar.style.display = checkboxes.length > 0 ? 'block' : 'none';
+        }
+
+        function toggleSelectAll(checkbox) {
+            document.querySelectorAll('.task-checkbox').forEach(cb => {
+                cb.checked = checkbox.checked;
+            });
+            updateBulkActions();
+        }
+
+        function getSelectedTaskIds() {
+            const checkboxes = document.querySelectorAll('.task-checkbox:checked');
+            return Array.from(checkboxes).map(cb => cb.dataset.taskId);
+        }
+
+        function clearSelection() {
+            document.querySelectorAll('.task-checkbox').forEach(cb => {
+                cb.checked = false;
+            });
+            document.getElementById('selectAll').checked = false;
+            updateBulkActions();
+        }
+
+        async function bulkChangeStatus() {
+            const taskIds = getSelectedTaskIds();
+            if (taskIds.length === 0) return;
+
+            const status = prompt('Enter new status (todo, in-progress, review, completed):');
+            if (!status || !['todo', 'in-progress', 'review', 'completed'].includes(status)) {
+                alert('Invalid status');
+                return;
+            }
+
+            try {
+                const response = await fetch('{{ route("projects.wbs.bulk-update", $project) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        task_ids: taskIds,
+                        status: status
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to update tasks');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to update tasks');
+            }
+        }
+
+        async function bulkAssign() {
+            const taskIds = getSelectedTaskIds();
+            if (taskIds.length === 0) return;
+
+            const userId = prompt('Enter user ID to assign tasks:');
+            if (!userId) return;
+
+            try {
+                const response = await fetch('{{ route("projects.wbs.bulk-assign", $project) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        task_ids: taskIds,
+                        assigned_to: parseInt(userId)
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to assign tasks');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to assign tasks');
+            }
+        }
+
+        async function bulkDelete() {
+            const taskIds = getSelectedTaskIds();
+            if (taskIds.length === 0) return;
+
+            if (!confirm(`Are you sure you want to delete ${taskIds.length} task(s)? This will also delete all subtasks.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('{{ route("projects.wbs.bulk-delete", $project) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        task_ids: taskIds
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to delete tasks');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to delete tasks');
+            }
+        }
+
+        // Template Functions
+        function openSaveTemplateModal() {
+            document.getElementById('saveTemplateModal').style.display = 'flex';
+        }
+
+        function closeSaveTemplateModal() {
+            document.getElementById('saveTemplateModal').style.display = 'none';
+            document.getElementById('saveTemplateForm').reset();
+        }
+
+        async function saveTemplate(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const response = await fetch('{{ route("projects.wbs.templates.save", $project) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Template saved successfully!');
+                    closeSaveTemplateModal();
+                } else {
+                    alert(result.message || 'Failed to save template');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to save template');
+            }
+        }
+
+        async function openLoadTemplateModal() {
+            document.getElementById('loadTemplateModal').style.display = 'flex';
+            await loadTemplates();
+        }
+
+        function closeLoadTemplateModal() {
+            document.getElementById('loadTemplateModal').style.display = 'none';
+        }
+
+        async function loadTemplates() {
+            try {
+                const response = await fetch('{{ route("projects.wbs.templates.list", $project) }}');
+                const data = await response.json();
+
+                const list = document.getElementById('templatesList');
+                if (data.templates.length === 0) {
+                    list.innerHTML = '<p class="text-gray-500 text-center py-4">No templates available</p>';
+                    return;
+                }
+
+                list.innerHTML = data.templates.map(template => `
+                    <div class="border dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-900 dark:text-white">${template.name}</h4>
+                                ${template.description ? `<p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${template.description}</p>` : ''}
+                                <p class="text-xs text-gray-500 mt-2">Created: ${new Date(template.created_at).toLocaleDateString()}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="applyTemplate(${template.id})" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-sm">
+                                    <i class="fas fa-download mr-1"></i>Load
+                                </button>
+                                <button onclick="deleteTemplate(${template.id})" class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('templatesList').innerHTML = '<p class="text-red-500 text-center py-4">Failed to load templates</p>';
+            }
+        }
+
+        async function applyTemplate(templateId) {
+            if (!confirm('This will replace all existing tasks. Continue?')) return;
+
+            try {
+                const response = await fetch('{{ route("projects.wbs.templates.load", $project) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ template_id: templateId })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Template loaded successfully!');
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to load template');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to load template');
+            }
+        }
+
+        async function deleteTemplate(templateId) {
+            if (!confirm('Delete this template?')) return;
+
+            try {
+                const response = await fetch(`/projects/{{ $project->id }}/wbs/templates/${templateId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    await loadTemplates(); // Refresh list
+                } else {
+                    alert(data.message || 'Failed to delete template');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to delete template');
+            }
+        }
+
+        // Weight Management Functions
+        function openWeightManagerModal() {
+            document.getElementById('weightManagerModal').style.display = 'flex';
+            switchWeightTab('summary');
+        }
+
+        function closeWeightManagerModal() {
+            document.getElementById('weightManagerModal').style.display = 'none';
+        }
+
+        function switchWeightTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.weight-tab').forEach(btn => {
+                btn.classList.remove('border-amber-600', 'text-amber-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+            document.getElementById(`tab-${tab}`).classList.remove('border-transparent', 'text-gray-500');
+            document.getElementById(`tab-${tab}`).classList.add('border-amber-600', 'text-amber-600');
+
+            // Hide all content
+            document.querySelectorAll('.weight-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Show selected content and load data
+            const contentMap = {
+                'summary': 'weightSummaryContent',
+                'timeline': 'weightTimelineContent',
+                'status': 'weightStatusContent'
+            };
+
+            document.getElementById(contentMap[tab]).classList.remove('hidden');
+
+            // Load data
+            if (tab === 'summary') loadWeightSummary();
+            else if (tab === 'timeline') loadWeightTimeline();
+            else if (tab === 'status') loadWeightByStatus();
+        }
+
+        async function loadWeightTimeline() {
+            const container = document.getElementById('weightTimelineContent');
+            container.innerHTML = '<div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Loading timeline...</div>';
+
+            try {
+                const response = await fetch('{{ route("projects.wbs.weight.timeline", $project) }}');
+                const data = await response.json();
+
+                if (!data.success || data.timeline.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-center py-8">No timeline data available. Add due dates to tasks with weights.</p>';
+                    return;
+                }
+
+                let html = '<div class="space-y-6">';
+
+                // Timeline chart
+                html += '<div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg p-6">';
+                html += '<h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4"><i class="fas fa-chart-area mr-2"></i>Cumulative Weight Distribution</h4>';
+                html += '<div class="space-y-3">';
+
+                const maxCumulative = Math.max(...data.timeline.map(t => t.cumulative_weight));
+
+                data.timeline.forEach((period, index) => {
+                    const barWidth = (period.cumulative_weight / maxCumulative) * 100;
+                    const isLast = index === data.timeline.length - 1;
+
+                    html += `
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">${period.month}</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs text-gray-600 dark:text-gray-400">+${period.total_weight}%</span>
+                                    <span class="text-sm font-bold ${isLast ? 'text-green-600' : 'text-amber-600'}">${period.cumulative_weight}%</span>
+                                </div>
+                            </div>
+                            <div class="relative h-8 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 transition-all duration-500"
+                                     style="width: ${barWidth}%">
+                                    <div class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">
+                                        ${period.tasks.length} task(s)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+
+                // Task details by month
+                html += '<div class="space-y-4">';
+                html += '<h4 class="text-lg font-bold text-gray-900 dark:text-white"><i class="fas fa-tasks mr-2"></i>Tasks by Month</h4>';
+
+                data.timeline.forEach(period => {
+                    html += `
+                        <div class="border dark:border-gray-700 rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-3">
+                                <h5 class="font-semibold text-gray-900 dark:text-white">${period.month}</h5>
+                                <span class="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-full text-sm font-medium">
+                                    ${period.total_weight}% weight
+                                </span>
+                            </div>
+                            <div class="space-y-2">
+                                ${period.tasks.map(task => {
+                                    const statusColors = {
+                                        'todo': 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+                                        'in-progress': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+                                        'review': 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+                                        'completed': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                    };
+                                    const statusClass = statusColors[task.status] || statusColors.todo;
+
+                                    return `
+                                        <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900/50 rounded">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xs font-mono text-gray-600 dark:text-gray-400">${task.wbs_code}</span>
+                                                <span class="text-sm text-gray-900 dark:text-white">${task.title}</span>
+                                                <span class="px-2 py-0.5 ${statusClass} rounded text-xs font-medium">
+                                                    ${task.status.replace('-', ' ')}
+                                                </span>
+                                            </div>
+                                            <span class="text-sm font-semibold text-amber-600">${task.weight}%</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = '<p class="text-red-500 text-center py-8">Failed to load timeline data</p>';
+            }
+        }
+
+        async function loadWeightByStatus() {
+            const container = document.getElementById('weightStatusContent');
+            container.innerHTML = '<div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Loading status distribution...</div>';
+
+            try {
+                const response = await fetch('{{ route("projects.wbs.weight.by-status", $project) }}');
+                const data = await response.json();
+
+                if (!data.success || data.distribution.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-center py-8">No weight distribution by status</p>';
+                    return;
+                }
+
+                const statusConfig = {
+                    'todo': { color: 'gray', icon: 'circle', label: 'To Do' },
+                    'in-progress': { color: 'blue', icon: 'spinner', label: 'In Progress' },
+                    'review': { color: 'yellow', icon: 'eye', label: 'Review' },
+                    'completed': { color: 'green', icon: 'check-circle', label: 'Completed' }
+                };
+
+                let html = '<div class="space-y-6">';
+
+                // Status cards
+                html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+
+                data.distribution.forEach(item => {
+                    const config = statusConfig[item.status] || statusConfig.todo;
+                    const barWidth = (item.weight / data.total_weight) * 100;
+
+                    // Status-specific classes (fully defined to avoid Tailwind JIT issues)
+                    const statusClasses = {
+                        'todo': {
+                            border: 'border-gray-200 dark:border-gray-800',
+                            bg: 'bg-gray-50 dark:bg-gray-900/20',
+                            icon: 'text-gray-600 dark:text-gray-400',
+                            badge: 'bg-gray-100 dark:bg-gray-900/50 text-gray-700 dark:text-gray-400',
+                            text: 'text-gray-600 dark:text-gray-400',
+                            gradient: 'from-gray-400 to-gray-500'
+                        },
+                        'in-progress': {
+                            border: 'border-blue-200 dark:border-blue-800',
+                            bg: 'bg-blue-50 dark:bg-blue-900/20',
+                            icon: 'text-blue-600 dark:text-blue-400',
+                            badge: 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400',
+                            text: 'text-blue-600 dark:text-blue-400',
+                            gradient: 'from-blue-400 to-blue-500'
+                        },
+                        'review': {
+                            border: 'border-yellow-200 dark:border-yellow-800',
+                            bg: 'bg-yellow-50 dark:bg-yellow-900/20',
+                            icon: 'text-yellow-600 dark:text-yellow-400',
+                            badge: 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-400',
+                            text: 'text-yellow-600 dark:text-yellow-400',
+                            gradient: 'from-yellow-400 to-yellow-500'
+                        },
+                        'completed': {
+                            border: 'border-green-200 dark:border-green-800',
+                            bg: 'bg-green-50 dark:bg-green-900/20',
+                            icon: 'text-green-600 dark:text-green-400',
+                            badge: 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400',
+                            text: 'text-green-600 dark:text-green-400',
+                            gradient: 'from-green-400 to-green-500'
+                        }
+                    };
+
+                    const classes = statusClasses[item.status] || statusClasses.todo;
+
+                    html += `
+                        <div class="border-2 ${classes.border} rounded-lg p-4 ${classes.bg}">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-${config.icon} ${classes.icon}"></i>
+                                    <span class="font-semibold text-gray-900 dark:text-white">${config.label}</span>
+                                </div>
+                                <span class="px-3 py-1 ${classes.badge} rounded-full text-sm font-bold">
+                                    ${item.task_count} task(s)
+                                </span>
+                            </div>
+                            <div class="mb-2">
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-gray-600 dark:text-gray-400">Weight</span>
+                                    <span class="font-bold ${classes.text}">${item.weight}% (${item.percentage}%)</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r ${classes.gradient} transition-all duration-500"
+                                         style="width: ${barWidth}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+
+                // Summary
+                html += `
+                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-lg p-6 border-2 border-purple-200 dark:border-purple-800">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Total Weighted Tasks</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Across all statuses</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-4xl font-bold text-purple-600 dark:text-purple-400">${data.total_weight}%</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">${data.distribution.reduce((sum, item) => sum + item.task_count, 0)} tasks</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                html += '</div>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = '<p class="text-red-500 text-center py-8">Failed to load status distribution</p>';
+            }
+        }
+
+        async function loadWeightSummary() {
+            try {
+                const response = await fetch('{{ route("projects.wbs.weight.summary", $project) }}');
+                const data = await response.json();
+
+                const container = document.getElementById('weightSummaryContent');
+
+                if (!data.success || Object.keys(data.summary).length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-center py-8">No tasks with weights assigned</p>';
+                    return;
+                }
+
+                let html = '<div class="space-y-6">';
+
+                Object.entries(data.summary).forEach(([parentId, group]) => {
+                    const parentName = group.parent
+                        ? `${group.parent.wbs_code} - ${group.parent.title}`
+                        : 'Root Level Tasks';
+                    const statusBg = group.is_valid ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30';
+                    const statusText = group.is_valid ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400';
+
+                    html += `
+                        <div class="border dark:border-gray-700 rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="font-semibold text-gray-900 dark:text-white">${parentName}</h4>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-sm px-3 py-1 rounded-full ${statusBg} ${statusText} font-medium">
+                                        Total: ${group.total_weight}%
+                                        ${group.is_valid ? '<i class="fas fa-check ml-1"></i>' : '<i class="fas fa-exclamation-triangle ml-1"></i>'}
+                                    </span>
+                                    <button onclick="autoDistribute('${parentId}')" class="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-sm">
+                                        <i class="fas fa-magic mr-1"></i>Auto Distribute
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                ${group.tasks.map(task => `
+                                    <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900/50 rounded">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-mono text-gray-600 dark:text-gray-400">${task.wbs_code}</span>
+                                            <span class="text-sm text-gray-900 dark:text-white">${task.title}</span>
+                                            ${task.is_locked ? '<i class="fas fa-lock text-amber-600 text-xs"></i>' : ''}
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm font-semibold text-gray-900 dark:text-white">${task.weight}%</span>
+                                            <span class="text-xs text-gray-500">(${task.weight_percentage}% of group)</span>
+                                            <button onclick="openWeightEditor(${task.id}, ${task.weight}, ${task.is_locked})" class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs">
+                                                Edit
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('weightSummaryContent').innerHTML = '<p class="text-red-500 text-center py-8">Failed to load weight summary</p>';
+            }
+        }
+
+        function openWeightEditor(taskId, currentWeight, isLocked) {
+            document.getElementById('weightTaskId').value = taskId;
+            document.getElementById('weightInput').value = currentWeight;
+            document.getElementById('weightLockCheckbox').checked = isLocked;
+            document.getElementById('weightEditorModal').style.display = 'flex';
+        }
+
+        function closeWeightEditorModal() {
+            document.getElementById('weightEditorModal').style.display = 'none';
+            document.getElementById('weightEditorForm').reset();
+        }
+
+        async function saveWeight(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const taskId = formData.get('task_id');
+            const weight = formData.get('weight');
+            const isLocked = document.getElementById('weightLockCheckbox').checked;
+
+            try {
+                // Update weight
+                const response = await fetch(`/projects/{{ $project->id }}/wbs/${taskId}/weight`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ weight: parseFloat(weight) })
+                });
+
+                const data = await response.json();
+                if (!data.success) {
+                    throw new Error(data.message);
+                }
+
+                // Update lock if changed
+                if (data.task.is_weight_locked !== isLocked) {
+                    await fetch(`/projects/{{ $project->id }}/wbs/${taskId}/weight/toggle-lock`, {
+                        method: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    });
+                }
+
+                closeWeightEditorModal();
+
+                // Show validation feedback
+                if (data.validation) {
+                    showValidationToast(data.validation);
+                }
+
+                // Refresh page or summary
+                if (document.getElementById('weightManagerModal').style.display === 'flex') {
+                    loadWeightSummary();
+                } else {
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to save weight: ' + error.message);
+            }
+        }
+
+        // Real-time validation preview
+        let currentTaskSiblings = [];
+
+        function previewValidation() {
+            const input = document.getElementById('weightInput');
+            const preview = document.getElementById('validationPreview');
+            const value = input.value;
+            const newWeight = parseFloat(value);
+
+            // Reset preview
+            preview.classList.add('hidden');
+            preview.className = 'mt-2 text-sm';
+
+            // Check if empty or not a number
+            if (value === '' || isNaN(newWeight)) {
+                preview.className += ' text-gray-600 dark:text-gray-400';
+                preview.innerHTML = '<i class="fas fa-info-circle mr-1"></i>Enter a weight value (0-100)';
+                preview.classList.remove('hidden');
+                return;
+            }
+
+            // Check range
+            if (newWeight > 100) {
+                preview.className += ' text-red-600 dark:text-red-400';
+                preview.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i>Weight cannot exceed 100%';
+                preview.classList.remove('hidden');
+            } else if (newWeight < 0) {
+                preview.className += ' text-red-600 dark:text-red-400';
+                preview.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i>Weight cannot be negative';
+                preview.classList.remove('hidden');
+            } else if (newWeight === 0) {
+                preview.className += ' text-yellow-600 dark:text-yellow-400';
+                preview.innerHTML = '<i class="fas fa-info-circle mr-1"></i>Setting weight to 0 (task will not count in total)';
+                preview.classList.remove('hidden');
+            } else {
+                // Valid weight
+                preview.className += ' text-green-600 dark:text-green-400';
+                preview.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Valid weight: ' + newWeight.toFixed(2) + '%';
+                preview.classList.remove('hidden');
+            }
+        }
+
+        function showValidationToast(validation) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 z-50 max-w-md p-4 rounded-lg shadow-lg transform transition-all duration-300 translate-x-0';
+
+            let bgColor, icon, message;
+
+            if (validation.status === 'perfect') {
+                bgColor = 'bg-green-100 border-l-4 border-green-500 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+                icon = '<i class="fas fa-check-circle text-green-500 mr-2"></i>';
+                message = `✓ Perfect! Total weight = 100%`;
+            } else if (validation.status === 'over') {
+                bgColor = 'bg-red-100 border-l-4 border-red-500 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+                icon = '<i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>';
+                message = `⚠ Over by ${Math.abs(validation.difference)}% (Total: ${validation.total_weight}%)`;
+            } else if (validation.status === 'under') {
+                bgColor = 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+                icon = '<i class="fas fa-info-circle text-yellow-500 mr-2"></i>';
+                message = `ℹ Under by ${Math.abs(validation.difference)}% (Total: ${validation.total_weight}%)`;
+            }
+
+            toast.className += ' ' + bgColor;
+            toast.innerHTML = `
+                <div class="flex items-center">
+                    ${icon}
+                    <div class="flex-1">
+                        <p class="font-semibold">${message}</p>
+                        <p class="text-sm mt-1">${validation.task_count} tasks (${validation.locked_count} locked)</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-3 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                toast.style.transform = 'translateX(400px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        async function autoDistribute(parentId) {
+            if (!confirm('Distribute weight equally among all unlocked sibling tasks?')) return;
+
+            try {
+                const response = await fetch('{{ route("projects.wbs.weight.auto-distribute", $project) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        parent_id: parentId === 'null' ? null : parseInt(parentId)
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    // Show validation feedback
+                    if (data.validation) {
+                        showValidationToast(data.validation);
+                    }
+                    loadWeightSummary();
+                } else {
+                    alert(data.message || 'Failed to distribute weight');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to distribute weight');
+            }
+        }
+
+        // Initialize drag & drop after page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initDragDrop();
+        });
     </script>
+
+    <!-- SortableJS Library for Drag & Drop -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     @endpush
 @endsection

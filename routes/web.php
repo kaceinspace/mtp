@@ -76,20 +76,40 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Work Breakdown Structure (WBS)
     Route::get('/projects/{project}/wbs', [App\Http\Controllers\WbsController::class, 'index'])->name('projects.wbs');
+    Route::get('/projects/{project}/wbs/gantt', [App\Http\Controllers\WbsController::class, 'showGantt'])->name('projects.wbs.gantt');
     Route::get('/projects/{project}/wbs/tree', [App\Http\Controllers\WbsController::class, 'tree'])->name('projects.wbs.tree');
+    Route::get('/projects/{project}/wbs/{task}/children', [App\Http\Controllers\WbsController::class, 'getChildren'])->name('projects.wbs.children');
     Route::post('/projects/{project}/wbs', [App\Http\Controllers\WbsController::class, 'store'])->name('projects.wbs.store');
     Route::post('/projects/{project}/wbs/reorder', [App\Http\Controllers\WbsController::class, 'reorder'])->name('projects.wbs.reorder');
+    Route::post('/projects/{project}/wbs/bulk-update', [App\Http\Controllers\WbsController::class, 'bulkUpdate'])->name('projects.wbs.bulk-update');
+    Route::post('/projects/{project}/wbs/bulk-assign', [App\Http\Controllers\WbsController::class, 'bulkAssign'])->name('projects.wbs.bulk-assign');
+    Route::post('/projects/{project}/wbs/bulk-delete', [App\Http\Controllers\WbsController::class, 'bulkDelete'])->name('projects.wbs.bulk-delete');
     Route::patch('/projects/{project}/wbs/{task}', [App\Http\Controllers\WbsController::class, 'update'])->name('projects.wbs.update');
     Route::delete('/projects/{project}/wbs/{task}', [App\Http\Controllers\WbsController::class, 'destroy'])->name('projects.wbs.destroy');
-    
+
     // Task Dependencies
     Route::post('/projects/{project}/wbs/dependencies', [App\Http\Controllers\WbsController::class, 'addDependency'])->name('projects.wbs.dependencies.add');
     Route::delete('/projects/{project}/wbs/dependencies/{dependency}', [App\Http\Controllers\WbsController::class, 'removeDependency'])->name('projects.wbs.dependencies.remove');
     Route::get('/projects/{project}/wbs/{task}/dependencies', [App\Http\Controllers\WbsController::class, 'getDependencies'])->name('projects.wbs.dependencies.get');
-    
+
     // Critical Path
     Route::post('/projects/{project}/wbs/critical-path/calculate', [App\Http\Controllers\WbsController::class, 'calculateCriticalPath'])->name('projects.wbs.critical-path.calculate');
     Route::get('/projects/{project}/wbs/critical-path', [App\Http\Controllers\WbsController::class, 'showCriticalPath'])->name('projects.wbs.critical-path');
+
+    // WBS Templates
+    Route::post('/projects/{project}/wbs/templates/save', [App\Http\Controllers\WbsController::class, 'saveTemplate'])->name('projects.wbs.templates.save');
+    Route::post('/projects/{project}/wbs/templates/load', [App\Http\Controllers\WbsController::class, 'loadTemplate'])->name('projects.wbs.templates.load');
+    Route::get('/projects/{project}/wbs/templates', [App\Http\Controllers\WbsController::class, 'listTemplates'])->name('projects.wbs.templates.list');
+    Route::delete('/projects/{project}/wbs/templates/{templateId}', [App\Http\Controllers\WbsController::class, 'deleteTemplate'])->name('projects.wbs.templates.delete');
+
+    // Weight Management
+    Route::patch('/projects/{project}/wbs/{task}/weight', [App\Http\Controllers\WbsController::class, 'updateWeight'])->name('projects.wbs.weight.update');
+    Route::post('/projects/{project}/wbs/weight/auto-distribute', [App\Http\Controllers\WbsController::class, 'autoDistributeWeight'])->name('projects.wbs.weight.auto-distribute');
+    Route::patch('/projects/{project}/wbs/{task}/weight/toggle-lock', [App\Http\Controllers\WbsController::class, 'toggleWeightLock'])->name('projects.wbs.weight.toggle-lock');
+    Route::get('/projects/{project}/wbs/weight/summary', [App\Http\Controllers\WbsController::class, 'getWeightSummary'])->name('projects.wbs.weight.summary');
+    Route::get('/projects/{project}/wbs/weight/timeline', [App\Http\Controllers\WbsController::class, 'getWeightTimeline'])->name('projects.wbs.weight.timeline');
+    Route::get('/projects/{project}/wbs/weight/by-status', [App\Http\Controllers\WbsController::class, 'getWeightByStatus'])->name('projects.wbs.weight.by-status');
+
     Route::post('/projects/{project}/wbs/reorder', [App\Http\Controllers\WbsController::class, 'reorder'])->name('projects.wbs.reorder');
     Route::patch('/projects/{project}/wbs/{task}', [App\Http\Controllers\WbsController::class, 'update'])->name('projects.wbs.update');
     Route::delete('/projects/{project}/wbs/{task}', [App\Http\Controllers\WbsController::class, 'destroy'])->name('projects.wbs.destroy');

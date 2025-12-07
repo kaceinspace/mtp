@@ -30,6 +30,9 @@ class Task extends Model
         'late_finish',
         'total_float',
         'is_critical',
+        'weight',
+        'weight_percentage',
+        'is_weight_locked',
     ];
 
     protected $casts = [
@@ -44,6 +47,9 @@ class Task extends Model
         'late_finish' => 'integer',
         'total_float' => 'integer',
         'is_critical' => 'boolean',
+        'weight' => 'decimal:2',
+        'weight_percentage' => 'decimal:2',
+        'is_weight_locked' => 'boolean',
     ];
 
     // Task belongs to a project
