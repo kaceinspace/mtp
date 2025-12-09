@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'S-Curve & Analytics - ' . $project->title)
+@section('title', __('phase3_4.scurve') . ' & ' . __('phase3_4.dashboard_analytics') . ' - ' . $project->title)
 
 @section('content')
 <div class="container mx-auto px-4 py-6 max-w-7xl">
@@ -8,17 +8,17 @@
     <div class="mb-6">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">S-Curve & Analytics</h1>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ __('phase3_4.scurve') }} & {{ __('phase3_4.dashboard_analytics') }}</h1>
                 <p class="text-gray-600 dark:text-gray-400 mt-1">
                     <a href="{{ route('projects.show', $project) }}" class="hover:text-blue-600">{{ $project->title }}</a>
                     <span class="mx-2">•</span>
-                    Performance Analysis & Forecasting
+                    {{ __('phase3_4.performance_analysis_forecasting') }}
                 </p>
             </div>
             <div class="flex gap-3">
                 <a href="{{ route('projects.progress.index', $project) }}"
                    class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
-                    <i class="fas fa-arrow-left mr-2"></i>Back to Progress
+                    <i class="fas fa-arrow-left mr-2"></i>{{ __('phase3_4.back_to_progress') }}
                 </a>
             </div>
         </div>
@@ -31,18 +31,18 @@
             {{ $performanceMetrics['spi'] >= 1 ? 'border-green-500' : ($performanceMetrics['spi'] >= 0.8 ? 'border-yellow-500' : 'border-red-500') }}">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Schedule Performance Index</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('phase3_4.spi') }}</p>
                     <p class="text-3xl font-bold mt-2
                         {{ $performanceMetrics['spi'] >= 1 ? 'text-green-600' : ($performanceMetrics['spi'] >= 0.8 ? 'text-yellow-600' : 'text-red-600') }}">
                         {{ $performanceMetrics['spi'] }}
                     </p>
                     <p class="text-xs text-gray-500 mt-1">
                         @if($performanceMetrics['spi'] >= 1)
-                            <i class="fas fa-check-circle text-green-500"></i> On Schedule
+                            <i class="fas fa-check-circle text-green-500"></i> {{ __('phase3_4.on_schedule') }}
                         @elseif($performanceMetrics['spi'] >= 0.8)
-                            <i class="fas fa-exclamation-triangle text-yellow-500"></i> Minor Delay
+                            <i class="fas fa-exclamation-triangle text-yellow-500"></i> {{ __('phase3_4.minor_delay') }}
                         @else
-                            <i class="fas fa-times-circle text-red-500"></i> Major Delay
+                            <i class="fas fa-times-circle text-red-500"></i> {{ __('phase3_4.major_delay') }}
                         @endif
                     </p>
                 </div>
@@ -57,18 +57,18 @@
             {{ $performanceMetrics['cpi'] >= 1 ? 'border-blue-500' : ($performanceMetrics['cpi'] >= 0.8 ? 'border-orange-500' : 'border-red-500') }}">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Cost Performance Index</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('phase3_4.cpi') }}</p>
                     <p class="text-3xl font-bold mt-2
                         {{ $performanceMetrics['cpi'] >= 1 ? 'text-blue-600' : ($performanceMetrics['cpi'] >= 0.8 ? 'text-orange-600' : 'text-red-600') }}">
                         {{ $performanceMetrics['cpi'] }}
                     </p>
                     <p class="text-xs text-gray-500 mt-1">
                         @if($performanceMetrics['cpi'] >= 1)
-                            <i class="fas fa-check-circle text-blue-500"></i> Under Budget
+                            <i class="fas fa-check-circle text-blue-500"></i> {{ __('phase3_4.under_budget') }}
                         @elseif($performanceMetrics['cpi'] >= 0.8)
-                            <i class="fas fa-exclamation-triangle text-orange-500"></i> Minor Overrun
+                            <i class="fas fa-exclamation-triangle text-orange-500"></i> {{ __('phase3_4.minor_overrun') }}
                         @else
-                            <i class="fas fa-times-circle text-red-500"></i> Major Overrun
+                            <i class="fas fa-times-circle text-red-500"></i> {{ __('phase3_4.major_overrun') }}
                         @endif
                     </p>
                 </div>
@@ -82,7 +82,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border-l-4 border-purple-500">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Project Completion</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('phase3_4.project_completion') }}</p>
                     <p class="text-3xl font-bold text-purple-600 mt-2">{{ $performanceMetrics['completion'] }}%</p>
                     <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
                         <div class="bg-purple-600 h-2 rounded-full transition-all duration-500"
@@ -100,13 +100,13 @@
             {{ $forecast['risk_level'] === 'low' ? 'border-green-500' : ($forecast['risk_level'] === 'medium' ? 'border-yellow-500' : 'border-red-500') }}">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Risk Level</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('phase3_4.risk_level') }}</p>
                     <p class="text-2xl font-bold mt-2 capitalize
                         {{ $forecast['risk_level'] === 'low' ? 'text-green-600' : ($forecast['risk_level'] === 'medium' ? 'text-yellow-600' : 'text-red-600') }}">
-                        {{ $forecast['risk_level'] }}
+                        {{ __('phase3_4.' . $forecast['risk_level'] . '_risk') }}
                     </p>
                     <p class="text-xs text-gray-500 mt-1">
-                        On-time probability: {{ $forecast['on_time_probability'] }}%
+                        {{ __('phase3_4.on_time_probability') }}: {{ $forecast['on_time_probability'] }}%
                     </p>
                 </div>
                 <div class="text-4xl opacity-20">
@@ -120,16 +120,16 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-                <i class="fas fa-chart-area text-blue-500 mr-2"></i>S-Curve Analysis (Planned vs Actual)
+                <i class="fas fa-chart-area text-blue-500 mr-2"></i>{{ __('phase3_4.scurve_analysis') }} ({{ __('phase3_4.planned_vs_actual') }})
             </h2>
             <div class="flex gap-4 text-sm">
                 <div class="flex items-center">
                     <span class="w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
-                    <span class="text-gray-600 dark:text-gray-400">Planned</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.planned') }}</span>
                 </div>
                 <div class="flex items-center">
                     <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                    <span class="text-gray-600 dark:text-gray-400">Actual</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.actual') }}</span>
                 </div>
             </div>
         </div>
@@ -143,7 +143,7 @@
         <!-- SPI Trend Chart -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                <i class="fas fa-chart-line text-purple-500 mr-2"></i>SPI Trend Over Time
+                <i class="fas fa-chart-line text-purple-500 mr-2"></i>{{ __('phase3_4.spi_trend_over_time') }}
             </h2>
             <div class="h-64">
                 <canvas id="spiTrendChart"></canvas>
@@ -153,7 +153,7 @@
         <!-- Completion Trend Chart -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                <i class="fas fa-percentage text-indigo-500 mr-2"></i>Weekly Completion Rate
+                <i class="fas fa-percentage text-indigo-500 mr-2"></i>{{ __('phase3_4.weekly_completion_rate') }}
             </h2>
             <div class="h-64">
                 <canvas id="completionTrendChart"></canvas>
@@ -166,33 +166,33 @@
         <!-- EVM Metrics -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                <i class="fas fa-calculator text-blue-500 mr-2"></i>Earned Value Management
+                <i class="fas fa-calculator text-blue-500 mr-2"></i>{{ __('phase3_4.earned_value_management') }}
             </h2>
             <div class="space-y-4">
                 <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
-                    <span class="text-gray-600 dark:text-gray-400">Planned Value (PV)</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.pv') }}</span>
                     <span class="font-semibold text-gray-900 dark:text-white">{{ number_format($performanceMetrics['pv'], 2) }}%</span>
                 </div>
                 <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
-                    <span class="text-gray-600 dark:text-gray-400">Earned Value (EV)</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.ev') }}</span>
                     <span class="font-semibold text-gray-900 dark:text-white">{{ number_format($performanceMetrics['ev'], 2) }}%</span>
                 </div>
                 <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
-                    <span class="text-gray-600 dark:text-gray-400">Actual Cost (AC)</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.ac') }}</span>
                     <span class="font-semibold text-gray-900 dark:text-white">{{ number_format($performanceMetrics['ac'], 2) }}%</span>
                 </div>
                 <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
-                    <span class="text-gray-600 dark:text-gray-400">Budget at Completion (BAC)</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.bac') }}</span>
                     <span class="font-semibold text-gray-900 dark:text-white">{{ number_format($performanceMetrics['bac'], 2) }}%</span>
                 </div>
                 <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
-                    <span class="text-gray-600 dark:text-gray-400">Schedule Variance (SV)</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.sv') }}</span>
                     <span class="font-semibold {{ $performanceMetrics['sv'] >= 0 ? 'text-green-600' : 'text-red-600' }}">
                         {{ $performanceMetrics['sv'] > 0 ? '+' : '' }}{{ number_format($performanceMetrics['sv'], 2) }}%
                     </span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-gray-600 dark:text-gray-400">Cost Variance (CV)</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.cv') }}</span>
                     <span class="font-semibold {{ $performanceMetrics['cv'] >= 0 ? 'text-green-600' : 'text-red-600' }}">
                         {{ $performanceMetrics['cv'] > 0 ? '+' : '' }}{{ number_format($performanceMetrics['cv'], 2) }}%
                     </span>
@@ -203,26 +203,26 @@
         <!-- Forecast & Projections -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                <i class="fas fa-crystal-ball text-purple-500 mr-2"></i>Forecast & Projections
+                <i class="fas fa-crystal-ball text-purple-500 mr-2"></i>{{ __('phase3_4.forecast_projections') }}
             </h2>
             <div class="space-y-4">
                 <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
-                    <span class="text-gray-600 dark:text-gray-400">Estimate at Completion (EAC)</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.eac') }}</span>
                     <span class="font-semibold text-gray-900 dark:text-white">{{ number_format($performanceMetrics['eac'], 2) }}%</span>
                 </div>
                 <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
-                    <span class="text-gray-600 dark:text-gray-400">Estimate to Complete (ETC)</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.etc') }}</span>
                     <span class="font-semibold text-gray-900 dark:text-white">{{ number_format($performanceMetrics['etc'], 2) }}%</span>
                 </div>
                 <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
-                    <span class="text-gray-600 dark:text-gray-400">Variance at Completion (VAC)</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.vac') }}</span>
                     <span class="font-semibold {{ $performanceMetrics['vac'] >= 0 ? 'text-green-600' : 'text-red-600' }}">
                         {{ $performanceMetrics['vac'] > 0 ? '+' : '' }}{{ number_format($performanceMetrics['vac'], 2) }}%
                     </span>
                 </div>
                 @if($forecast['forecast_completion_date'])
                 <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
-                    <span class="text-gray-600 dark:text-gray-400">Forecast Completion Date</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.forecast_completion_date') }}</span>
                     <span class="font-semibold text-gray-900 dark:text-white">
                         {{ \Carbon\Carbon::parse($forecast['forecast_completion_date'])->format('M d, Y') }}
                     </span>
@@ -230,14 +230,14 @@
                 @endif
                 @if($forecast['forecast_delay_days'] !== null)
                 <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
-                    <span class="text-gray-600 dark:text-gray-400">Expected Delay/Advance</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.expected_delay_advance') }}</span>
                     <span class="font-semibold {{ $forecast['forecast_delay_days'] >= 0 ? 'text-red-600' : 'text-green-600' }}">
-                        {{ abs($forecast['forecast_delay_days']) }} days {{ $forecast['forecast_delay_days'] >= 0 ? 'delay' : 'ahead' }}
+                        {{ abs($forecast['forecast_delay_days']) }} {{ __('phase3_4.days') }} {{ $forecast['forecast_delay_days'] >= 0 ? __('phase3_4.delay') : __('phase3_4.ahead') }}
                     </span>
                 </div>
                 @endif
                 <div class="flex justify-between items-center">
-                    <span class="text-gray-600 dark:text-gray-400">Remaining Work</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('phase3_4.remaining_work') }}</span>
                     <span class="font-semibold text-gray-900 dark:text-white">{{ number_format($forecast['remaining_work_percentage'], 2) }}%</span>
                 </div>
             </div>
@@ -247,7 +247,7 @@
     <!-- Deviation Trend Chart -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            <i class="fas fa-wave-square text-orange-500 mr-2"></i>Weekly Deviation Trend
+            <i class="fas fa-wave-square text-orange-500 mr-2"></i>{{ __('phase3_4.weekly_deviation_trend') }}
         </h2>
         <div class="h-64">
             <canvas id="deviationTrendChart"></canvas>

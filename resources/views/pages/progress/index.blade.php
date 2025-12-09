@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Weekly Progress - ' . $project->title)
-@section('page-title', 'Weekly Progress Tracking')
+@section('title', __('phase3_4.weekly_progress') . ' - ' . $project->title)
+@section('page-title', __('phase3_4.weekly_progress_tracking'))
 
 @section('content')
 <div class="space-y-6">
@@ -9,62 +9,62 @@
     <div class="flex justify-between items-center">
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                Weekly Progress Tracking - {{ $project->title }}
+                {{ __('phase3_4.weekly_progress_tracking') }} - {{ $project->title }}
             </h2>
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Week {{ $currentWeekStart->format('W, Y') }}
+                {{ __('phase3_4.week') }} {{ $currentWeekStart->format('W, Y') }}
                 ({{ $currentWeekStart->format('M d') }} - {{ $currentWeekEnd->format('M d, Y') }})
             </p>
         </div>
         <div class="flex gap-2">
             <button type="button" onclick="previousWeek()"
                     class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
-                <i class="fas fa-chevron-left mr-2"></i>Previous Week
+                <i class="fas fa-chevron-left mr-2"></i>{{ __('phase3_4.previous_week') }}
             </button>
             <button type="button" onclick="nextWeek()"
                     class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
-                Next Week<i class="fas fa-chevron-right ml-2"></i>
+                {{ __('phase3_4.next_week') }}<i class="fas fa-chevron-right ml-2"></i>
             </button>
             <button type="button" onclick="openWeeklyPlanModal()"
                     class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition">
-                <i class="fas fa-calendar-week mr-2"></i>Weekly Plan
+                <i class="fas fa-calendar-week mr-2"></i>{{ __('phase3_4.weekly_plan') }}
             </button>
 
             <!-- Report & Export Buttons -->
             <div class="relative group">
                 <button type="button"
                         class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition flex items-center">
-                    <i class="fas fa-file-download mr-2"></i>Reports
+                    <i class="fas fa-file-download mr-2"></i>{{ __('phase3_4.progress_reports') }}
                     <i class="fas fa-chevron-down ml-2 text-xs"></i>
                 </button>
                 <div class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <a href="{{ route('projects.progress.report', $project) }}?week_start={{ $currentWeekStart->format('Y-m-d') }}"
                        class="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                         <i class="fas fa-eye text-blue-600 w-5"></i>
-                        <span class="ml-3 text-gray-900 dark:text-white">View Report</span>
+                        <span class="ml-3 text-gray-900 dark:text-white">{{ __('phase3_4.view_report') }}</span>
                     </a>
                     <a href="{{ route('projects.progress.export.excel', $project) }}?week_start={{ $currentWeekStart->format('Y-m-d') }}"
                        class="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition border-t border-gray-100 dark:border-gray-700">
                         <i class="fas fa-file-excel text-green-600 w-5"></i>
-                        <span class="ml-3 text-gray-900 dark:text-white">Export Excel</span>
+                        <span class="ml-3 text-gray-900 dark:text-white">{{ __('phase3_4.export_excel') }}</span>
                     </a>
                     <a href="{{ route('projects.progress.export.pdf', $project) }}?week_start={{ $currentWeekStart->format('Y-m-d') }}"
                        target="_blank"
                        class="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition border-t border-gray-100 dark:border-gray-700 rounded-b-lg">
                         <i class="fas fa-file-pdf text-red-600 w-5"></i>
-                        <span class="ml-3 text-gray-900 dark:text-white">Export PDF</span>
+                        <span class="ml-3 text-gray-900 dark:text-white">{{ __('phase3_4.export_pdf') }}</span>
                     </a>
                 </div>
             </div>
 
             <a href="{{ route('projects.analytics.index', $project) }}"
                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">
-                <i class="fas fa-chart-line mr-2"></i>Analytics
+                <i class="fas fa-chart-line mr-2"></i>{{ __('messages.analytics') }}
             </a>
 
             <a href="{{ route('projects.wbs', $project) }}"
                class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
-                <i class="fas fa-arrow-left mr-2"></i>Back to WBS
+                <i class="fas fa-arrow-left mr-2"></i>{{ __('phase3_4.back_to_wbs') }}
             </a>
         </div>
     </div>
@@ -75,7 +75,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Bobot Planned</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('phase3_4.bobot_planned') }}</p>
                     <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1" id="plannedWeight">
                         {{ $summary['planned_weight'] }}%
                     </p>
@@ -90,7 +90,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Bobot Actual</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('phase3_4.bobot_actual') }}</p>
                     <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1" id="actualWeight">
                         {{ $summary['actual_weight'] }}%
                     </p>
@@ -105,7 +105,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Deviation</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('phase3_4.deviation') }}</p>
                     <p class="text-2xl font-bold mt-1" id="deviationWeight"
                        data-deviation="{{ $summary['deviation_weight'] }}">
                         {{ $summary['deviation_weight'] }}%
@@ -121,7 +121,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Completion Rate</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('phase3_4.completion_rate') }}</p>
                     <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1" id="completionRate">
                         {{ $summary['completion_rate'] }}%
                     </p>
@@ -135,23 +135,23 @@
 
     <!-- Status Distribution -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Task Status Distribution</h3>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('phase3_4.task_status_distribution') }}</h3>
         <div class="grid grid-cols-4 gap-4">
             <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                 <p class="text-3xl font-bold text-green-600" id="completedCount">{{ $summary['completed'] }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Completed</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('messages.completed') }}</p>
             </div>
             <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <p class="text-3xl font-bold text-blue-600" id="onTrackCount">{{ $summary['on_track'] }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">On Track</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('phase3_4.on_track') }}</p>
             </div>
             <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
                 <p class="text-3xl font-bold text-yellow-600" id="atRiskCount">{{ $summary['at_risk'] }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">At Risk</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('phase3_4.at_risk') }}</p>
             </div>
             <div class="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
                 <p class="text-3xl font-bold text-red-600" id="delayedCount">{{ $summary['delayed'] }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Delayed</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('phase3_4.delayed') }}</p>
             </div>
         </div>
     </div>
@@ -162,10 +162,10 @@
         <div class="flex items-center">
             <i class="fas fa-exclamation-circle text-red-500 text-xl mr-3"></i>
             <div>
-                <p class="font-semibold text-red-800 dark:text-red-400">Deviation Alert</p>
+                <p class="font-semibold text-red-800 dark:text-red-400">{{ __('phase3_4.deviation_alert') }}</p>
                 <p class="text-sm text-red-700 dark:text-red-300 mt-1">
-                    {{ $summary['delayed'] }} task(s) delayed, {{ $summary['at_risk'] }} task(s) at risk.
-                    <a href="#alerts" class="underline hover:text-red-900">View details</a>
+                    {{ $summary['delayed'] }} {{ __('phase3_4.tasks_delayed') }}, {{ $summary['at_risk'] }} {{ __('phase3_4.tasks_at_risk') }}.
+                    <a href="#alerts" class="underline hover:text-red-900">{{ __('phase3_4.view_details') }}</a>
                 </p>
             </div>
         </div>
@@ -175,20 +175,20 @@
     <!-- Task Progress Table -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div class="p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Task Progress Details</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('phase3_4.task_progress_details') }}</h3>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Task</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Assignee</th>
-                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Weight</th>
-                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Planned %</th>
-                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actual %</th>
-                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Progress</th>
-                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
-                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('messages.task') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('messages.assignee') }}</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('phase3_4.weight') }}</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('phase3_4.planned') }} %</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('phase3_4.actual') }} %</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('messages.progress') }}</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('messages.status') }}</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('messages.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="progressTableBody">
@@ -205,7 +205,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 <span class="text-gray-700 dark:text-gray-300">
-                                    {{ $task->assignee?->name ?? 'Unassigned' }}
+                                    {{ $task->assignee?->name ?? __('messages.unassigned') }}
                                 </span>
                             </td>
                             <td class="px-4 py-3 text-center">
@@ -242,25 +242,25 @@
                                         @elseif($progress->status === 'at-risk') bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400
                                         @elseif($progress->status === 'delayed') bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400
                                         @endif">
-                                        {{ ucfirst($progress->status) }}
+                                        {{ __('phase3_4.' . str_replace('-', '_', $progress->status)) }}
                                     </span>
                                 @else
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                                        Not Started
+                                        {{ __('phase3_4.not_started') }}
                                     </span>
                                 @endif
                             </td>
                             <td class="px-4 py-3 text-center">
                                 <button onclick="openProgressModal({{ $task->id }}, '{{ $task->wbs_code }}', '{{ $task->title }}')"
                                         class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                                    <i class="fas fa-edit"></i> Update
+                                    <i class="fas fa-edit"></i> {{ __('phase3_4.update_progress') }}
                                 </button>
                             </td>
                         </tr>
                         @empty
                         <tr>
                             <td colspan="8" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                No tasks found for this week
+                                {{ __('phase3_4.no_tasks_this_week') }}
                             </td>
                         </tr>
                         @endforelse
@@ -276,7 +276,7 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Weekly Plan</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('phase3_4.weekly_plan') }}</h3>
                 <button onclick="closeWeeklyPlanModal()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
                     <i class="fas fa-times text-xl"></i>
                 </button>
@@ -285,17 +285,17 @@
 
         <form id="weeklyPlanForm" class="p-6 space-y-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Objectives</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('phase3_4.objectives') }}</label>
                 <textarea name="objectives" rows="3"
                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          placeholder="Main objectives for this week...">{{ $weeklyPlan->objectives ?? '' }}</textarea>
+                          placeholder="{{ __('phase3_4.main_objectives_week') }}">{{ $weeklyPlan->objectives ?? '' }}</textarea>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Key Activities</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('phase3_4.key_activities') }}</label>
                 <textarea name="key_activities" rows="4"
                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          placeholder="Key activities planned...">{{ $weeklyPlan->key_activities ?? '' }}</textarea>
+                          placeholder="{{ __('phase3_4.key_activities_planned') }}">{{ $weeklyPlan->key_activities ?? '' }}</textarea>
             </div>
 
             <div>

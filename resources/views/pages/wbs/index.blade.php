@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'WBS - ' . $project->title)
-@section('page-title', 'Work Breakdown Structure')
+@section('title', __('phase3_4.wbs') . ' - ' . $project->title)
+@section('page-title', __('phase3_4.work_breakdown_structure'))
 
 @section('content')
 <div class="space-y-6">
@@ -9,52 +9,52 @@
     <div class="flex justify-between items-center">
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                Work Breakdown Structure - {{ $project->title }}
+                {{ __('phase3_4.work_breakdown_structure') }} - {{ $project->title }}
             </h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Hierarchical task breakdown and planning</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('phase3_4.hierarchical_task_breakdown') }}</p>
         </div>
         <div class="flex gap-2">
             <button type="button"
                     onclick="openSaveTemplateModal()"
                     class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition z-10 relative cursor-pointer">
-                <i class="fas fa-save mr-2"></i>Save as Template
+                <i class="fas fa-save mr-2"></i>{{ __('phase3_4.save_template') }}
             </button>
             <button type="button"
                     onclick="openLoadTemplateModal()"
                     class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition z-10 relative cursor-pointer">
-                <i class="fas fa-download mr-2"></i>Load Template
+                <i class="fas fa-download mr-2"></i>{{ __('phase3_4.load_template') }}
             </button>
             <a href="{{ route('projects.wbs.gantt', $project) }}"
                class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition z-10 relative">
-                <i class="fas fa-chart-gantt mr-2"></i>Gantt View
+                <i class="fas fa-chart-gantt mr-2"></i>{{ __('phase3_4.gantt_view') }}
             </a>
             <button type="button"
                     onclick="openWeightManagerModal()"
                     class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition z-10 relative cursor-pointer">
-                <i class="fas fa-weight-hanging mr-2"></i>Weight Manager
+                <i class="fas fa-weight-hanging mr-2"></i>{{ __('phase3_4.weight_manager') }}
             </button>
             <button type="button"
                     onclick="openCalendarSettingsModal()"
                     class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition z-10 relative cursor-pointer">
-                <i class="fas fa-calendar-alt mr-2"></i>Calendar Settings
+                <i class="fas fa-calendar-alt mr-2"></i>{{ __('phase3_4.calendar_settings') }}
             </button>
             <a href="{{ route('projects.wbs.critical-path', $project) }}"
                class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition z-10 relative">
-                <i class="fas fa-route mr-2"></i>Critical Path
+                <i class="fas fa-route mr-2"></i>{{ __('phase3_4.critical_path') }}
             </a>
             <a href="{{ route('projects.progress.index', $project) }}"
                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition z-10 relative">
-                <i class="fas fa-chart-bar mr-2"></i>Progress Tracking
+                <i class="fas fa-chart-bar mr-2"></i>{{ __('phase3_4.progress_tracking') }}
             </a>
             <a href="{{ route('projects.show', $project) }}"
                class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition z-10 relative">
-                <i class="fas fa-arrow-left mr-2"></i>Back to Project
+                <i class="fas fa-arrow-left mr-2"></i>{{ __('messages.back_to_project') }}
             </a>
             @if(Gate::allows('admin') || Gate::allows('team_lead'))
             <button type="button"
                     onclick="openAddRootTaskModal()"
                     class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition z-10 relative cursor-pointer">
-                <i class="fas fa-plus mr-2"></i>Add Root Task
+                <i class="fas fa-plus mr-2"></i>{{ __('phase3_4.add_root_task') }}
             </button>
             @endif
         </div>
@@ -66,17 +66,17 @@
             <!-- Header -->
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Task Hierarchy</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('messages.task_hierarchy') }}</h3>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        Drag and drop tasks to reorganize • Click to view details
+                        {{ __('phase3_4.drag_drop_reorganize') }}
                     </p>
                 </div>
                 <div class="flex gap-2">
                     <button onclick="expandAll()" class="text-sm px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600">
-                        <i class="fas fa-expand-alt mr-1"></i>Expand All
+                        <i class="fas fa-expand-alt mr-1"></i>{{ __('messages.expand_all') }}
                     </button>
                     <button onclick="collapseAll()" class="text-sm px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600">
-                        <i class="fas fa-compress-alt mr-1"></i>Collapse All
+                        <i class="fas fa-compress-alt mr-1"></i>{{ __('messages.collapse_all') }}
                     </button>
                 </div>
             </div>
@@ -86,25 +86,25 @@
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            <span id="selectedCount">0</span> task(s) selected
+                            <span id="selectedCount">0</span> {{ __('phase3_4.tasks_selected') }}
                         </span>
                         <label class="flex items-center gap-2">
                             <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" class="w-4 h-4 text-primary-600 rounded">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Select All</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">{{ __('phase3_4.select_all') }}</span>
                         </label>
                     </div>
                     <div class="flex gap-2">
                         <button onclick="bulkChangeStatus()" class="text-sm px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded transition">
-                            <i class="fas fa-tasks mr-1"></i>Change Status
+                            <i class="fas fa-tasks mr-1"></i>{{ __('phase3_4.change_status') }}
                         </button>
                         <button onclick="bulkAssign()" class="text-sm px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded transition">
-                            <i class="fas fa-user-plus mr-1"></i>Assign To
+                            <i class="fas fa-user-plus mr-1"></i>{{ __('phase3_4.assign_to') }}
                         </button>
                         <button onclick="bulkDelete()" class="text-sm px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded transition">
-                            <i class="fas fa-trash mr-1"></i>Delete
+                            <i class="fas fa-trash mr-1"></i>{{ __('messages.delete') }}
                         </button>
                         <button onclick="clearSelection()" class="text-sm px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white rounded transition">
-                            <i class="fas fa-times mr-1"></i>Clear
+                            <i class="fas fa-times mr-1"></i>{{ __('phase3_4.clear') }}
                         </button>
                     </div>
                 </div>
@@ -117,8 +117,8 @@
                 @empty
                     <div class="text-center py-12">
                         <i class="fas fa-sitemap text-5xl text-gray-400 dark:text-gray-600 mb-4"></i>
-                        <p class="text-gray-600 dark:text-gray-400">No tasks yet</p>
-                        <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">Create your first task to start building the WBS</p>
+                        <p class="text-gray-600 dark:text-gray-400">{{ __('messages.no_tasks_yet') }}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">{{ __('messages.create_first_task_wbs') }}</p>
                     </div>
                 @endforelse
             </div>
@@ -134,7 +134,7 @@
             <!-- Modal Header -->
             <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                    <span id="modalTitle">Add New Task</span>
+                    <span id="modalTitle">{{ __('phase3_4.add_new_task') }}</span>
                 </h3>
                 <button onclick="closeAddTaskModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                     <i class="fas fa-times text-xl"></i>
@@ -146,33 +146,33 @@
                 <!-- Task Title -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Task Title <span class="text-red-500">*</span>
+                        {{ __('messages.task_title') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="text"
                            id="taskTitle"
                            name="title"
                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                           placeholder="Enter task title"
+                           placeholder="{{ __('messages.enter_task_title') }}"
                            required>
                     </div>
 
                 <!-- Description -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Description
+                        {{ __('messages.description') }}
                     </label>
                     <textarea id="taskDescription"
                               name="description"
                               rows="3"
                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                              placeholder="Task description (optional)"></textarea>
+                              placeholder="{{ __('messages.task_description_optional') }}"></textarea>
                 </div>
 
                 <!-- Parent Task (if adding subtask) -->
                 <input type="hidden" id="taskParentId" name="parent_id">
                 <div id="parentTaskInfo" style="display: none;">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Parent Task
+                        {{ __('messages.parent_task') }}
                     </label>
                     <input type="text"
                            id="parentTaskTitle"
@@ -184,12 +184,12 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Assign To
+                            {{ __('messages.assign_to') }}
                         </label>
                         <select id="taskAssignedTo"
                                 name="assigned_to"
                                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                            <option value="">-- Unassigned --</option>
+                            <option value="">-- {{ __('messages.unassigned') }} --</option>
                             @foreach($members as $member)
                                 <option value="{{ $member->id }}">{{ $member->name }}</option>
                             @endforeach
@@ -198,16 +198,16 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Priority <span class="text-red-500">*</span>
+                            {{ __('messages.priority') }} <span class="text-red-500">*</span>
                         </label>
                         <select id="taskPriority"
                                 name="priority"
                                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                                 required>
-                            <option value="low">Low</option>
-                            <option value="medium" selected>Medium</option>
-                            <option value="high">High</option>
-                            <option value="critical">Critical</option>
+                            <option value="low">{{ __('messages.low') }}</option>
+                            <option value="medium" selected>{{ __('messages.medium') }}</option>
+                            <option value="high">{{ __('messages.high') }}</option>
+                            <option value="critical">{{ __('phase3_4.critical') }}</option>
                         </select>
                     </div>
                 </div>
@@ -216,7 +216,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Due Date
+                            {{ __('messages.due_date') }}
                         </label>
                         <input type="date"
                                id="taskDueDate"
@@ -226,7 +226,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Estimated Duration (days)
+                            {{ __('phase3_4.estimated_duration') }} ({{ __('phase3_4.days') }})
                         </label>
                         <input type="number"
                                id="taskEstimatedDuration"
@@ -242,11 +242,11 @@
                     <button type="button"
                             onclick="closeAddTaskModal()"
                             class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
-                        Cancel
+                        {{ __('messages.cancel') }}
                     </button>
                     <button type="submit"
                             class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg">
-                        <span id="submitButtonText">Create Task</span>
+                        <span id="submitButtonText">{{ __('messages.create_task') }}</span>
                     </button>
                 </div>
             </form>
@@ -259,23 +259,23 @@
          onclick="if(event.target === this) closeSaveTemplateModal()">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Save as Template</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('phase3_4.save_as_template') }}</h3>
                 <button onclick="closeSaveTemplateModal()" class="text-gray-500 hover:text-gray-700">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <form id="saveTemplateForm" onsubmit="saveTemplate(event)">
                 <div class="mb-4">
-                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Template Name</label>
+                    <label class="block text-gray-700 dark:text-gray-300 mb-2">{{ __('phase3_4.template_name') }}</label>
                     <input type="text" name="name" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Description (Optional)</label>
+                    <label class="block text-gray-700 dark:text-gray-300 mb-2">{{ __('messages.description') }} ({{ __('messages.optional') }})</label>
                     <textarea name="description" rows="3" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
                 </div>
                 <div class="flex justify-end gap-2">
-                    <button type="button" onclick="closeSaveTemplateModal()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">Save Template</button>
+                    <button type="button" onclick="closeSaveTemplateModal()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">{{ __('messages.cancel') }}</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">{{ __('phase3_4.save_template') }}</button>
                 </div>
             </form>
         </div>
@@ -287,7 +287,7 @@
          onclick="if(event.target === this) closeLoadTemplateModal()">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full p-6">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Load Template</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('phase3_4.load_template') }}</h3>
                 <button onclick="closeLoadTemplateModal()" class="text-gray-500 hover:text-gray-700">
                     <i class="fas fa-times"></i>
                 </button>
@@ -311,7 +311,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
             <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">
-                    <i class="fas fa-weight-hanging mr-2"></i>Weight Distribution Manager
+                    <i class="fas fa-weight-hanging mr-2"></i>{{ __('phase3_4.weight_distribution') }} Manager
                 </h3>
                 <button onclick="closeWeightManagerModal()" class="text-gray-500 hover:text-gray-700">
                     <i class="fas fa-times"></i>
@@ -403,7 +403,7 @@
             <!-- Modal Header -->
             <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">
-                    <i class="fas fa-calendar-alt mr-2"></i>Calendar & Working Days Settings
+                    <i class="fas fa-calendar-alt mr-2"></i>{{ __('phase3_4.calendar_settings') }} & {{ __('phase3_4.working_days') }} Settings
                 </h3>
                 <button onclick="closeCalendarSettingsModal()" class="text-gray-500 hover:text-gray-700">
                     <i class="fas fa-times"></i>

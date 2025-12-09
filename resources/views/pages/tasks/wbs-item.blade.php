@@ -51,7 +51,7 @@
                     </span>
                 </div>
             @else
-                <span class="text-xs text-gray-400 dark:text-gray-500">Unassigned</span>
+                <span class="text-xs text-gray-400 dark:text-gray-500">{{ __('messages.unassigned') }}</span>
             @endif
         </div>
 
@@ -98,13 +98,13 @@
         <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
             <a href="{{ route('tasks.show', $task) }}"
                class="p-1.5 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
-               title="View Details">
+               :title="__('messages.view_details')">
                 <i class="fas fa-eye text-xs"></i>
             </a>
             @if(Gate::allows('admin') || Gate::allows('team_lead'))
             <a href="{{ route('tasks.edit', $task) }}"
                class="p-1.5 text-gray-500 hover:text-yellow-600 dark:text-gray-400 dark:hover:text-yellow-400"
-               title="Edit Task">
+               :title="__('messages.edit_task')">
                 <i class="fas fa-edit text-xs"></i>
             </a>
             @endif

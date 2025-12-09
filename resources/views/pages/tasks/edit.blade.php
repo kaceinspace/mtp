@@ -1,14 +1,14 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Edit Task')
-@section('page-title', 'Edit Task')
+@section('title', __('messages.edit_task'))
+@section('page-title', __('messages.edit_task'))
 
 @section('content')
 <div class="max-w-4xl mx-auto">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Task</h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Update task details</p>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('messages.edit_task') }}</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('messages.update_task_details') }}</p>
         </div>
 
         <form action="{{ route('tasks.update', $task) }}" method="POST" class="space-y-6">
@@ -86,7 +86,7 @@
                 <!-- Task Title -->
                 <div>
                     <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Task Title <span class="text-red-500">*</span>
+                        {{ __('messages.task_title') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="text" id="title" name="title" value="{{ old('title', $task->title) }}" required
                         class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent @error('title') border-red-500 @enderror">
@@ -110,7 +110,7 @@
                 <!-- Assign To -->
                 <div>
                     <label for="assigned_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Assign To
+                        {{ __('messages.assign_to') }}
                     </label>
                     <select id="assigned_to" name="assigned_to"
                         class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent @error('assigned_to') border-red-500 @enderror">
@@ -179,20 +179,20 @@
             <div class="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
                 <div>
                     @if(Gate::allows('admin'))
-                        <button type="button" onclick="if(confirm('Are you sure you want to delete this task?')) document.getElementById('delete-form').submit();"
+                        <button type="button" onclick="if(confirm('{{ __('messages.confirm_delete_task') }}')) document.getElementById('delete-form').submit();"
                             class="px-4 py-2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-medium rounded-lg transition">
-                            Delete Task
+                            {{ __('messages.delete_task') }}
                         </button>
                     @endif
                 </div>
                 <div class="flex items-center space-x-3">
                     <a href="{{ route('tasks.index') }}"
                         class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium transition">
-                        Cancel
+                        {{ __('messages.cancel') }}
                     </a>
                     <button type="submit"
                         class="px-6 py-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white font-medium rounded-lg transition">
-                        Update Task
+                        {{ __('messages.update_task') }}
                     </button>
                 </div>
             </div>

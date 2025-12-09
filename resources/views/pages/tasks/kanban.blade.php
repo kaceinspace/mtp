@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Kanban Board')
-@section('page-title', 'Task Kanban Board')
+@section('title', __('messages.kanban_board'))
+@section('page-title', __('messages.task_kanban_board'))
 
 @section('content')
 <div class="space-y-6" x-data="kanbanBoard()">
@@ -10,13 +10,13 @@
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                 @if(Gate::allows('admin') || Gate::allows('team_lead'))
-                    All Tasks - Kanban View
+                    {{ __('messages.all_tasks') }} - {{ __('messages.kanban_view') }}
                 @else
-                    My Tasks - Kanban View
+                    {{ __('messages.my_tasks') }} - {{ __('messages.kanban_view') }}
                 @endif
             </h2>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Drag and drop tasks to update their status
+                {{ __('messages.drag_drop_tasks') }}
             </p>
         </div>
 
@@ -27,19 +27,19 @@
                     <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
                     </svg>
-                    List
+                    {{ __('messages.list') }}
                 </a>
                 <button class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md">
                     <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                     </svg>
-                    Kanban
+                    {{ __('messages.kanban') }}
                 </button>
                 <a href="{{ route('tasks.wbs') }}" class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-md transition">
                     <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
                     </svg>
-                    WBS
+                    {{ __('phase3_4.wbs') }}
                 </a>
             </div>
 
@@ -48,7 +48,7 @@
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                 </svg>
-                Create New Task
+                {{ __('messages.create_new_task') }}
             </a>
             @endif
         </div>
@@ -59,9 +59,9 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Filter by Project -->
             <div>
-                <label class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 block">Filter by Project</label>
+                <label class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 block">{{ __('messages.filter_by_project') }}</label>
                 <select x-model="filterProject" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent">
-                    <option value="all">All Projects</option>
+                    <option value="all">{{ __('messages.all_projects') }}</option>
                     @foreach($projects as $project)
                     <option value="{{ $project->id }}">{{ $project->title }}</option>
                     @endforeach
@@ -70,13 +70,13 @@
 
             <!-- Filter by Priority -->
             <div>
-                <label class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 block">Filter by Priority</label>
+                <label class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 block">{{ __('messages.filter_by_priority') }}</label>
                 <select x-model="filterPriority" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent">
-                    <option value="all">All Priorities</option>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="critical">Critical</option>
+                    <option value="all">{{ __('messages.all_priorities') }}</option>
+                    <option value="low">{{ __('messages.low') }}</option>
+                    <option value="medium">{{ __('messages.medium') }}</option>
+                    <option value="high">{{ __('messages.high') }}</option>
+                    <option value="critical">{{ __('messages.critical') }}</option>
                 </select>
             </div>
 

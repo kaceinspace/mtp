@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'WBS View - Tasks')
-@section('page-title', 'Work Breakdown Structure')
+@section('title', __('messages.wbs_view') . ' - ' . __('messages.tasks'))
+@section('page-title', __('messages.work_breakdown_structure'))
 
 @section('content')
 <div class="space-y-6" x-data="wbsManager()">
@@ -9,9 +9,9 @@
     <div class="flex justify-between items-center">
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                Work Breakdown Structure
+                {{ __('messages.work_breakdown_structure') }}
             </h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Hierarchical task breakdown and planning</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('messages.hierarchical_task_breakdown') }}</p>
         </div>
         <div class="flex items-center gap-3">
             <!-- View Toggle -->
@@ -20,19 +20,19 @@
                     <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
                     </svg>
-                    List
+                    {{ __('messages.list') }}
                 </a>
                 <a href="{{ route('tasks.kanban') }}" class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-md transition">
                     <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                     </svg>
-                    Kanban
+                    {{ __('messages.kanban') }}
                 </a>
                 <button class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md">
                     <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
                     </svg>
-                    WBS
+                    {{ __('messages.wbs') }}
                 </button>
             </div>
             @if(Gate::allows('admin') || Gate::allows('team_lead'))
@@ -40,7 +40,7 @@
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
-                Create New Task
+                {{ __('messages.create_new_task') }}
             </a>
             @endif
         </div>
@@ -52,17 +52,17 @@
             <!-- Header Controls -->
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Task Hierarchy</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('messages.task_hierarchy') }}</h3>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        Click to expand/collapse • Hover for actions
+                        {{ __('messages.click_to_expand_collapse') }}
                     </p>
                 </div>
                 <div class="flex gap-2">
                     <button @click="expandAll()" class="text-sm px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition">
-                        <i class="fas fa-expand-alt mr-1"></i>Expand All
+                        <i class="fas fa-expand-alt mr-1"></i>{{ __('messages.expand_all') }}
                     </button>
                     <button @click="collapseAll()" class="text-sm px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition">
-                        <i class="fas fa-compress-alt mr-1"></i>Collapse All
+                        <i class="fas fa-compress-alt mr-1"></i>{{ __('messages.collapse_all') }}
                     </button>
                 </div>
             </div>
@@ -74,8 +74,8 @@
                 @empty
                     <div class="text-center py-12">
                         <i class="fas fa-sitemap text-5xl text-gray-400 dark:text-gray-600 mb-4"></i>
-                        <p class="text-gray-600 dark:text-gray-400">No tasks yet</p>
-                        <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">Create your first task to start building the WBS</p>
+                        <p class="text-gray-600 dark:text-gray-400">{{ __('messages.no_tasks_yet') }}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">{{ __('messages.create_first_task_wbs') }}</p>
                     </div>
                 @endforelse
             </div>

@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', $project->title)
-@section('page-title', 'Project Details')
+@section('page-title', __('messages.project_details'))
 
 @section('content')
 <div class="space-y-6">
@@ -20,20 +20,20 @@
                         {{ ucfirst(str_replace('-', ' ', $project->status)) }}
                     </span>
                 </div>
-                <p class="text-primary-100 dark:text-primary-200 text-lg">{{ $project->description ?? 'No description provided' }}</p>
+                <p class="text-primary-100 dark:text-primary-200 text-lg">{{ $project->description ?? __('messages.no_description_provided') }}</p>
                 <div class="flex items-center space-x-6 mt-4 text-sm text-primary-100 dark:text-primary-200">
                     <div class="flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
-                        Created by {{ $project->creator->name }}
+                        {{ __('messages.created_by') }} {{ $project->creator->name }}
                     </div>
                     <div class="flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        {{ $project->start_date ? $project->start_date->format('M d, Y') : 'No start date' }} -
-                        {{ $project->end_date ? $project->end_date->format('M d, Y') : 'No end date' }}
+                        {{ $project->start_date ? $project->start_date->format('M d, Y') : __('messages.no_start_date') }} -
+                        {{ $project->end_date ? $project->end_date->format('M d, Y') : __('messages.no_end_date') }}
                     </div>
                 </div>
             </div>
@@ -92,7 +92,7 @@
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Total Tasks</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('messages.total_tasks') }}</p>
                             <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ $project->tasks->count() }}</p>
                         </div>
                         <div class="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-lg">
@@ -106,7 +106,7 @@
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Completed</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('phase3_4.completed') }}</p>
                             <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ $project->tasks->where('status', 'completed')->count() }}</p>
                         </div>
                         <div class="bg-green-100 dark:bg-green-900/30 p-3 rounded-lg">
@@ -120,7 +120,7 @@
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Team Size</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('messages.team_size') }}</p>
                             <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ $project->members->count() }}</p>
                         </div>
                         <div class="bg-accent-100 dark:bg-accent-900/30 p-3 rounded-lg">
@@ -135,13 +135,13 @@
             <!-- Tasks List -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Tasks</h2>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('messages.tasks') }}</h2>
                     @if(Gate::allows('admin') || Gate::allows('team_lead'))
                     <a href="{{ route('tasks.create', ['project_id' => $project->id]) }}" class="inline-flex items-center px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition">
                         <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
-                        Add Task
+                        {{ __('messages.add_task') }}
                     </a>
                     @endif
                 </div>

@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Teams')
-@section('page-title', 'Teams Management')
+@section('title', __('messages.teams'))
+@section('page-title', __('messages.team_management'))
 
 @section('content')
 <div class="space-y-6" x-data="{ activeStatus: 'all' }">
@@ -10,19 +10,19 @@
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                 @if(Gate::allows('admin'))
-                    All Teams
+                    {{ __('messages.all_teams') }}
                 @else
-                    My Teams
+                    {{ __('messages.my_teams') }}
                 @endif
             </h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Manage and collaborate with your teams</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('messages.manage_collaborate_teams') }}</p>
         </div>
         @if(Gate::allows('admin') || Gate::allows('team_lead'))
         <a href="{{ route('teams.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white font-medium rounded-lg transition">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            Create New Team
+            {{ __('messages.create_new_team') }}
         </a>
         @endif
     </div>
@@ -33,17 +33,17 @@
             <button @click="activeStatus = 'all'"
                     :class="activeStatus === 'all' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
                     class="px-4 py-2 rounded-lg font-medium transition">
-                All Teams
+                {{ __('messages.all_teams') }}
             </button>
             <button @click="activeStatus = 'active'"
                     :class="activeStatus === 'active' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
                     class="px-4 py-2 rounded-lg font-medium transition">
-                Active
+                {{ __('messages.active') }}
             </button>
             <button @click="activeStatus = 'inactive'"
                     :class="activeStatus === 'inactive' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
                     class="px-4 py-2 rounded-lg font-medium transition">
-                Inactive
+                {{ __('messages.inactive') }}
             </button>
         </div>
     </div>
@@ -76,7 +76,7 @@
                     <!-- Status Badge -->
                     <span class="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                         {{ $team->status === 'active' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300' }}">
-                        {{ ucfirst($team->status) }}
+                        {{ __('messages.' . $team->status) }}
                     </span>
                 </div>
 
@@ -103,7 +103,7 @@
                         </div>
                     </div>
                     <div class="ml-3">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Team Lead</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('messages.team_lead') }}</p>
                         <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $team->teamLead->name }}</p>
                     </div>
                 </div>
@@ -115,7 +115,7 @@
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                         </svg>
-                        {{ $team->members->count() }} members
+                        {{ $team->members->count() }} {{ __('messages.members') }}
                     </div>
 
                     <!-- Member Avatars -->
@@ -145,12 +145,12 @@
             <div class="px-6 py-3 bg-gray-50 dark:bg-gray-900/50 flex items-center justify-between">
                 <a href="{{ route('teams.show', $team) }}"
                    class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300 font-medium">
-                    View Details →
+                    {{ __('messages.view_details') }} →
                 </a>
                 @if(Gate::allows('admin') || (Gate::allows('team_lead') && $team->team_lead_id === auth()->id()))
                 <a href="{{ route('teams.edit', $team) }}"
                    class="text-sm text-accent-600 dark:text-accent-400 hover:text-accent-900 dark:hover:text-accent-300 font-medium">
-                    Edit
+                    {{ __('messages.edit') }}
                 </a>
                 @endif
             </div>
@@ -162,8 +162,8 @@
                     <svg class="w-16 h-16 text-gray-400 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
-                    <p class="text-gray-500 dark:text-gray-400 text-lg font-medium">No teams found</p>
-                    <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Get started by creating a new team</p>
+                    <p class="text-gray-500 dark:text-gray-400 text-lg font-medium">{{ __('messages.no_teams_found') }}</p>
+                    <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">{{ __('messages.get_started_team') }}</p>
                 </div>
             </div>
         </div>

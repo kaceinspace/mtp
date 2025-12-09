@@ -1,15 +1,15 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Project Files - ' . $project->title)
+@section('title', __('messages.project_files') . ' - ' . $project->title)
 
 @section('header')
     <div class="flex items-center justify-between">
         <div>
-            <h2 class="text-2xl font-bold text-gray-800">📁 Project Files</h2>
+            <h2 class="text-2xl font-bold text-gray-800">📁 {{ __('messages.project_files') }}</h2>
             <p class="text-gray-600 mt-1">{{ $project->title }}</p>
         </div>
         <a href="{{ route('projects.show', $project) }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
-            ← Back to Project
+            ← {{ __('messages.back_to_project') }}
         </a>
     </div>
 @endsection
@@ -21,7 +21,7 @@
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Total Files</p>
+                    <p class="text-gray-500 text-sm font-medium">{{ __('messages.total_files') }}</p>
                     <h3 class="text-3xl font-bold text-gray-900 mt-2">{{ $files->total() }}</h3>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -48,23 +48,23 @@
     <!-- Upload Section -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold text-gray-900">Upload Files</h3>
+            <h3 class="text-xl font-bold text-gray-900">{{ __('messages.upload_files') }}</h3>
         </div>
 
         <form @submit.prevent="uploadFiles" enctype="multipart/form-data">
             @csrf
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Select Files</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('messages.select_files') }}</label>
                 <input type="file"
                        name="files[]"
                        multiple
                        @change="handleFileSelect($event)"
                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                <p class="text-xs text-gray-500 mt-1">Maximum file size: 50MB per file</p>
+                <p class="text-xs text-gray-500 mt-1">{{ __('messages.maximum_file_size') }}</p>
             </div>
 
             <div class="mb-4" x-show="selectedFiles.length > 0">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Selected Files</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('messages.selected_files') }}</label>
                 <div class="bg-gray-50 rounded-lg p-3">
                     <template x-for="(file, index) in selectedFiles" :key="index">
                         <div class="flex items-center justify-between py-2 border-b border-gray-200 last:border-0">
@@ -76,15 +76,15 @@
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('messages.description_optional') }}</label>
                 <textarea x-model="description" name="description" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
             </div>
 
             <button type="submit"
                     :disabled="uploading || selectedFiles.length === 0"
                     class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                <span x-show="!uploading">📤 Upload Files</span>
-                <span x-show="uploading">Uploading...</span>
+                <span x-show="!uploading">📤 {{ __('messages.upload_files') }}</span>
+                <span x-show="uploading">{{ __('messages.uploading') }}</span>
             </button>
         </form>
     </div>
@@ -93,10 +93,10 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-100">
         <div class="p-6 border-b border-gray-100">
             <div class="flex items-center justify-between">
-                <h3 class="text-xl font-bold text-gray-900">All Files</h3>
+                <h3 class="text-xl font-bold text-gray-900">{{ __('messages.all_files') }}</h3>
                 <div class="flex space-x-2">
                     <select x-model="filterType" @change="filterFiles" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Types</option>
+                        <option value="">{{ __('messages.all_types') }}</option>
                         @foreach($filesByType as $type)
                             <option value="{{ $type->file_type }}">{{ strtoupper($type->file_type) }}</option>
                         @endforeach
@@ -120,7 +120,7 @@
                                     <span>📤 {{ $file->user->name }}</span>
                                     <span>📏 {{ $file->formatted_size }}</span>
                                     <span>📅 {{ $file->created_at->format('M d, Y H:i') }}</span>
-                                    <span>⬇️ {{ $file->download_count }} downloads</span>
+                                    <span>⬇️ {{ $file->download_count }} {{ __('messages.downloads') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -156,8 +156,8 @@
                     <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                     </svg>
-                    <p class="text-gray-500 font-medium">No files uploaded yet</p>
-                    <p class="text-sm text-gray-400 mt-1">Upload your first file to get started</p>
+                    <p class="text-gray-500 font-medium">{{ __('messages.no_files_uploaded') }}</p>
+                    <p class="text-sm text-gray-400 mt-1">{{ __('messages.upload_first_file') }}</p>
                 </div>
             @endforelse
         </div>

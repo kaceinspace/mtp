@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Admin Dashboard')
-@section('page-title', 'Admin Dashboard')
+@section('title', __('messages.admin') . ' ' . __('messages.dashboard'))
+@section('page-title', __('messages.admin') . ' ' . __('messages.dashboard'))
 
 @section('content')
 <div class="space-y-6">
@@ -9,8 +9,8 @@
     <div class="bg-gradient-to-r from-primary-600 to-primary-800 dark:from-primary-800 dark:to-primary-950 rounded-lg shadow-lg p-6 text-white">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-2xl font-bold mb-2">Welcome, {{ auth()->user()->name }}! 👋</h2>
-                <p class="text-primary-100 dark:text-primary-200">Manage and monitor all projects and team activities</p>
+                <h2 class="text-2xl font-bold mb-2">{{ __('messages.welcome') }}, {{ auth()->user()->name }}! 👋</h2>
+                <p class="text-primary-100 dark:text-primary-200">{{ __('messages.manage_monitor_activities') }}</p>
             </div>
             <div class="hidden md:block">
                 <svg class="w-24 h-24 text-white opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -26,10 +26,10 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Users</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('messages.total_users') }}</p>
                     <p class="text-3xl font-bold text-gray-900 dark:text-white mt-2">{{ $stats['total_users'] ?? 0 }}</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                        <span class="text-green-600 dark:text-green-400">{{ $stats['active_users'] ?? 0 }} Active</span>
+                        <span class="text-green-600 dark:text-green-400">{{ $stats['active_users'] ?? 0 }} {{ __('messages.active') }}</span>
                     </p>
                 </div>
                 <div class="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-lg">
@@ -44,10 +44,10 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Projects</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('messages.total_projects') }}</p>
                     <p class="text-3xl font-bold text-gray-900 dark:text-white mt-2">{{ $stats['total_projects'] ?? 0 }}</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                        <span class="text-accent-600 dark:text-accent-400">{{ $stats['ongoing_projects'] ?? 0 }} Ongoing</span>
+                        <span class="text-accent-600 dark:text-accent-400">{{ $stats['ongoing_projects'] ?? 0 }} {{ __('messages.ongoing') }}</span>
                     </p>
                 </div>
                 <div class="bg-green-100 dark:bg-green-900/30 p-3 rounded-lg">
@@ -62,10 +62,10 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Tasks</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('messages.total_tasks') }}</p>
                     <p class="text-3xl font-bold text-gray-900 dark:text-white mt-2">{{ $stats['total_tasks'] ?? 0 }}</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                        <span class="text-orange-600 dark:text-orange-400">{{ $stats['pending_tasks'] ?? 0 }} Pending</span>
+                        <span class="text-blue-600 dark:text-blue-400">{{ $stats['completed_tasks'] ?? 0 }} {{ __('messages.completed') }}</span>
                     </p>
                 </div>
                 <div class="bg-accent-100 dark:bg-accent-900/30 p-3 rounded-lg">
@@ -80,10 +80,10 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Completion Rate</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('messages.completion_rate') }}</p>
                     <p class="text-3xl font-bold text-gray-900 dark:text-white mt-2">{{ $stats['completion_rate'] ?? 0 }}%</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                        <span class="text-green-600 dark:text-green-400">{{ $stats['completed_projects'] ?? 0 }} Completed</span>
+                        <span class="text-green-600 dark:text-green-400">{{ $stats['completed_projects'] ?? 0 }} {{ __('messages.completed') }}</span>
                     </p>
                 </div>
                 <div class="bg-green-100 dark:bg-green-900/30 p-3 rounded-lg">
@@ -104,20 +104,20 @@
             <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                     <i class="fas fa-heartbeat text-red-500 mr-2"></i>
-                    Project Health Indicators
+                    {{ __('messages.project_health_indicators') }}
                 </h3>
                 <div class="flex gap-4 text-sm">
                     <div class="flex items-center">
                         <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                        <span class="text-gray-600 dark:text-gray-400">{{ $projectHealthData['healthy'] }} Healthy</span>
+                        <span class="text-gray-600 dark:text-gray-400">{{ $projectHealthData['healthy'] }} {{ __('messages.healthy') }}</span>
                     </div>
                     <div class="flex items-center">
                         <span class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
-                        <span class="text-gray-600 dark:text-gray-400">{{ $projectHealthData['at_risk'] }} At Risk</span>
+                        <span class="text-gray-600 dark:text-gray-400">{{ $projectHealthData['at_risk'] }} {{ __('messages.at_risk') }}</span>
                     </div>
                     <div class="flex items-center">
                         <span class="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
-                        <span class="text-gray-600 dark:text-gray-400">{{ $projectHealthData['critical'] }} Critical</span>
+                        <span class="text-gray-600 dark:text-gray-400">{{ $projectHealthData['critical'] }} {{ __('messages.critical') }}</span>
                     </div>
                 </div>
             </div>
@@ -126,21 +126,21 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border-2 border-green-500">
                     <div class="text-3xl font-bold text-green-600 dark:text-green-400">{{ $projectHealthData['healthy'] }}</div>
-                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Healthy Projects</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('messages.healthy_projects') }}</div>
                 </div>
                 <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border-2 border-yellow-500">
                     <div class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{{ $projectHealthData['at_risk'] }}</div>
-                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">At Risk Projects</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('messages.at_risk_projects') }}</div>
                 </div>
                 <div class="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border-2 border-red-500">
                     <div class="text-3xl font-bold text-red-600 dark:text-red-400">{{ $projectHealthData['critical'] }}</div>
-                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Critical Projects</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('messages.critical_projects') }}</div>
                 </div>
             </div>
 
             @if(count($projectHealthData['projects']) > 0)
             <div class="space-y-3">
-                <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Projects Needing Attention</h4>
+                <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{{ __('messages.projects_needing_attention') }}</h4>
                 @foreach($projectHealthData['projects'] as $item)
                 <div class="flex items-center justify-between p-3 rounded-lg border
                     @if($item['health']['status'] === 'critical') border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/10
@@ -175,7 +175,7 @@
                             @endif">
                             {{ $item['health']['score'] }}
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">Health Score</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ __('messages.health_score') }}</div>
                     </div>
                 </div>
                 @endforeach
@@ -192,18 +192,18 @@
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                     <i class="fas fa-chart-line text-blue-500 mr-2"></i>
-                    Progress Trends
+                    {{ __('messages.progress_trends') }}
                     @if($progressTrends['trend'] === 'improving')
                         <span class="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
-                            <i class="fas fa-arrow-up mr-1"></i> Improving
+                            <i class="fas fa-arrow-up mr-1"></i> {{ __('messages.improving') }}
                         </span>
                     @elseif($progressTrends['trend'] === 'declining')
                         <span class="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
-                            <i class="fas fa-arrow-down mr-1"></i> Declining
+                            <i class="fas fa-arrow-down mr-1"></i> {{ __('messages.declining') }}
                         </span>
                     @else
                         <span class="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
-                            <i class="fas fa-minus mr-1"></i> Stable
+                            <i class="fas fa-minus mr-1"></i> {{ __('messages.stable') }}
                         </span>
                     @endif
                 </h3>
@@ -215,7 +215,7 @@
                     <div class="flex items-center justify-between">
                         <span class="text-sm text-gray-700 dark:text-gray-300">
                             <i class="fas fa-crystal-ball text-blue-500 mr-2"></i>
-                            Predicted next week completion:
+                            {{ __('messages.predicted_next_week') }}:
                         </span>
                         <span class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ $progressTrends['prediction'] }}%</span>
                     </div>
@@ -228,7 +228,7 @@
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                     <i class="fas fa-tasks text-purple-500 mr-2"></i>
-                    Task Completion Trends
+                    {{ __('messages.task_completion_trends') }}
                 </h3>
             </div>
             <div class="p-6">
@@ -246,7 +246,7 @@
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                     <i class="fas fa-users text-indigo-500 mr-2"></i>
-                    Team Performance Metrics
+                    {{ __('messages.team_performance_metrics') }}
                 </h3>
             </div>
             <div class="p-6">
@@ -266,23 +266,23 @@
                         </div>
                         <div class="grid grid-cols-2 gap-4 mt-3">
                             <div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">SPI</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ __('messages.spi') }}</div>
                                 <div class="text-lg font-bold text-gray-900 dark:text-white">{{ $team['spi'] }}</div>
                             </div>
                             <div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">Completion</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ __('messages.completion') }}</div>
                                 <div class="text-lg font-bold text-gray-900 dark:text-white">{{ $team['completion_rate'] }}%</div>
                             </div>
                         </div>
                         <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between text-sm text-gray-600 dark:text-gray-400">
-                            <span>{{ $team['projects'] }} Projects</span>
-                            <span>{{ $team['tasks'] }} Tasks</span>
+                            <span>{{ $team['projects'] }} {{ __('messages.projects') }}</span>
+                            <span>{{ $team['tasks'] }} {{ __('messages.tasks') }}</span>
                         </div>
                     </div>
                     @endforeach
                 </div>
                 @else
-                <p class="text-center text-gray-500 dark:text-gray-400 py-8">No team data available</p>
+                <p class="text-center text-gray-500 dark:text-gray-400 py-8">{{ __('messages.no_team_data') }}</p>
                 @endif
             </div>
         </div>
@@ -294,27 +294,27 @@
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                     <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
-                    Risk Indicators
+                    {{ __('messages.risk_indicators') }}
                 </h3>
             </div>
             <div class="p-6">
                 <div class="grid grid-cols-3 gap-4 mb-6">
                     <div class="text-center p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
                         <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ $riskIndicators['high_count'] }}</div>
-                        <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">High Risk</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ __('messages.high_risk') }}</div>
                     </div>
                     <div class="text-center p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
                         <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $riskIndicators['medium_count'] }}</div>
-                        <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">Medium Risk</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ __('messages.medium_risk') }}</div>
                     </div>
                     <div class="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                         <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $riskIndicators['low_count'] }}</div>
-                        <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">Low Risk</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ __('messages.low_risk') }}</div>
                     </div>
                 </div>
 
                 <div class="space-y-3">
-                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">High Risk Projects</h4>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('messages.high_risk_projects') }}</h4>
                     @forelse($riskIndicators['high_risks'] as $item)
                     <div class="p-3 rounded-lg border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10">
                         <div class="font-medium text-gray-900 dark:text-white">{{ $item['project']->title }}</div>
@@ -327,11 +327,11 @@
                         </div>
                     </div>
                     @empty
-                    <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No high risk projects</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">{{ __('messages.no_high_risk_projects') }}</p>
                     @endforelse
 
                     @if(count($riskIndicators['medium_risks']) > 0)
-                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 mt-4">Medium Risk Projects</h4>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 mt-4">{{ __('messages.medium_risk_projects') }}</h4>
                     @foreach($riskIndicators['medium_risks'] as $item)
                     <div class="p-3 rounded-lg border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/10">
                         <div class="font-medium text-gray-900 dark:text-white">{{ $item['project']->title }}</div>
@@ -351,7 +351,7 @@
         <!-- Recent Projects -->
         <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Projects</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('messages.recent_projects') }}</h3>
             </div>
             <div class="divide-y divide-gray-200 dark:divide-gray-700">
                 @forelse($recent_projects ?? [] as $project)
@@ -359,7 +359,7 @@
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <h4 class="text-sm font-semibold text-gray-900 dark:text-white">{{ $project->title }}</h4>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">By: {{ $project->creator->name }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('messages.by') }}: {{ $project->creator->name }}</p>
                             <div class="flex items-center space-x-4 mt-3">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300">
                                     {{ ucfirst($project->status) }}
@@ -373,7 +373,7 @@
                             </div>
                         </div>
                         <a href="#" class="ml-4 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium">
-                            View →
+                            {{ __('messages.view') }} →
                         </a>
                     </div>
                 </div>
@@ -382,12 +382,12 @@
                     <svg class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
                     </svg>
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">No projects yet</p>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">{{ __('messages.no_projects_yet') }}</p>
                 </div>
                 @endforelse
             </div>
             <div class="p-4 border-t border-gray-200 dark:border-gray-700">
-                <a href="#" class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">View all projects →</a>
+                <a href="#" class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">{{ __('messages.view_all_projects') }} →</a>
             </div>
         </div>
 
@@ -395,11 +395,11 @@
         <div class="space-y-6">
             <!-- User Distribution -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">User Distribution</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('messages.user_distribution') }}</h3>
                 <div class="space-y-3">
                     <div>
                         <div class="flex items-center justify-between text-sm mb-1">
-                            <span class="text-gray-600 dark:text-gray-400">👥 Team Members</span>
+                            <span class="text-gray-600 dark:text-gray-400">👥 {{ __('messages.team_members') }}</span>
                             <span class="font-medium text-gray-900 dark:text-white">{{ $stats['team_member_count'] ?? 0 }}</span>
                         </div>
                         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -408,7 +408,7 @@
                     </div>
                     <div>
                         <div class="flex items-center justify-between text-sm mb-1">
-                            <span class="text-gray-600 dark:text-gray-400">👑 Team Leads</span>
+                            <span class="text-gray-600 dark:text-gray-400">👑 {{ __('messages.team_leads') }}</span>
                             <span class="font-medium text-gray-900 dark:text-white">{{ $stats['team_lead_count'] ?? 0 }}</span>
                         </div>
                         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -417,7 +417,7 @@
                     </div>
                     <div>
                         <div class="flex items-center justify-between text-sm mb-1">
-                            <span class="text-gray-600 dark:text-gray-400">🛡️ Admins</span>
+                            <span class="text-gray-600 dark:text-gray-400">🛡️ {{ __('messages.admins') }}</span>
                             <span class="font-medium text-gray-900 dark:text-white">{{ $stats['admin_count'] ?? 0 }}</span>
                         </div>
                         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -429,7 +429,7 @@
 
             <!-- Quick Actions -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('messages.quick_actions') }}</h3>
                 <div class="space-y-2">
                     <a href="{{ route('admin.users.create') }}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition group">
                         <div class="bg-primary-100 dark:bg-primary-900/30 group-hover:bg-primary-200 dark:group-hover:bg-primary-900/50 p-2 rounded-lg transition">
@@ -437,7 +437,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
                         </div>
-                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Add New User</span>
+                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">{{ __('messages.add_new_user') }}</span>
                     </a>
                     <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition group">
                         <div class="bg-green-100 dark:bg-green-900/30 group-hover:bg-green-200 dark:group-hover:bg-green-900/50 p-2 rounded-lg transition">
@@ -445,7 +445,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                             </svg>
                         </div>
-                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">View All Projects</span>
+                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">{{ __('messages.view_all_projects') }}</span>
                     </a>
                     <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition group">
                         <div class="bg-accent-100 dark:bg-accent-900/30 group-hover:bg-accent-200 dark:group-hover:bg-accent-900/50 p-2 rounded-lg transition">
@@ -453,7 +453,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                             </svg>
                         </div>
-                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Generate Report</span>
+                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">{{ __('messages.generate_report') }}</span>
                     </a>
                     <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition group">
                         <div class="bg-primary-100 dark:bg-primary-900/30 group-hover:bg-primary-200 dark:group-hover:bg-primary-900/50 p-2 rounded-lg transition">
@@ -462,7 +462,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
                         </div>
-                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">System Settings</span>
+                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">{{ __('messages.system_settings') }}</span>
                     </a>
                 </div>
             </div>
@@ -471,7 +471,7 @@
 
     <!-- Recent Activities -->
     <div class="mt-6">
-        <x-activity-feed :activities="$recent_activities ?? collect([])" title="Recent Activities" />
+        <x-activity-feed :activities="$recent_activities ?? collect([])" :title="__('messages.recent_activities')" />
     </div>
 </div>
 @endsection
@@ -498,7 +498,7 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: {!! json_encode($progressTrends['weeks']) !!},
                 datasets: [{
-                    label: 'Completion Rate',
+                    label: '{{ __('messages.completion_rate') }}',
                     data: {!! json_encode($progressTrends['completion_rates']) !!},
                     borderColor: '#3b82f6',
                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -523,7 +523,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         borderWidth: 1,
                         callbacks: {
                             label: function(context) {
-                                return 'Completion: ' + context.parsed.y.toFixed(1) + '%';
+                                return '{{ __('messages.completion') }}: ' + context.parsed.y.toFixed(1) + '%';
                             }
                         }
                     }
@@ -559,14 +559,14 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: {!! json_encode($progressTrends['weeks']) !!},
                 datasets: [{
-                    label: 'Completed Tasks',
+                    label: '{{ __('messages.completed_tasks') }}',
                     data: {!! json_encode(array_map(function($tasks) {
                         return $tasks['completed'] ?? 0;
                     }, $progressTrends['tasks'])) !!},
                     backgroundColor: '#10b981',
                     borderRadius: 6
                 }, {
-                    label: 'Pending Tasks',
+                    label: '{{ __('messages.pending_tasks') }}',
                     data: {!! json_encode(array_map(function($tasks) {
                         return ($tasks['total'] ?? 0) - ($tasks['completed'] ?? 0);
                     }, $progressTrends['tasks'])) !!},

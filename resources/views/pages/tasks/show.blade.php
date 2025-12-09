@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', $task->title)
-@section('page-title', 'Task Details')
+@section('page-title', __('messages.task_details'))
 
 @section('content')
 <div class="space-y-6">
@@ -26,14 +26,14 @@
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                         </svg>
-                        Project: <a href="{{ route('projects.show', $task->project) }}" class="font-medium hover:underline ml-1">{{ $task->project->title }}</a>
+                        {{ __('messages.project') }}: <a href="{{ route('projects.show', $task->project) }}" class="font-medium hover:underline ml-1">{{ $task->project->title }}</a>
                     </div>
                     @if($task->assignee)
                     <div class="flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
-                        Assigned to {{ $task->assignee->name }}
+                        {{ __('messages.assigned_to') }} {{ $task->assignee->name }}
                     </div>
                     @endif
                 </div>
@@ -46,12 +46,12 @@
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                     </svg>
-                    Edit
+                    {{ __('messages.edit') }}
                 </a>
                 @endif
                 <a href="{{ route('tasks.index') }}"
                     class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition">
-                    Back to Tasks
+                    {{ __('messages.back_to_tasks') }}
                 </a>
             </div>
         </div>
@@ -63,7 +63,7 @@
             <!-- Description -->
             @if($task->description)
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Description</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('messages.description') }}</h3>
                 <div class="prose dark:prose-invert max-w-none">
                     <p class="text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ $task->description }}</p>
                 </div>
@@ -72,7 +72,7 @@
 
             <!-- Activity Timeline (Placeholder for future feature) -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity Timeline</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('messages.activity_timeline') }}</h3>
                 <div class="space-y-4">
                     <div class="flex items-start space-x-3">
                         <div class="flex-shrink-0">
@@ -83,7 +83,7 @@
                             </div>
                         </div>
                         <div class="flex-1">
-                            <p class="text-sm text-gray-900 dark:text-white font-medium">Task created</p>
+                            <p class="text-sm text-gray-900 dark:text-white font-medium">{{ __('messages.task_created') }}</p>
                             <p class="text-xs text-gray-500 dark:text-gray-400">{{ $task->created_at->diffForHumans() }}</p>
                         </div>
                     </div>
@@ -98,7 +98,7 @@
                             </div>
                         </div>
                         <div class="flex-1">
-                            <p class="text-sm text-gray-900 dark:text-white font-medium">Task completed</p>
+                            <p class="text-sm text-gray-900 dark:text-white font-medium">{{ __('messages.task_completed') }}</p>
                             <p class="text-xs text-gray-500 dark:text-gray-400">{{ $task->completed_at->diffForHumans() }}</p>
                         </div>
                     </div>
@@ -111,12 +111,12 @@
         <div class="space-y-6">
             <!-- Task Details Card -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Task Details</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('messages.task_details') }}</h3>
 
                 <div class="space-y-4">
                     <!-- Priority -->
                     <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2">Priority</label>
+                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2">{{ __('messages.priority') }}</label>
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
                             @if($task->priority === 'critical') bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300
                             @elseif($task->priority === 'high') bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300
@@ -129,7 +129,7 @@
 
                     <!-- Status -->
                     <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2">Status</label>
+                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2">{{ __('messages.status') }}</label>
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
                             @if($task->status === 'completed') bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300
                             @elseif($task->status === 'in-progress') bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300
@@ -143,7 +143,7 @@
                     <!-- Due Date -->
                     @if($task->due_date)
                     <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2">Due Date</label>
+                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2">{{ __('messages.due_date') }}</label>
                         @php
                             $isOverdue = $task->due_date->isPast() && $task->status !== 'completed';
                         @endphp
@@ -154,16 +154,16 @@
                             <span class="font-medium">{{ $task->due_date->format('M d, Y') }}</span>
                         </div>
                         @if($isOverdue)
-                            <p class="text-xs text-red-600 dark:text-red-400 mt-1">⚠️ Overdue by {{ $task->due_date->diffForHumans() }}</p>
+                            <p class="text-xs text-red-600 dark:text-red-400 mt-1">⚠️ {{ __('messages.overdue_by', ['time' => $task->due_date->diffForHumans()]) }}</p>
                         @elseif(!$task->completed_at)
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Due {{ $task->due_date->diffForHumans() }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('messages.due') }} {{ $task->due_date->diffForHumans() }}</p>
                         @endif
                     </div>
                     @endif
 
                     <!-- Assigned To -->
                     <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2">Assigned To</label>
+                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2">{{ __('messages.assigned_to') }}</label>
                         @if($task->assignee)
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10">
@@ -179,7 +179,7 @@
                                 </div>
                             </div>
                         @else
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Unassigned</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('messages.unassigned') }}</p>
                         @endif
                     </div>
 
@@ -187,16 +187,16 @@
                     <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                         <div class="space-y-2 text-xs text-gray-500 dark:text-gray-400">
                             <div class="flex justify-between">
-                                <span>Created:</span>
+                                <span>{{ __('messages.created') }}:</span>
                                 <span>{{ $task->created_at->format('M d, Y H:i') }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span>Updated:</span>
+                                <span>{{ __('messages.updated') }}:</span>
                                 <span>{{ $task->updated_at->format('M d, Y H:i') }}</span>
                             </div>
                             @if($task->completed_at)
                             <div class="flex justify-between">
-                                <span>Completed:</span>
+                                <span>{{ __('messages.completed') }}:</span>
                                 <span>{{ $task->completed_at->format('M d, Y H:i') }}</span>
                             </div>
                             @endif
@@ -207,7 +207,7 @@
 
             <!-- Project Info Card -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Project</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('messages.project') }}</h3>
                 <a href="{{ route('projects.show', $task->project) }}" class="block group">
                     <div class="space-y-2">
                         <h4 class="text-sm font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400">
@@ -220,7 +220,7 @@
                         @endif
                         <div class="flex items-center justify-between pt-2">
                             <span class="text-xs text-gray-500 dark:text-gray-400">
-                                {{ $task->project->tasks->count() }} tasks
+                                {{ $task->project->tasks->count() }} {{ __('messages.tasks') }}
                             </span>
                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
                                 @if($task->project->status === 'completed') bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300

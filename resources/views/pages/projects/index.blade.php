@@ -1,22 +1,22 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Projects')
-@section('page-title', 'Projects Management')
+@section('title', __('messages.projects'))
+@section('page-title', __('messages.project_management'))
 
 @section('content')
 <div class="space-y-6" x-data="{ activeStatus: 'all' }">
     <!-- Header with Action Button -->
     <div class="flex justify-between items-center">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">All Projects</h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Manage and track all your projects</p>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('messages.all_projects') }}</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('messages.manage_track_projects') }}</p>
         </div>
         @if(Gate::allows('admin') || Gate::allows('team_lead'))
         <a href="{{ route('projects.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white font-medium rounded-lg transition">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            Create New Project
+            {{ __('messages.create_new_project') }}
         </a>
         @endif
     </div>
@@ -27,27 +27,27 @@
             <button @click="activeStatus = 'all'"
                     :class="activeStatus === 'all' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
                     class="px-4 py-2 rounded-lg font-medium transition">
-                All Projects
+                {{ __('messages.all_projects') }}
             </button>
             <button @click="activeStatus = 'planning'"
                     :class="activeStatus === 'planning' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
                     class="px-4 py-2 rounded-lg font-medium transition">
-                Planning
+                {{ __('messages.planning') }}
             </button>
             <button @click="activeStatus = 'ongoing'"
                     :class="activeStatus === 'ongoing' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
                     class="px-4 py-2 rounded-lg font-medium transition">
-                Ongoing
+                {{ __('messages.ongoing') }}
             </button>
             <button @click="activeStatus = 'completed'"
                     :class="activeStatus === 'completed' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
                     class="px-4 py-2 rounded-lg font-medium transition">
-                Completed
+                {{ __('messages.completed') }}
             </button>
             <button @click="activeStatus = 'on-hold'"
                     :class="activeStatus === 'on-hold' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
                     class="px-4 py-2 rounded-lg font-medium transition">
-                On Hold
+                {{ __('messages.on_hold') }}
             </button>
         </div>
     </div>
@@ -84,7 +84,7 @@
                         @elseif($project->priority === 'medium') bg-accent-100 dark:bg-accent-900/30 text-accent-800 dark:text-accent-300
                         @else bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300
                         @endif">
-                        {{ ucfirst($project->priority) }}
+                        {{ __('messages.' . $project->priority) }}
                     </span>
                 </div>
 
@@ -96,7 +96,7 @@
                         @elseif($project->status === 'on-hold') bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300
                         @else bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300
                         @endif">
-                        {{ ucfirst(str_replace('-', ' ', $project->status)) }}
+                        {{ __('messages.' . str_replace('-', '_', $project->status)) }}
                     </span>
                 </div>
             </div>
@@ -108,7 +108,7 @@
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                     </svg>
-                    {{ $project->department ?? 'No department' }} - {{ $project->teamInfo->name ?? 'No team' }}
+                    {{ $project->department ?? __('messages.no_department') }} - {{ $project->teamInfo->name ?? __('messages.no_team') }}
                 </div>
                 @endif
 
@@ -116,15 +116,15 @@
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
-                    {{ $project->start_date ? $project->start_date->format('M d, Y') : 'No start date' }} -
-                    {{ $project->end_date ? $project->end_date->format('M d, Y') : 'No end date' }}
+                    {{ $project->start_date ? $project->start_date->format('M d, Y') : __('messages.no_start_date') }} -
+                    {{ $project->end_date ? $project->end_date->format('M d, Y') : __('messages.no_end_date') }}
                 </div>
 
                 <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
-                    Created by {{ $project->creator->name }}
+                    {{ __('messages.created_by') }} {{ $project->creator->name }}
                 </div>
 
                 <!-- Team Members -->
@@ -136,7 +136,7 @@
                              class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800"
                              title="{{ $member->name }}">
                         @empty
-                        <span class="text-sm text-gray-500 dark:text-gray-400">No members</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">{{ __('messages.no_members') }}</span>
                         @endforelse
                         @if($project->members->count() > 3)
                         <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-white dark:border-gray-800 flex items-center justify-center">
@@ -170,14 +170,14 @@
                 <svg class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                 </svg>
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No projects yet</h3>
-                <p class="text-gray-600 dark:text-gray-400 mb-4">Get started by creating your first project</p>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">{{ __('messages.no_projects_yet') }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">{{ __('messages.get_started_project') }}</p>
                 @if(Gate::allows('admin') || Gate::allows('team_lead'))
                 <a href="{{ route('projects.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
-                    Create Project
+                    {{ __('messages.create_project') }}
                 </a>
                 @endif
             </div>

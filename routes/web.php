@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DiscussionController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
@@ -13,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
+// Language switching (can be public or auth - keeping it accessible)
+Route::post('/language/switch', [LanguageController::class, 'switch'])->name('language.switch');
+Route::get('/language/current', [LanguageController::class, 'current'])->name('language.current');
 
 // Dashboard routes (requires authentication)
 Route::middleware(['auth', 'verified'])->group(function () {

@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Weekly Report - ' . $project->title)
-@section('page-title', 'Weekly Progress Report')
+@section('title', __('phase3_4.weekly_report') . ' - ' . $project->title)
+@section('page-title', __('phase3_4.weekly_progress_report'))
 
 @section('content')
 <div class="space-y-6">
@@ -9,26 +9,26 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex justify-between items-start">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Weekly Progress Report</h2>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ __('phase3_4.weekly_progress_report') }}</h2>
                 <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                    <p><span class="font-semibold">Project:</span> {{ $project->title }}</p>
-                    <p><span class="font-semibold">Week:</span> {{ $weekStartDate->format('M d, Y') }} - {{ $weekEndDate->format('M d, Y') }}
-                        <span class="text-gray-500">(Week {{ $weekStartDate->weekOfYear }}, {{ $weekStartDate->year }})</span>
+                    <p><span class="font-semibold">{{ __('messages.project') }}:</span> {{ $project->title }}</p>
+                    <p><span class="font-semibold">{{ __('messages.week') }}:</span> {{ $weekStartDate->format('M d, Y') }} - {{ $weekEndDate->format('M d, Y') }}
+                        <span class="text-gray-500">({{ __('messages.week') }} {{ $weekStartDate->weekOfYear }}, {{ $weekStartDate->year }})</span>
                     </p>
                 </div>
             </div>
             <div class="flex gap-2">
                 <a href="{{ route('projects.progress.index', $project) }}?week_start={{ $weekStartDate->format('Y-m-d') }}"
                    class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition inline-flex items-center">
-                    <i class="fas fa-arrow-left mr-2"></i> Back to Progress
+                    <i class="fas fa-arrow-left mr-2"></i> {{ __('phase3_4.back_to_progress') }}
                 </a>
                 <a href="{{ route('projects.progress.export.excel', $project) }}?week_start={{ $weekStartDate->format('Y-m-d') }}"
                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition inline-flex items-center">
-                    <i class="fas fa-file-excel mr-2"></i> Export Excel
+                    <i class="fas fa-file-excel mr-2"></i> {{ __('phase3_4.export_excel') }}
                 </a>
                 <a href="{{ route('projects.progress.export.pdf', $project) }}?week_start={{ $weekStartDate->format('Y-m-d') }}"
                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition inline-flex items-center" target="_blank">
-                    <i class="fas fa-file-pdf mr-2"></i> Export PDF
+                    <i class="fas fa-file-pdf mr-2"></i> {{ __('phase3_4.export_pdf') }}
                 </a>
             </div>
         </div>
@@ -39,9 +39,9 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Tasks</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">{{ __('phase3_4.total_tasks') }}</p>
                     <h3 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $summary['total_tasks'] }}</h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Activities this week</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('phase3_4.activities_this_week') }}</p>
                 </div>
                 <div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                     <i class="fas fa-tasks text-2xl text-blue-600 dark:text-blue-400"></i>
@@ -52,9 +52,9 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Planned Weight</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">{{ __('phase3_4.planned_weight') }}</p>
                     <h3 class="text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($summary['planned_weight'], 2) }}%</h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Target completion</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('phase3_4.target_completion') }}</p>
                 </div>
                 <div class="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                     <i class="fas fa-bullseye text-2xl text-purple-600 dark:text-purple-400"></i>
@@ -65,11 +65,11 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Actual Weight</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">{{ __('phase3_4.actual_weight') }}</p>
                     <h3 class="text-3xl font-bold {{ $summary['actual_weight'] >= $summary['planned_weight'] ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400' }}">
                         {{ number_format($summary['actual_weight'], 2) }}%
                     </h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Actual progress</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('phase3_4.actual_progress_text') }}</p>
                 </div>
                 <div class="p-3 {{ $summary['actual_weight'] >= $summary['planned_weight'] ? 'bg-green-100 dark:bg-green-900/30' : 'bg-yellow-100 dark:bg-yellow-900/30' }} rounded-lg">
                     <i class="fas fa-chart-line text-2xl {{ $summary['actual_weight'] >= $summary['planned_weight'] ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400' }}"></i>
@@ -80,11 +80,11 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Deviation</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">{{ __('phase3_4.deviation') }}</p>
                     <h3 class="text-3xl font-bold {{ $summary['deviation_weight'] >= 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400' }}">
                         {{ $summary['deviation_weight'] > 0 ? '-' : '+' }}{{ number_format(abs($summary['deviation_weight']), 2) }}%
                     </h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $summary['deviation_weight'] >= 0 ? 'Behind schedule' : 'Ahead of schedule' }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $summary['deviation_weight'] >= 0 ? __('phase3_4.behind_schedule') : __('phase3_4.ahead_of_schedule') }}</p>
                 </div>
                 <div class="p-3 {{ $summary['deviation_weight'] >= 0 ? 'bg-red-100 dark:bg-red-900/30' : 'bg-green-100 dark:bg-green-900/30' }} rounded-lg">
                     <i class="fas fa-exclamation-triangle text-2xl {{ $summary['deviation_weight'] >= 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400' }}"></i>
@@ -96,7 +96,7 @@
     <!-- Status Distribution -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Status Distribution</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('phase3_4.status_distribution') }}</h3>
         </div>
         <div class="p-6">
             @php
@@ -119,7 +119,7 @@
                             <div class="text-xs font-medium text-green-600 dark:text-green-400">{{ round($completedPct, 1) }}%</div>
                         </div>
                     </div>
-                    <div class="text-sm font-semibold text-green-700 dark:text-green-300">Completed</div>
+                    <div class="text-sm font-semibold text-green-700 dark:text-green-300">{{ __('phase3_4.completed') }}</div>
                     <div class="mt-2 bg-green-200 dark:bg-green-900/50 rounded-full h-2 overflow-hidden">
                         <div class="bg-green-500 dark:bg-green-600 h-full transition-all duration-500" style="width: {{ $completedPct }}%"></div>
                     </div>
@@ -135,7 +135,7 @@
                             <div class="text-xs font-medium text-blue-600 dark:text-blue-400">{{ round($onTrackPct, 1) }}%</div>
                         </div>
                     </div>
-                    <div class="text-sm font-semibold text-blue-700 dark:text-blue-300">On Track</div>
+                    <div class="text-sm font-semibold text-blue-700 dark:text-blue-300">{{ __('phase3_4.on_track') }}</div>
                     <div class="mt-2 bg-blue-200 dark:bg-blue-900/50 rounded-full h-2 overflow-hidden">
                         <div class="bg-blue-500 dark:bg-blue-600 h-full transition-all duration-500" style="width: {{ $onTrackPct }}%"></div>
                     </div>
@@ -151,7 +151,7 @@
                             <div class="text-xs font-medium text-yellow-600 dark:text-yellow-400">{{ round($atRiskPct, 1) }}%</div>
                         </div>
                     </div>
-                    <div class="text-sm font-semibold text-yellow-700 dark:text-yellow-300">At Risk</div>
+                    <div class="text-sm font-semibold text-yellow-700 dark:text-yellow-300">{{ __('phase3_4.at_risk') }}</div>
                     <div class="mt-2 bg-yellow-200 dark:bg-yellow-900/50 rounded-full h-2 overflow-hidden">
                         <div class="bg-yellow-500 dark:bg-yellow-600 h-full transition-all duration-500" style="width: {{ $atRiskPct }}%"></div>
                     </div>
@@ -167,7 +167,7 @@
                             <div class="text-xs font-medium text-red-600 dark:text-red-400">{{ round($delayedPct, 1) }}%</div>
                         </div>
                     </div>
-                    <div class="text-sm font-semibold text-red-700 dark:text-red-300">Delayed</div>
+                    <div class="text-sm font-semibold text-red-700 dark:text-red-300">{{ __('phase3_4.delayed') }}</div>
                     <div class="mt-2 bg-red-200 dark:bg-red-900/50 rounded-full h-2 overflow-hidden">
                         <div class="bg-red-500 dark:bg-red-600 h-full transition-all duration-500" style="width: {{ $delayedPct }}%"></div>
                     </div>
@@ -177,8 +177,8 @@
             <!-- Combined Progress Bar -->
             <div class="bg-gray-100 dark:bg-gray-900 rounded-lg p-4">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Overall Distribution</span>
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{ $total }} Total Tasks</span>
+                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('phase3_4.overall_distribution') }}</span>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">{{ $total }} {{ __('phase3_4.total_tasks') }}</span>
                 </div>
                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-8 flex overflow-hidden shadow-inner">
                     @if($summary['completed'] > 0)
@@ -226,35 +226,35 @@
     @if($weeklyPlan)
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Weekly Plan</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('phase3_4.weekly_plan') }}</h3>
         </div>
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Objectives</h4>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('phase3_4.objectives') }}</h4>
                     <div class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-sm text-gray-700 dark:text-gray-300">
-                        {!! nl2br(e($weeklyPlan->objectives ?? 'No objectives set')) !!}
+                        {!! nl2br(e($weeklyPlan->objectives ?? __('phase3_4.no_objectives_set'))) !!}
                     </div>
                 </div>
                 <div>
-                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Plan Details</h4>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('phase3_4.plan_details') }}</h4>
                     <div class="space-y-2">
                         <div class="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
-                            <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Status:</span>
+                            <span class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('messages.status') }}:</span>
                             <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $weeklyPlan->status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' }}">
                                 {{ ucfirst($weeklyPlan->status) }}
                             </span>
                         </div>
                         <div class="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
-                            <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Planned Weight:</span>
+                            <span class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('phase3_4.planned_weight') }}:</span>
                             <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ number_format($weeklyPlan->planned_weight_total ?? 0, 2) }}%</span>
                         </div>
                         <div class="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
-                            <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Actual Weight:</span>
+                            <span class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('phase3_4.actual_weight') }}:</span>
                             <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ number_format($weeklyPlan->actual_weight_total ?? 0, 2) }}%</span>
                         </div>
                         <div class="flex justify-between py-2">
-                            <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Completion Rate:</span>
+                            <span class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('phase3_4.completion_rate') }}:</span>
                             <span class="text-sm font-bold {{ $weeklyPlan->getCompletionPercentage() >= 100 ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400' }}">
                                 {{ number_format($weeklyPlan->getCompletionPercentage(), 1) }}%
                             </span>
@@ -269,20 +269,20 @@
     <!-- Task Progress Details -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Task Progress Details</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('phase3_4.task_progress_details') }}</h3>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="bg-gray-50 dark:bg-gray-900">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Task</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Assignee</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Weight</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Planned %</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actual %</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Progress</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Deviation</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('messages.task') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('messages.assignee') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('phase3_4.weight') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('phase3_4.planned_percentage') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('phase3_4.actual_percentage') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('messages.progress') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('phase3_4.deviation') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('messages.status') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -298,7 +298,7 @@
                             @if($progress->task->assignee)
                                 {{ $progress->task->assignee->name }}
                             @else
-                                <span class="text-gray-400">Unassigned</span>
+                                <span class="text-gray-400">{{ __('messages.unassigned') }}</span>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{{ number_format($progress->task->weight ?? 0, 2) }}%</td>
@@ -325,10 +325,10 @@
                         <td class="px-6 py-4">
                             @php
                                 $statusConfig = [
-                                    'on-track' => ['bg' => 'bg-blue-100 dark:bg-blue-900/30', 'text' => 'text-blue-800 dark:text-blue-400', 'label' => 'On Track'],
-                                    'at-risk' => ['bg' => 'bg-yellow-100 dark:bg-yellow-900/30', 'text' => 'text-yellow-800 dark:text-yellow-400', 'label' => 'At Risk'],
-                                    'delayed' => ['bg' => 'bg-red-100 dark:bg-red-900/30', 'text' => 'text-red-800 dark:text-red-400', 'label' => 'Delayed'],
-                                    'completed' => ['bg' => 'bg-green-100 dark:bg-green-900/30', 'text' => 'text-green-800 dark:text-green-400', 'label' => 'Completed']
+                                    'on-track' => ['bg' => 'bg-blue-100 dark:bg-blue-900/30', 'text' => 'text-blue-800 dark:text-blue-400', 'label' => __('phase3_4.on_track')],
+                                    'at-risk' => ['bg' => 'bg-yellow-100 dark:bg-yellow-900/30', 'text' => 'text-yellow-800 dark:text-yellow-400', 'label' => __('phase3_4.at_risk')],
+                                    'delayed' => ['bg' => 'bg-red-100 dark:bg-red-900/30', 'text' => 'text-red-800 dark:text-red-400', 'label' => __('phase3_4.delayed')],
+                                    'completed' => ['bg' => 'bg-green-100 dark:bg-green-900/30', 'text' => 'text-green-800 dark:text-green-400', 'label' => __('phase3_4.completed')]
                                 ];
                                 $status = $statusConfig[$progress->status] ?? ['bg' => 'bg-gray-100', 'text' => 'text-gray-800', 'label' => $progress->status];
                             @endphp
@@ -339,7 +339,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">No progress data available for this week</td>
+                        <td colspan="8" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">{{ __('phase3_4.no_progress_data') }}</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -352,7 +352,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-red-200 dark:border-red-800">
             <div class="px-6 py-4 bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-800 rounded-t-lg">
                 <h3 class="text-lg font-semibold text-red-900 dark:text-red-300 flex items-center">
-                    <i class="fas fa-exclamation-triangle mr-2"></i> Major Problems
+                    <i class="fas fa-exclamation-triangle mr-2"></i> {{ __('phase3_4.major_problems') }}
                 </h3>
             </div>
             <div class="p-6">
@@ -373,7 +373,7 @@
                         @endforeach
                     </ul>
                 @else
-                    <p class="text-sm text-gray-500 dark:text-gray-400">No major problems reported this week</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('phase3_4.no_major_problems') }}</p>
                 @endif
             </div>
         </div>
@@ -381,7 +381,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-green-200 dark:border-green-800">
             <div class="px-6 py-4 bg-green-50 dark:bg-green-900/20 border-b border-green-200 dark:border-green-800 rounded-t-lg">
                 <h3 class="text-lg font-semibold text-green-900 dark:text-green-300 flex items-center">
-                    <i class="fas fa-lightbulb mr-2"></i> Proposed Solutions
+                    <i class="fas fa-lightbulb mr-2"></i> {{ __('phase3_4.proposed_solutions') }}
                 </h3>
             </div>
             <div class="p-6">
@@ -402,7 +402,7 @@
                         @endforeach
                     </ul>
                 @else
-                    <p class="text-sm text-gray-500 dark:text-gray-400">No solutions documented</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('phase3_4.no_solutions_documented') }}</p>
                 @endif
             </div>
         </div>
@@ -413,7 +413,7 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-blue-200 dark:border-blue-800">
         <div class="px-6 py-4 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800 rounded-t-lg">
             <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-300 flex items-center">
-                <i class="fas fa-calendar-check mr-2"></i> Program & Actions for Next Week
+                <i class="fas fa-calendar-check mr-2"></i> {{ __('phase3_4.program_actions_next_week') }}
             </h3>
         </div>
         <div class="p-6">
@@ -429,13 +429,13 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900/20 border-b border-gray-200 dark:border-gray-700 rounded-t-lg">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-300 flex items-center">
-                <i class="fas fa-paperclip mr-2"></i> Remarks & Attachments
+                <i class="fas fa-paperclip mr-2"></i> {{ __('phase3_4.remarks_attachments') }}
             </h3>
         </div>
         <div class="p-6 space-y-4">
             @if($weeklyPlan->remarks)
             <div>
-                <h4 class="font-semibold text-sm text-gray-700 dark:text-gray-300 mb-2">Remarks:</h4>
+                <h4 class="font-semibold text-sm text-gray-700 dark:text-gray-300 mb-2">{{ __('phase3_4.remarks') }}:</h4>
                 <div class="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg">
                     {!! nl2br(e($weeklyPlan->remarks)) !!}
                 </div>
@@ -444,13 +444,13 @@
 
             @if($weeklyPlan->attachments && count($weeklyPlan->attachments) > 0)
             <div>
-                <h4 class="font-semibold text-sm text-gray-700 dark:text-gray-300 mb-2">Attachments:</h4>
+                <h4 class="font-semibold text-sm text-gray-700 dark:text-gray-300 mb-2">{{ __('phase3_4.attachments') }}:</h4>
                 <ul class="space-y-2">
                     @foreach($weeklyPlan->attachments as $attachment)
                         <li class="flex items-center text-sm">
                             <i class="fas fa-file text-gray-400 mr-2"></i>
                             <a href="{{ $attachment['url'] ?? '#' }}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">
-                                {{ $attachment['name'] ?? 'Attachment' }}
+                                {{ $attachment['name'] ?? __('phase3_4.attachment') }}
                             </a>
                             @if(isset($attachment['size']))
                                 <span class="text-gray-400 text-xs ml-2">({{ $attachment['size'] }})</span>

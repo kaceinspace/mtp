@@ -1,21 +1,21 @@
 @extends('layouts.dashboard')
 
-@section('title', 'User Management')
+@section('title', __('messages.user_management'))
 
 @section('header')
     <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
         <div class="space-y-1">
             <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                👥 User Management
+                👥 {{ __('messages.user_management') }}
             </h2>
-            <p class="text-gray-600">Kelola semua pengguna sistem dengan mudah dan efisien</p>
+            <p class="text-gray-600">{{ __('messages.manage_users_efficiently') }}</p>
         </div>
         <a href="{{ route('admin.users.create') }}"
            class="group px-6 py-3 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-xl hover:shadow-2xl hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all duration-300 font-semibold inline-flex items-center space-x-2">
             <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
             </svg>
-            <span>Tambah User Baru</span>
+            <span>{{ __('messages.add_new_user') }}</span>
         </a>
     </div>
 @endsection
@@ -32,7 +32,7 @@
             </div>
             <span class="text-3xl font-bold">{{ $users->where('user_type', 'admin')->count() }}</span>
         </div>
-        <p class="text-purple-100 font-medium">Admin</p>
+        <p class="text-purple-100 font-medium">{{ __('messages.admin') }}</p>
     </div>
 
     <div class="group bg-gradient-to-br from-green-500 to-emerald-700 rounded-2xl p-6 text-white hover:shadow-2xl hover:shadow-green-500/50 hover:-translate-y-1 transition-all duration-300">
@@ -44,7 +44,7 @@
             </div>
             <span class="text-3xl font-bold">{{ $users->where('user_type', 'team_lead')->count() }}</span>
         </div>
-        <p class="text-green-100 font-medium">Team Lead</p>
+        <p class="text-green-100 font-medium">{{ __('messages.team_lead') }}</p>
     </div>
 
     <div class="group bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl p-6 text-white hover:shadow-2xl hover:shadow-blue-500/50 hover:-translate-y-1 transition-all duration-300">

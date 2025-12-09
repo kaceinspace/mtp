@@ -39,6 +39,7 @@ class User extends Authenticatable
         'is_active',
         'last_activity',
         'settings',
+        'language',
     ];
 
     /**

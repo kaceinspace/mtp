@@ -16,6 +16,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \App\Http\Middleware\CheckPermission::class,
             'user_type' => \App\Http\Middleware\CheckUserType::class,
             'isAdmin' => \App\Http\Middleware\IsAdmin::class,
+            'setlocale' => \App\Http\Middleware\SetLocale::class,
+        ]);
+
+        // Register SetLocale middleware for web routes
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Critical Path - ' . $project->title)
-@section('page-title', 'Critical Path Analysis')
+@section('title', __('phase3_4.critical_path') . ' - ' . $project->title)
+@section('page-title', __('phase3_4.critical_path_analysis'))
 
 @section('content')
 <div class="space-y-6">
@@ -21,22 +21,22 @@
     <div class="flex justify-between items-center">
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                Critical Path Analysis - {{ $project->title }}
+                {{ __('phase3_4.critical_path_analysis') }} - {{ $project->title }}
             </h2>
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Identify the longest path of dependent tasks that determines project duration
+                {{ __('phase3_4.critical_path_description') }}
             </p>
         </div>
         <div class="flex gap-2">
             <a href="{{ route('projects.wbs', $project) }}"
                class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
-                <i class="fas fa-arrow-left mr-2"></i>Back to WBS
+                <i class="fas fa-arrow-left mr-2"></i>{{ __('phase3_4.back_to_wbs') }}
             </a>
             <form action="{{ route('projects.wbs.critical-path.calculate', $project) }}" method="POST" class="inline">
                 @csrf
                 <button type="submit"
                         class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition">
-                    <i class="fas fa-calculator mr-2"></i>Recalculate
+                    <i class="fas fa-calculator mr-2"></i>{{ __('phase3_4.recalculate') }}
                 </button>
             </form>
         </div>
@@ -47,9 +47,9 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Project Duration</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('phase3_4.project_duration') }}</p>
                     <p class="text-3xl font-bold text-primary-600 dark:text-primary-400 mt-2">
-                        {{ $projectDuration }} <span class="text-sm font-normal">days</span>
+                        {{ $projectDuration }} <span class="text-sm font-normal">{{ __('phase3_4.days') }}</span>
                     </p>
                 </div>
                 <div class="p-3 bg-primary-100 dark:bg-primary-900/20 rounded-lg">
@@ -61,7 +61,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Critical Tasks</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('phase3_4.critical_tasks') }}</p>
                     <p class="text-3xl font-bold text-red-600 dark:text-red-400 mt-2">
                         {{ count($criticalPath) }}
                     </p>
@@ -75,7 +75,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Total Tasks</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('messages.total_tasks') }}</p>
                     <p class="text-3xl font-bold text-gray-900 dark:text-white mt-2">
                         {{ $tasks->count() }}
                     </p>
@@ -105,10 +105,10 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                <i class="fas fa-route text-red-600 mr-2"></i>Critical Path Tasks
+                <i class="fas fa-route text-red-600 mr-2"></i>{{ __('phase3_4.critical_path_tasks') }}
             </h3>
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Tasks with zero slack time that directly impact project completion date
+                {{ __('phase3_4.tasks_zero_slack') }}
             </p>
         </div>
         <div class="p-6">

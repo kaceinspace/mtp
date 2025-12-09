@@ -67,7 +67,7 @@
                     <!-- Add Subtask Button (Always Visible, Modern Design) -->
                     <button onclick="openAddSubtask({id: {{ $task->id }}, title: '{{ addslashes($task->title) }}'})"
                             class="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-md text-xs font-medium shadow-sm transition-all duration-200 hover:shadow-md"
-                            title="Add Subtask">
+                            title="{{ __('phase3_4.add_subtask') }}">
                         <i class="fas fa-plus text-xs"></i>
                         <span class="hidden sm:inline">Sub</span>
                     </button>
@@ -76,18 +76,18 @@
                     <div class="flex items-center gap-1.5">
                         @if($isCritical)
                             <span class="inline-flex items-center px-2 py-0.5 bg-red-600 text-white text-xs font-bold rounded shadow-sm animate-pulse">
-                                <i class="fas fa-exclamation-triangle mr-1"></i>CRITICAL
+                                <i class="fas fa-exclamation-triangle mr-1"></i>{{ __('phase3_4.critical') }}
                             </span>
                         @endif
 
                         @if($task->hasDependencies())
-                            <span class="inline-flex items-center px-2 py-0.5 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 text-xs font-medium rounded border border-purple-200 dark:border-purple-800" title="Has dependencies">
+                            <span class="inline-flex items-center px-2 py-0.5 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 text-xs font-medium rounded border border-purple-200 dark:border-purple-800" title="{{ __('phase3_4.has_dependencies') }}">
                                 <i class="fas fa-link mr-1"></i>{{ $task->dependencies->count() }}
                             </span>
                         @endif
 
                         @if($task->hasDependents())
-                            <span class="inline-flex items-center px-2 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 text-xs font-medium rounded border border-blue-200 dark:border-blue-800" title="Other tasks depend on this">
+                            <span class="inline-flex items-center px-2 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 text-xs font-medium rounded border border-blue-200 dark:border-blue-800" title="{{ __('phase3_4.other_tasks_depend') }}">
                                 <i class="fas fa-share-nodes mr-1"></i>{{ $task->dependents->count() }}
                             </span>
                         @endif

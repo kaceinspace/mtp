@@ -1,10 +1,10 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Team Lead Dashboard')
+@section('title', __('messages.team_lead_dashboard'))
 
 @section('header')
-    <h2 class="text-2xl font-bold text-gray-800">Team Lead Dashboard</h2>
-    <p class="text-gray-600 mt-1">Monitor and manage your team's projects and tasks</p>
+    <h2 class="text-2xl font-bold text-gray-800">{{ __('messages.team_lead_dashboard') }}</h2>
+    <p class="text-gray-600 mt-1">{{ __('messages.monitor_manage_team') }}</p>
 @endsection
 
 @section('content')
@@ -22,10 +22,10 @@
                     <i class="fas fa-crown text-white text-3xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-4xl font-black mb-1">Welcome back, {{ auth()->user()->name }}!</h1>
+                    <h1 class="text-4xl font-black mb-1">{{ __('messages.welcome_back_name', ['name' => auth()->user()->name]) }}</h1>
                     <p class="text-green-100 text-lg flex items-center gap-2">
                         <i class="fas fa-briefcase"></i>
-                        {{ auth()->user()->department ?? 'Not set' }} • Team Lead
+                        {{ auth()->user()->department ?? __('messages.not_set') }} • {{ __('messages.team_lead') }}
                     </p>
                 </div>
             </div>
@@ -42,10 +42,10 @@
                     <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                         <i class="fas fa-users text-white text-2xl"></i>
                     </div>
-                    <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-full">TEAMS</span>
+                    <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-full">{{ __('messages.teams') }}</span>
                 </div>
                 <h3 class="text-4xl font-black text-gray-900 dark:text-white mb-1">{{ $stats['my_teams'] }}</h3>
-                <p class="text-sm font-semibold text-blue-600 dark:text-blue-400">Teams Leading</p>
+                <p class="text-sm font-semibold text-blue-600 dark:text-blue-400">{{ __('messages.teams_leading') }}</p>
             </div>
         </div>
 
@@ -57,10 +57,10 @@
                     <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
                         <i class="fas fa-project-diagram text-white text-2xl"></i>
                     </div>
-                    <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-xs font-bold rounded-full">PROJECTS</span>
+                    <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-xs font-bold rounded-full">{{ __('messages.projects') }}</span>
                 </div>
                 <h3 class="text-4xl font-black text-gray-900 dark:text-white mb-1">{{ $stats['total_projects'] }}</h3>
-                <p class="text-sm font-semibold text-green-600 dark:text-green-400">{{ $stats['ongoing_projects'] }} Ongoing</p>
+                <p class="text-sm font-semibold text-green-600 dark:text-green-400">{{ $stats['ongoing_projects'] }} {{ __('messages.ongoing') }}</p>
             </div>
         </div>
 
@@ -72,10 +72,10 @@
                     <div class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
                         <i class="fas fa-tasks text-white text-2xl"></i>
                     </div>
-                    <span class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 text-xs font-bold rounded-full">TASKS</span>
+                    <span class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 text-xs font-bold rounded-full">{{ __('messages.tasks') }}</span>
                 </div>
                 <h3 class="text-4xl font-black text-gray-900 dark:text-white mb-1">{{ $stats['total_tasks'] }}</h3>
-                <p class="text-sm font-semibold text-yellow-600 dark:text-yellow-400">{{ $stats['pending_tasks'] }} Pending</p>
+                <p class="text-sm font-semibold text-yellow-600 dark:text-yellow-400">{{ $stats['pending_tasks'] }} {{ __('messages.pending') }}</p>
             </div>
         </div>
 
@@ -87,10 +87,10 @@
                     <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                         <i class="fas fa-check-circle text-white text-2xl"></i>
                     </div>
-                    <span class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-xs font-bold rounded-full">DONE</span>
+                    <span class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-xs font-bold rounded-full">{{ __('messages.done') }}</span>
                 </div>
                 <h3 class="text-4xl font-black text-gray-900 dark:text-white mb-1">{{ $stats['completed_projects'] }}</h3>
-                <p class="text-sm font-semibold text-purple-600 dark:text-purple-400">Successfully Completed</p>
+                <p class="text-sm font-semibold text-purple-600 dark:text-purple-400">{{ __('messages.successfully_completed') }}</p>
             </div>
         </div>
     </div>
@@ -107,12 +107,12 @@
                                 <i class="fas fa-project-diagram text-white text-xl"></i>
                             </div>
                             <div>
-                                <h3 class="text-2xl font-black text-white">Team Projects</h3>
-                                <p class="text-blue-100 text-sm">Active project overview</p>
+                                <h3 class="text-2xl font-black text-white">{{ __('messages.team_projects') }}</h3>
+                                <p class="text-blue-100 text-sm">{{ __('messages.active_project_overview') }}</p>
                             </div>
                         </div>
                         <a href="{{ route('projects.index') }}" class="px-4 py-2 bg-white/20 backdrop-blur hover:bg-white/30 text-white rounded-lg text-sm font-bold transition flex items-center gap-2">
-                            View All <i class="fas fa-arrow-right"></i>
+                            {{ __('messages.view_all') }} <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
                 </div>
@@ -131,7 +131,7 @@
                                         <div class="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
                                             <span class="flex items-center gap-1">
                                                 <i class="fas fa-tasks"></i>
-                                                {{ $project->tasks->count() }} tasks
+                                                {{ $project->tasks->count() }} {{ __('messages.tasks') }}
                                             </span>
                                             <span class="flex items-center gap-1">
                                                 <i class="fas fa-clock"></i>
@@ -157,10 +157,10 @@
                                             ];
                                         @endphp
                                         <span class="px-3 py-1 rounded-lg text-xs font-bold bg-gradient-to-r {{ $statusColors[$project->status] ?? 'from-gray-400 to-gray-500' }} text-white shadow-md">
-                                            {{ strtoupper($project->status) }}
+                                            {{ strtoupper(__('messages.status_' . str_replace('-', '_', $project->status))) }}
                                         </span>
                                         <span class="px-3 py-1 rounded-lg text-xs font-bold bg-gradient-to-r {{ $priorityColors[$project->priority] ?? 'from-gray-400 to-gray-500' }} text-white shadow-md">
-                                            {{ strtoupper($project->priority) }}
+                                            {{ strtoupper(__('messages.priority_' . $project->priority)) }}
                                         </span>
                                     </div>
                                 </div>
@@ -171,8 +171,8 @@
                             <div class="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-project-diagram text-4xl text-gray-400"></i>
                             </div>
-                            <p class="text-gray-600 dark:text-gray-400 font-semibold">No projects yet</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">Create your first project to get started</p>
+                            <p class="text-gray-600 dark:text-gray-400 font-semibold">{{ __('messages.no_projects_yet') }}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">{{ __('messages.create_first_project') }}</p>
                         </div>
                     @endforelse
                 </div>
@@ -187,12 +187,12 @@
                                 <i class="fas fa-exclamation-triangle text-white text-xl"></i>
                             </div>
                             <div>
-                                <h3 class="text-2xl font-black text-white">Priority Tasks</h3>
-                                <p class="text-orange-100 text-sm">Urgent & high priority items</p>
+                                <h3 class="text-2xl font-black text-white">{{ __('messages.priority_tasks') }}</h3>
+                                <p class="text-orange-100 text-sm">{{ __('messages.urgent_high_priority') }}</p>
                             </div>
                         </div>
                         <a href="{{ route('tasks.index') }}" class="px-4 py-2 bg-white/20 backdrop-blur hover:bg-white/30 text-white rounded-lg text-sm font-bold transition flex items-center gap-2">
-                            View All <i class="fas fa-arrow-right"></i>
+                            {{ __('messages.view_all') }} <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
                 </div>
@@ -209,7 +209,7 @@
                                         <h5 class="font-bold text-gray-900 dark:text-white mb-1">{{ $task->title }}</h5>
                                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
                                             <i class="fas fa-project-diagram mr-1"></i>
-                                            {{ $task->project->title ?? 'No Project' }}
+                                            {{ $task->project->title ?? __('messages.no_project') }}
                                         </p>
                                         @if($task->due_date)
                                         <p class="text-xs font-semibold
@@ -217,9 +217,9 @@
                                             @else text-gray-500 dark:text-gray-400
                                             @endif">
                                             <i class="fas fa-clock mr-1"></i>
-                                            Due: {{ $task->due_date->format('M d, Y') }}
+                                            {{ __('messages.due') }}: {{ $task->due_date->format('M d, Y') }}
                                             @if($task->due_date < now())
-                                                <span class="ml-1 text-xs">(Overdue!)</span>
+                                                <span class="ml-1 text-xs">({{ __('messages.overdue_exclamation') }})</span>
                                             @endif
                                         </p>
                                         @endif
@@ -229,7 +229,7 @@
                                         @elseif($task->priority === 'high') bg-gradient-to-r from-orange-500 to-orange-600 text-white
                                         @else bg-gradient-to-r from-yellow-500 to-yellow-600 text-white
                                         @endif">
-                                        {{ strtoupper($task->priority) }}
+                                        {{ strtoupper(__('messages.priority_' . $task->priority)) }}
                                     </span>
                                 </div>
                             </div>
@@ -239,8 +239,8 @@
                             <div class="w-20 h-20 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-check-double text-3xl text-green-500"></i>
                             </div>
-                            <p class="text-gray-600 dark:text-gray-400 font-semibold">All caught up!</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">No priority tasks at the moment</p>
+                            <p class="text-gray-600 dark:text-gray-400 font-semibold">{{ __('messages.all_caught_up') }}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">{{ __('messages.no_priority_tasks') }}</p>
                         </div>
                     @endforelse
                 </div>
@@ -256,8 +256,8 @@
                             <i class="fas fa-users text-white text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-2xl font-black text-white">Team Members</h3>
-                            <p class="text-indigo-100 text-sm">{{ count($team_members) }} members</p>
+                            <h3 class="text-2xl font-black text-white">{{ __('messages.team_members') }}</h3>
+                            <p class="text-indigo-100 text-sm">{{ count($team_members) }} {{ __('messages.members') }}</p>
                         </div>
                     </div>
                 </div>
@@ -271,11 +271,11 @@
                                     </div>
                                     <div class="flex-1">
                                         <h4 class="font-bold text-gray-900 dark:text-white text-sm">{{ $member->name }}</h4>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $member->department ?? 'Team Member' }}</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $member->department ?? __('messages.team_member') }}</p>
                                     </div>
                                     @if($member->user_type === 'team_lead')
                                         <span class="px-3 py-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white text-xs font-bold rounded-lg shadow-md flex items-center gap-1">
-                                            <i class="fas fa-crown"></i> Lead
+                                            <i class="fas fa-crown"></i> {{ __('messages.lead') }}
                                         </span>
                                     @endif
                                 </div>
@@ -286,8 +286,8 @@
                             <div class="w-20 h-20 bg-indigo-100 dark:bg-indigo-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-users text-3xl text-indigo-500"></i>
                             </div>
-                            <p class="text-gray-600 dark:text-gray-400 font-semibold">No team members</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">Add members to your team</p>
+                            <p class="text-gray-600 dark:text-gray-400 font-semibold">{{ __('messages.no_team_members') }}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">{{ __('messages.add_members_team') }}</p>
                         </div>
                     @endforelse
                 </div>
@@ -302,7 +302,7 @@
             <div class="h-1 flex-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"></div>
             <h2 class="text-3xl font-black text-gray-900 dark:text-white flex items-center gap-3">
                 <i class="fas fa-chart-line text-blue-600"></i>
-                Team Analytics Dashboard
+                {{ __('messages.team_analytics_dashboard') }}
             </h2>
             <div class="h-1 flex-1 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-full"></div>
         </div>
@@ -318,7 +318,7 @@
 
     <!-- Recent Activities -->
     <div class="mt-8">
-        <x-activity-feed :activities="$recent_activities ?? collect([])" title="Team Activities" />
+        <x-activity-feed :activities="$recent_activities ?? collect([])" :title="__('messages.team_activities')" />
     </div>
 </div>
 @endsection
